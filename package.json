@@ -1,0 +1,18 @@
+{
+  "name": "govee-lights",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:ui": "bun build src/ui/App.jsx --target browser --outfile public/app.js",
+    "dev:ui": "bun build src/ui/App.jsx --target browser --outfile public/app.js --watch",
+    "dev": "bun run build:ui && bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "check": "bun build src/index.ts --target bun --outdir .tmp-build && bun build src/ui/App.jsx --target browser --outfile .tmp-build-ui/app.js"
+  },
+  "dependencies": {
+    "mqtt": "^5.15.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  }
+}

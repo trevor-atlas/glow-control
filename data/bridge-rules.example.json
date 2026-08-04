@@ -1,0 +1,21 @@
+{
+  "rules": [
+    {
+      "name": "Turn on a Govee light when motion starts",
+      "topic": "zigbee2mqtt/living-room-motion",
+      "when": {
+        "occupancy": true
+      },
+      "commands": [
+        {
+          "provider": "govee",
+          "deviceId": "replace-with-a-govee-device-id",
+          "command": {
+            "type": "power",
+            "on": true
+          }
+        }
+      ]
+    }
+  ]
+}
