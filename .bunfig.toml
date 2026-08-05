@@ -1,0 +1,4 @@
+# Pin the registry: bun 1.3.x defaults to the Hugging Face mirror
+# (npm.hubteam.com), which does not resolve in this environment.
+[install]
+registry = "https://registry.npmjs.org"
