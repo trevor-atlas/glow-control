@@ -3,6 +3,7 @@
 !.env.example
 .tmp-build/
 .tmp-build-ui/
+dist/
 data/device-names.json
 data/device-palettes.json
 data/bridge-rules.json

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { createRoot } from "react-dom/client";
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { CloseButton, Dialog, DialogBackdrop, DialogPanel, DialogTitle, Input, Switch } from "@headlessui/react";
 
@@ -355,4 +354,4 @@ function App() {
   </main>;
 }
 
-createRoot(document.getElementById("root")).render(<App />);
+export default App;

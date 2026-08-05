@@ -15,7 +15,7 @@ const MAX_PALETTE_SIZE = 12;
 const hexColorPattern = /^#[0-9a-f]{6}$/;
 
 const port = Number(Bun.env.PORT ?? 3000);
-const publicDirectory = `${import.meta.dir}/../public`;
+const publicDirectory = `${import.meta.dir}/../dist`;
 const dataDirectory = `${import.meta.dir}/../data`;
 const deviceNamesFile = `${dataDirectory}/device-names.json`;
 const devicePalettesFile = `${dataDirectory}/device-palettes.json`;
@@ -572,7 +572,9 @@ async function staticFile(pathname: string): Promise<Response> {
   const safePath = requested.replace(/^\/+/, "").replaceAll("..", "");
   const file = Bun.file(`${publicDirectory}/${safePath}`);
   if (await file.exists()) return new Response(file);
-  return new Response(Bun.file(`${publicDirectory}/index.html`));
+  const fallback = Bun.file(`${publicDirectory}/index.html`);
+  if (await fallback.exists()) return new Response(fallback);
+  return new Response("Frontend not built — run `bun run build:web` or use `bun run dev` (Vite on :5173)", { status: 503 });
 }
 
 const server = Bun.serve({

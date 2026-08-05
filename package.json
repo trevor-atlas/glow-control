@@ -4,11 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:ui": "bun build src/ui/App.jsx --target browser --outfile public/app.js",
-    "dev:ui": "bun build src/ui/App.jsx --target browser --outfile public/app.js --watch",
-    "dev": "bun run build:ui && bun --watch src/index.ts",
+    "dev:web": "vite",
+    "dev:api": "bun --watch src/index.ts",
+    "dev": "concurrently -k -n web,api -c cyan,magenta \"bun run dev:web\" \"bun run dev:api\"",
+    "build:web": "vite build",
     "start": "bun src/index.ts",
-    "check": "bun build src/index.ts --target bun --outdir .tmp-build && bun build src/ui/App.jsx --target browser --outfile .tmp-build-ui/app.js"
+    "check": "bun build src/index.ts --target bun --outdir .tmp-build && vite build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",
@@ -17,5 +18,10 @@
     "react": "19.2.8",
     "react-colorful": "^5.8.0",
     "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.5",
+    "concurrently": "^10.0.4",
+    "vite": "^8.2.0"
   }
 }
