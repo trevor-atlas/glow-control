@@ -18828,12 +18828,15 @@ function useLightSocket() {
   const socketRef = import_react30.useRef(null);
   const reconnectTimer = import_react30.useRef(null);
   const [connected, setConnected] = import_react30.useState(false);
-  const [snapshot, setSnapshot] = import_react30.useState({ devices: [], configuredProviders: [], hueConfigured: false });
+  const [snapshot, setSnapshot] = import_react30.useState({ devices: [], configuredProviders: [], hueConfigured: false, elgatoLights: [] });
   const [toast, setToast] = import_react30.useState(null);
   const [hueBridges, setHueBridges] = import_react30.useState([]);
   const [discoveringHue, setDiscoveringHue] = import_react30.useState(false);
   const [pairingHue, setPairingHue] = import_react30.useState(false);
   const [huePairCount, setHuePairCount] = import_react30.useState(0);
+  const [elgatoDiscovered, setElgatoDiscovered] = import_react30.useState([]);
+  const [discoveringElgato, setDiscoveringElgato] = import_react30.useState(false);
+  const [elgatoBusy, setElgatoBusy] = import_react30.useState("");
   const notify = import_react30.useCallback((message, error = false) => {
     setToast({ message, error });
     window.clearTimeout(notify.timer);
@@ -18864,15 +18867,23 @@ function useLightSocket() {
         const message = JSON.parse(event.data);
         if (message.type === "snapshot")
           setSnapshot(message);
-        if (message.type === "ack")
+        if (message.type === "ack") {
+          setElgatoBusy("");
           notify(message.message);
+        }
         if (message.type === "error") {
           setPairingHue(false);
+          setDiscoveringElgato(false);
+          setElgatoBusy("");
           notify(message.error, true);
         }
         if (message.type === "hue-discovery") {
           setHueBridges(message.bridges);
           setDiscoveringHue(false);
+        }
+        if (message.type === "elgato-discovery") {
+          setElgatoDiscovered(message.lights);
+          setDiscoveringElgato(false);
         }
         if (message.type === "hue-paired") {
           setPairingHue(false);
@@ -18904,7 +18915,27 @@ function useLightSocket() {
     if (!send({ type: "pair-hue", bridgeIp }))
       setPairingHue(false);
   }, [send]);
-  return { ...snapshot, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue };
+  const discoverElgato = import_react30.useCallback(() => {
+    setDiscoveringElgato(true);
+    if (!send({ type: "discover-elgato" }))
+      setDiscoveringElgato(false);
+  }, [send]);
+  const addElgatoLight = import_react30.useCallback((ip) => {
+    setElgatoBusy(`add:${ip}`);
+    if (!send({ type: "add-elgato-light", ip }))
+      setElgatoBusy("");
+  }, [send]);
+  const removeElgatoLight = import_react30.useCallback((id) => {
+    setElgatoBusy(`remove:${id}`);
+    if (!send({ type: "remove-elgato-light", id }))
+      setElgatoBusy("");
+  }, [send]);
+  const flashElgatoLight = import_react30.useCallback((id) => {
+    setElgatoBusy(`flash:${id}`);
+    if (!send({ type: "flash-elgato-light", id }))
+      setElgatoBusy("");
+  }, [send]);
+  return { ...snapshot, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight };
 }
 function ColorControl({ device, connected, send }) {
   const [color, setColor] = import_react30.useState("#ffffff");
@@ -19235,8 +19266,9 @@ function DeviceCard({ device, connected, send }) {
     ]
   }, undefined, true, undefined, this);
 }
-function HueSetup({ open, onClose, bridges, discovering, pairing, onDiscover, onPair }) {
+function SetupPanel({ open, onClose, bridges, discovering, pairing, onDiscover, onPair, elgatoDiscovered, discoveringElgato, elgatoBusy, elgatoLights, onDiscoverElgato, onAddElgato, onRemoveElgato, onFlashElgato }) {
   const [bridgeIp, setBridgeIp] = import_react30.useState("");
+  const [elgatoIp, setElgatoIp] = import_react30.useState("");
   if (!open)
     return null;
   return /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
@@ -19249,10 +19281,10 @@ function HueSetup({ open, onClose, bridges, discovering, pairing, onDiscover, on
             children: [
               /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
                 className: "eyebrow",
-                children: "Local connection"
+                children: "Local connections"
               }, undefined, false, undefined, this),
               /* @__PURE__ */ jsx_dev_runtime.jsxDEV("h2", {
-                children: "Connect a Hue bridge"
+                children: "Set up lights"
               }, undefined, false, undefined, this)
             ]
           }, undefined, true, undefined, this),
@@ -19260,75 +19292,197 @@ function HueSetup({ open, onClose, bridges, discovering, pairing, onDiscover, on
             className: "close-button",
             type: "button",
             onClick: onClose,
-            "aria-label": "Close Hue setup",
+            "aria-label": "Close setup",
             children: "×"
           }, undefined, false, undefined, this)
         ]
       }, undefined, true, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
-        className: "setup-copy",
-        children: "Find your bridge on the local network. Press the round link button on top of the bridge, then click Pair bridge within 30 seconds."
-      }, undefined, false, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-        className: "secondary-button",
-        type: "button",
-        onClick: onDiscover,
-        disabled: discovering,
-        children: discovering ? "Searching…" : "Find Hue bridges"
-      }, undefined, false, undefined, this),
       /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "hue-bridges",
-        "aria-live": "polite",
+        className: "setup-block",
         children: [
-          !discovering && bridges.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-            className: "device-meta",
-            children: "No bridges found. Enter the bridge IP address below."
-          }, undefined, false, undefined, this),
-          bridges.map((bridge) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "bridge-option",
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
+            className: "setup-copy",
             children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                children: bridge.internalipaddress
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("strong", {
+                children: "Philips Hue"
               }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                type: "button",
-                onClick: () => setBridgeIp(bridge.internalipaddress),
-                children: "Use this bridge"
-              }, undefined, false, undefined, this)
+              " — find your bridge on the local network. Press the round link button on top of the bridge, then click Pair bridge within 30 seconds."
             ]
-          }, bridge.internalipaddress, true, undefined, this))
+          }, undefined, true, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+            className: "secondary-button",
+            type: "button",
+            onClick: onDiscover,
+            disabled: discovering,
+            children: discovering ? "Searching…" : "Find Hue bridges"
+          }, undefined, false, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "hue-bridges",
+            "aria-live": "polite",
+            children: [
+              !discovering && bridges.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                className: "device-meta",
+                children: "No bridges found. Enter the bridge IP address below."
+              }, undefined, false, undefined, this),
+              bridges.map((bridge) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "bridge-option",
+                children: [
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    children: bridge.internalipaddress
+                  }, undefined, false, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                    type: "button",
+                    onClick: () => setBridgeIp(bridge.internalipaddress),
+                    children: "Use this bridge"
+                  }, undefined, false, undefined, this)
+                ]
+              }, bridge.internalipaddress, true, undefined, this))
+            ]
+          }, undefined, true, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("form", {
+            className: "hue-pair-form",
+            onSubmit: (event) => {
+              event.preventDefault();
+              onPair(bridgeIp);
+            },
+            children: [
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("label", {
+                className: "setup-label",
+                htmlFor: "hue-bridge-ip",
+                children: "Bridge IP address"
+              }, undefined, false, undefined, this),
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "setup-row",
+                children: [
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
+                    id: "hue-bridge-ip",
+                    type: "text",
+                    inputMode: "url",
+                    value: bridgeIp,
+                    onChange: (event) => setBridgeIp(event.target.value),
+                    placeholder: "192.168.1.100",
+                    required: true
+                  }, undefined, false, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                    className: "save-name-button",
+                    type: "submit",
+                    disabled: pairing,
+                    children: pairing ? "Pairing…" : "Pair bridge"
+                  }, undefined, false, undefined, this)
+                ]
+              }, undefined, true, undefined, this)
+            ]
+          }, undefined, true, undefined, this)
         ]
       }, undefined, true, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("form", {
-        className: "hue-pair-form",
-        onSubmit: (event) => {
-          event.preventDefault();
-          onPair(bridgeIp);
-        },
+      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+        className: "setup-block",
         children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("label", {
-            className: "setup-label",
-            htmlFor: "hue-bridge-ip",
-            children: "Bridge IP address"
-          }, undefined, false, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
+            className: "setup-copy",
+            children: [
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("strong", {
+                children: "Elgato Key Lights"
+              }, undefined, false, undefined, this),
+              " — find your lights on the local network, or add one by IP address."
+            ]
+          }, undefined, true, undefined, this),
           /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
             className: "setup-row",
             children: [
               /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
-                id: "hue-bridge-ip",
+                id: "elgato-ip",
                 type: "text",
                 inputMode: "url",
-                value: bridgeIp,
-                onChange: (event) => setBridgeIp(event.target.value),
-                placeholder: "192.168.1.100",
-                required: true
+                value: elgatoIp,
+                onChange: (event) => setElgatoIp(event.target.value),
+                placeholder: "192.168.1.100"
               }, undefined, false, undefined, this),
               /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
                 className: "save-name-button",
-                type: "submit",
-                disabled: pairing,
-                children: pairing ? "Pairing…" : "Pair bridge"
+                type: "button",
+                disabled: Boolean(elgatoBusy),
+                onClick: () => {
+                  const ip = elgatoIp.trim();
+                  if (ip)
+                    onAddElgato(ip);
+                },
+                children: "Add by IP"
               }, undefined, false, undefined, this)
+            ]
+          }, undefined, true, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+            className: "secondary-button",
+            type: "button",
+            onClick: onDiscoverElgato,
+            disabled: discoveringElgato,
+            children: discoveringElgato ? "Searching…" : "Find Elgato lights"
+          }, undefined, false, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "hue-bridges",
+            "aria-live": "polite",
+            children: [
+              !discoveringElgato && elgatoDiscovered.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                className: "device-meta",
+                children: "No lights found. Elgato lights advertise on the local network via mDNS."
+              }, undefined, false, undefined, this),
+              elgatoDiscovered.map((light) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "bridge-option",
+                children: [
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    children: [
+                      light.name,
+                      light.model ? ` (${light.model})` : "",
+                      " · ",
+                      light.ip
+                    ]
+                  }, undefined, true, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                    type: "button",
+                    disabled: Boolean(elgatoBusy),
+                    onClick: () => onAddElgato(light.ip),
+                    children: "Add"
+                  }, undefined, false, undefined, this)
+                ]
+              }, `${light.id}@${light.ip}`, true, undefined, this))
+            ]
+          }, undefined, true, undefined, this),
+          elgatoLights.length > 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "hue-bridges",
+            children: [
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                className: "device-meta",
+                children: "Added lights"
+              }, undefined, false, undefined, this),
+              elgatoLights.map((light) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "bridge-option",
+                children: [
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    children: [
+                      light.name ?? light.id,
+                      " · ",
+                      light.ip
+                    ]
+                  }, undefined, true, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    className: "setup-row",
+                    children: [
+                      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                        type: "button",
+                        disabled: Boolean(elgatoBusy),
+                        onClick: () => onFlashElgato(light.id),
+                        children: "Flash"
+                      }, undefined, false, undefined, this),
+                      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                        type: "button",
+                        disabled: Boolean(elgatoBusy),
+                        onClick: () => onRemoveElgato(light.id),
+                        children: "Remove"
+                      }, undefined, false, undefined, this)
+                    ]
+                  }, undefined, true, undefined, this)
+                ]
+              }, light.id, true, undefined, this))
             ]
           }, undefined, true, undefined, this)
         ]
@@ -19337,12 +19491,12 @@ function HueSetup({ open, onClose, bridges, discovering, pairing, onDiscover, on
   }, undefined, true, undefined, this);
 }
 function App() {
-  const [hueSetupOpen, setHueSetupOpen] = import_react30.useState(false);
+  const [setupOpen, setSetupOpen] = import_react30.useState(false);
   const controller = useLightSocket();
-  const { devices, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue } = controller;
+  const { devices, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight, elgatoLights } = controller;
   import_react30.useEffect(() => {
     if (huePairCount > 0)
-      setHueSetupOpen(false);
+      setSetupOpen(false);
   }, [huePairCount]);
   const onDevices = devices.filter((device) => device.state?.on === true);
   const offDevices = devices.filter((device) => device.state?.on !== true);
@@ -19380,8 +19534,8 @@ function App() {
               /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
                 className: "secondary-button",
                 type: "button",
-                onClick: () => setHueSetupOpen(!hueSetupOpen),
-                children: "Set up Hue bridge"
+                onClick: () => setSetupOpen(!setupOpen),
+                children: "Set up lights"
               }, undefined, false, undefined, this),
               /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
                 className: "secondary-button",
@@ -19394,14 +19548,22 @@ function App() {
           }, undefined, true, undefined, this)
         ]
       }, undefined, true, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV(HueSetup, {
-        open: hueSetupOpen,
-        onClose: () => setHueSetupOpen(false),
+      /* @__PURE__ */ jsx_dev_runtime.jsxDEV(SetupPanel, {
+        open: setupOpen,
+        onClose: () => setSetupOpen(false),
         bridges: hueBridges,
         discovering: discoveringHue,
         pairing: pairingHue,
         onDiscover: discoverHue,
-        onPair: pairHue
+        onPair: pairHue,
+        elgatoDiscovered,
+        discoveringElgato,
+        elgatoBusy,
+        elgatoLights: elgatoLights ?? [],
+        onDiscoverElgato: discoverElgato,
+        onAddElgato: addElgatoLight,
+        onRemoveElgato: removeElgatoLight,
+        onFlashElgato: flashElgatoLight
       }, undefined, false, undefined, this),
       devices.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
         className: "device-grid",

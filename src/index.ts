@@ -3,6 +3,8 @@ import { MqttBridge } from "./bridge/mqtt";
 import { GoveeProvider, ProviderError } from "./providers/govee";
 import { HueProvider, type HueBridgeConfig } from "./providers/hue";
 import { discoverHueBridges } from "./providers/hue-discovery";
+import { ElgatoProvider, type ElgatoLightConfig } from "./providers/elgato";
+import { discoverElgatoLights } from "./providers/elgato-discovery";
 import type { LightCommand, LightDevice, LightProvider } from "./providers/types";
 
 type DeviceNames = Record<string, Record<string, string>>;
@@ -18,18 +20,24 @@ const dataDirectory = `${import.meta.dir}/../data`;
 const deviceNamesFile = `${dataDirectory}/device-names.json`;
 const devicePalettesFile = `${dataDirectory}/device-palettes.json`;
 const hueConfigFile = `${dataDirectory}/hue-bridge.json`;
+const elgatoLightsFile = `${dataDirectory}/elgato-lights.json`;
 const providers = new Map<string, LightProvider>();
 let deviceNames = await loadDeviceNames();
 let devicePalettes = await loadDevicePalettes();
 let hueConfig = await loadHueConfig();
+let elgatoConfig = await loadElgatoLights();
 let nameWriteQueue = Promise.resolve();
 let paletteWriteQueue = Promise.resolve();
+let elgatoWriteQueue = Promise.resolve();
 
 if (Bun.env.GOVEE_API_KEY && Bun.env.GOVEE_API_KEY !== "replace-me") {
   providers.set("govee", new GoveeProvider(Bun.env.GOVEE_API_KEY));
 }
 if (hueConfig) {
   providers.set("hue", new HueProvider(hueConfig));
+}
+if (elgatoConfig.length) {
+  providers.set("elgato", new ElgatoProvider(elgatoConfig));
 }
 
 const mqttBridge = Bun.env.MQTT_URL
@@ -71,6 +79,34 @@ async function saveHueConfig(config: HueBridgeConfig): Promise<void> {
   const temporaryFile = `${hueConfigFile}.tmp`;
   await Bun.write(temporaryFile, `${JSON.stringify(config, null, 2)}\n`);
   await rename(temporaryFile, hueConfigFile);
+}
+
+async function loadElgatoLights(): Promise<ElgatoLightConfig[]> {
+  const file = Bun.file(elgatoLightsFile);
+  if (!(await file.exists())) return [];
+  try {
+    const parsed = await file.json();
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (entry): entry is ElgatoLightConfig =>
+        typeof entry?.id === "string" && typeof entry?.ip === "string",
+    );
+  } catch {
+    console.warn(`Could not read ${elgatoLightsFile}; Elgato lights are not configured.`);
+    return [];
+  }
+}
+
+async function saveElgatoLights(): Promise<void> {
+  await mkdir(dataDirectory, { recursive: true });
+  const temporaryFile = `${elgatoLightsFile}.tmp`;
+  await Bun.write(temporaryFile, `${JSON.stringify(elgatoConfig, null, 2)}\n`);
+  await rename(temporaryFile, elgatoLightsFile);
+}
+
+function syncElgatoProvider(): void {
+  if (elgatoConfig.length) providers.set("elgato", new ElgatoProvider(elgatoConfig));
+  else providers.delete("elgato");
 }
 
 async function loadDeviceNames(): Promise<DeviceNames> {
@@ -170,6 +206,12 @@ let paletteMutationQueue = Promise.resolve();
 function runPaletteMutation<T>(task: () => Promise<T>): Promise<T> {
   const result = paletteMutationQueue.then(task, task);
   paletteMutationQueue = result.then(() => undefined, () => undefined);
+  return result;
+}
+
+function runElgatoMutation<T>(task: () => Promise<T>): Promise<T> {
+  const result = elgatoWriteQueue.then(task, task);
+  elgatoWriteQueue = result.then(() => undefined, () => undefined);
   return result;
 }
 
@@ -304,6 +346,8 @@ type SocketMessage = {
   providerId?: string;
   deviceId?: string;
   bridgeIp?: string;
+  ip?: string;
+  id?: string;
   name?: string;
   color?: string;
   command?: Record<string, unknown>;
@@ -322,6 +366,7 @@ async function sendSnapshot(socket: AppSocket): Promise<void> {
     devices: await listDevices(),
     configuredProviders: [...providers.keys()],
     hueConfigured: Boolean(hueConfig),
+    elgatoLights: elgatoConfig,
   });
 }
 
@@ -333,6 +378,7 @@ async function broadcastSnapshot(): Promise<void> {
     devices,
     configuredProviders: [...providers.keys()],
     hueConfigured: Boolean(hueConfig),
+    elgatoLights: elgatoConfig,
   });
   for (const socket of sockets) socket.send(message);
 }
@@ -403,6 +449,47 @@ async function handleSocketMessage(socket: AppSocket, rawMessage: string | Buffe
         sendSocket(socket, { type: "hue-paired", bridgeIp: config.bridgeIp, requestId: message.requestId });
         await broadcastSnapshot();
         void mqttBridge?.publishDevices();
+        return;
+      }
+      case "discover-elgato":
+        sendSocket(socket, { type: "elgato-discovery", lights: await discoverElgatoLights() });
+        return;
+      case "add-elgato-light": {
+        if (typeof message.ip !== "string") throw new ProviderError("An Elgato light IP address is required", 400);
+        await runElgatoMutation(async () => {
+          const light = await ElgatoProvider.discoverAt(message.ip);
+          if (elgatoConfig.some((entry) => entry.id === light.id)) {
+            sendSocket(socket, { type: "ack", message: `${light.name} is already added`, requestId: message.requestId });
+            return;
+          }
+          elgatoConfig = [...elgatoConfig, light];
+          await saveElgatoLights();
+          syncElgatoProvider();
+          await broadcastSnapshot();
+          void mqttBridge?.publishDevices();
+          sendSocket(socket, { type: "ack", message: `Added ${light.name}`, requestId: message.requestId });
+        });
+        return;
+      }
+      case "remove-elgato-light": {
+        if (typeof message.id !== "string") throw new ProviderError("An Elgato light id is required", 400);
+        await runElgatoMutation(async () => {
+          const removed = elgatoConfig.find((entry) => entry.id === message.id);
+          elgatoConfig = elgatoConfig.filter((entry) => entry.id !== message.id);
+          await saveElgatoLights();
+          syncElgatoProvider();
+          await broadcastSnapshot();
+          void mqttBridge?.publishDevices();
+          sendSocket(socket, { type: "ack", message: removed ? `Removed ${removed.name ?? "Elgato light"}` : "Elgato light removed", requestId: message.requestId });
+        });
+        return;
+      }
+      case "flash-elgato-light": {
+        if (typeof message.id !== "string") throw new ProviderError("An Elgato light id is required", 400);
+        const light = elgatoConfig.find((entry) => entry.id === message.id);
+        if (!light) throw new ProviderError("Elgato light not found", 404);
+        await ElgatoProvider.flash(light);
+        sendSocket(socket, { type: "ack", message: "Flashing light — check which one blinks", requestId: message.requestId });
         return;
       }
       default:

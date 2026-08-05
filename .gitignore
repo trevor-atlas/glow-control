@@ -8,3 +8,4 @@ data/device-palettes.json
 data/bridge-rules.json
 data/hue-bridge.json
 node_modules/
+data/elgato-lights.json

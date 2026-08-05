@@ -45,6 +45,7 @@ h1 { margin: 0; font-size: clamp(2.5rem, 7vw, 5rem); letter-spacing: -.07em; lin
 .setup-label { display: block; color: #c5c1cb; font-size: .82rem; margin-bottom: 8px; }
 .setup-row { display: flex; gap: 8px; }
 .setup-row input { min-width: 0; flex: 1; border: 1px solid #4b4658; border-radius: 9px; background: #15131b; color: #f6f4f0; padding: 9px 10px; }
+.setup-block { margin-top: 24px; padding-top: 22px; border-top: 1px solid #302d3a; }
 .setup-row input:focus { outline: 2px solid #b889ff; outline-offset: 2px; }
 .save-name-button { border: 1px solid #4b4658; border-radius: 9px; background: #312b3d; color: #f6f4f0; cursor: pointer; padding: 9px 11px; white-space: nowrap; }
 .save-name-button:hover { background: #453b55; }
