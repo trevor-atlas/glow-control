@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { HexColorPicker, HexColorInput } from "react-colorful";
-import { Input, Switch } from "@headlessui/react";
+import { CloseButton, Dialog, DialogBackdrop, DialogPanel, DialogTitle, Input, Switch } from "@headlessui/react";
 
 function hasCapability(device, type, instance) {
   return device.capabilities.some((capability) => capability.type === type && capability.instance === instance);
@@ -11,7 +11,7 @@ function useLightSocket() {
   const socketRef = useRef(null);
   const reconnectTimer = useRef(null);
   const [connected, setConnected] = useState(false);
-  const [snapshot, setSnapshot] = useState({ devices: [], configuredProviders: [], hueConfigured: false, elgatoLights: [] });
+  const [snapshot, setSnapshot] = useState({ devices: [], configuredProviders: [], hueConfigured: false, hueBridgeIp: null, elgatoLights: [] });
   const [toast, setToast] = useState(null);
   const [hueBridges, setHueBridges] = useState([]);
   const [discoveringHue, setDiscoveringHue] = useState(false);
@@ -281,47 +281,54 @@ function DeviceCard({ device, connected, send }) {
   </article>;
 }
 
-function SetupPanel({ open, onClose, bridges, discovering, pairing, onDiscover, onPair, elgatoDiscovered, discoveringElgato, elgatoBusy, elgatoLights, onDiscoverElgato, onAddElgato, onRemoveElgato, onFlashElgato }) {
+function SetupPanel({ open, onClose, hueBridgeIp, bridges, discovering, pairing, onDiscover, onPair, elgatoDiscovered, discoveringElgato, elgatoBusy, elgatoLights, onDiscoverElgato, onAddElgato, onRemoveElgato, onFlashElgato }) {
   const [bridgeIp, setBridgeIp] = useState("");
   const [elgatoIp, setElgatoIp] = useState("");
-  if (!open) return null;
-  return <section className="setup-panel">
-    <div className="setup-heading"><div><p className="eyebrow">Local connections</p><h2>Set up lights</h2></div><button className="close-button" type="button" onClick={onClose} aria-label="Close setup">×</button></div>
-    <div className="setup-block">
-      <p className="setup-copy"><strong>Philips Hue</strong> — find your bridge on the local network. Press the round link button on top of the bridge, then click Pair bridge within 30 seconds.</p>
-      <button className="secondary-button" type="button" onClick={onDiscover} disabled={discovering}>{discovering ? "Searching…" : "Find Hue bridges"}</button>
-      <div className="hue-bridges" aria-live="polite">
-        {!discovering && bridges.length === 0 && <span className="device-meta">No bridges found. Enter the bridge IP address below.</span>}
-        {bridges.map((bridge) => <div className="bridge-option" key={bridge.internalipaddress}><span>{bridge.internalipaddress}</span><button type="button" onClick={() => setBridgeIp(bridge.internalipaddress)}>Use this bridge</button></div>)}
-      </div>
-      <form className="hue-pair-form" onSubmit={(event) => { event.preventDefault(); onPair(bridgeIp); }}>
-        <label className="setup-label" htmlFor="hue-bridge-ip">Bridge IP address</label>
-        <div className="setup-row"><input id="hue-bridge-ip" type="text" inputMode="url" value={bridgeIp} onChange={(event) => setBridgeIp(event.target.value)} placeholder="192.168.1.100" required /><button className="save-name-button" type="submit" disabled={pairing}>{pairing ? "Pairing…" : "Pair bridge"}</button></div>
-      </form>
+  return <Dialog open={open} onClose={onClose} transition className="dialog-root">
+    <DialogBackdrop transition className="dialog-backdrop" />
+    <div className="dialog-positioner">
+      <DialogPanel transition className="setup-panel">
+        <div className="setup-heading"><div><p className="eyebrow">Local connections</p><DialogTitle>Set up lights</DialogTitle></div><CloseButton className="close-button" aria-label="Close setup">×</CloseButton></div>
+        <div className="setup-block">
+          <p className="setup-copy"><strong>Philips Hue</strong> — find your bridge on the local network. Press the round link button on top of the bridge, then click Pair bridge within 30 seconds.</p>
+          {hueBridgeIp && <div className="hue-bridges">
+            <div className="bridge-option"><span><span className="connection-status connected"><span />Connected</span> · {hueBridgeIp}</span></div>
+          </div>}
+          <button className="secondary-button" type="button" onClick={onDiscover} disabled={discovering}>{discovering ? "Searching…" : "Find Hue bridges"}</button>
+          <div className="hue-bridges" aria-live="polite">
+            {!discovering && !hueBridgeIp && bridges.length === 0 && <span className="device-meta">No bridges found. Enter the bridge IP address below.</span>}
+            {bridges.filter((bridge) => bridge.internalipaddress !== hueBridgeIp).map((bridge) => <div className="bridge-option" key={bridge.internalipaddress}><span>{bridge.internalipaddress}</span><button type="button" onClick={() => setBridgeIp(bridge.internalipaddress)}>Use this bridge</button></div>)}
+          </div>
+          <form className="hue-pair-form" onSubmit={(event) => { event.preventDefault(); onPair(bridgeIp); }}>
+            <label className="setup-label" htmlFor="hue-bridge-ip">Bridge IP address</label>
+            <div className="setup-row"><input id="hue-bridge-ip" type="text" inputMode="url" value={bridgeIp} onChange={(event) => setBridgeIp(event.target.value)} placeholder="192.168.1.100" required /><button className="save-name-button" type="submit" disabled={pairing}>{pairing ? "Pairing…" : "Pair bridge"}</button></div>
+          </form>
+        </div>
+        <div className="setup-block">
+          <p className="setup-copy"><strong>Elgato Key Lights</strong> — find your lights on the local network, or add one by IP address.</p>
+          <div className="setup-row">
+            <input id="elgato-ip" type="text" inputMode="url" value={elgatoIp} onChange={(event) => setElgatoIp(event.target.value)} placeholder="192.168.1.100" />
+            <button className="save-name-button" type="button" disabled={Boolean(elgatoBusy)} onClick={() => { const ip = elgatoIp.trim(); if (ip) onAddElgato(ip); }}>Add by IP</button>
+          </div>
+          <button className="secondary-button" type="button" onClick={onDiscoverElgato} disabled={discoveringElgato}>{discoveringElgato ? "Searching…" : "Find Elgato lights"}</button>
+          <div className="hue-bridges" aria-live="polite">
+            {!discoveringElgato && elgatoDiscovered.length === 0 && <span className="device-meta">No lights found. Elgato lights advertise on the local network via mDNS.</span>}
+            {elgatoDiscovered.map((light) => <div className="bridge-option" key={`${light.id}@${light.ip}`}><span>{light.name}{light.model ? ` (${light.model})` : ""} · {light.ip}</span><button type="button" disabled={Boolean(elgatoBusy)} onClick={() => onAddElgato(light.ip)}>Add</button></div>)}
+          </div>
+          {elgatoLights.length > 0 && <div className="hue-bridges">
+            <span className="device-meta">Added lights</span>
+            {elgatoLights.map((light) => <div className="bridge-option" key={light.id}><span>{light.name ?? light.id} · {light.ip}</span><span className="setup-row"><button type="button" disabled={Boolean(elgatoBusy)} onClick={() => onFlashElgato(light.id)}>Flash</button><button type="button" disabled={Boolean(elgatoBusy)} onClick={() => onRemoveElgato(light.id)}>Remove</button></span></div>)}
+          </div>}
+        </div>
+      </DialogPanel>
     </div>
-    <div className="setup-block">
-      <p className="setup-copy"><strong>Elgato Key Lights</strong> — find your lights on the local network, or add one by IP address.</p>
-      <div className="setup-row">
-        <input id="elgato-ip" type="text" inputMode="url" value={elgatoIp} onChange={(event) => setElgatoIp(event.target.value)} placeholder="192.168.1.100" />
-        <button className="save-name-button" type="button" disabled={Boolean(elgatoBusy)} onClick={() => { const ip = elgatoIp.trim(); if (ip) onAddElgato(ip); }}>Add by IP</button>
-      </div>
-      <button className="secondary-button" type="button" onClick={onDiscoverElgato} disabled={discoveringElgato}>{discoveringElgato ? "Searching…" : "Find Elgato lights"}</button>
-      <div className="hue-bridges" aria-live="polite">
-        {!discoveringElgato && elgatoDiscovered.length === 0 && <span className="device-meta">No lights found. Elgato lights advertise on the local network via mDNS.</span>}
-        {elgatoDiscovered.map((light) => <div className="bridge-option" key={`${light.id}@${light.ip}`}><span>{light.name}{light.model ? ` (${light.model})` : ""} · {light.ip}</span><button type="button" disabled={Boolean(elgatoBusy)} onClick={() => onAddElgato(light.ip)}>Add</button></div>)}
-      </div>
-      {elgatoLights.length > 0 && <div className="hue-bridges">
-        <span className="device-meta">Added lights</span>
-        {elgatoLights.map((light) => <div className="bridge-option" key={light.id}><span>{light.name ?? light.id} · {light.ip}</span><span className="setup-row"><button type="button" disabled={Boolean(elgatoBusy)} onClick={() => onFlashElgato(light.id)}>Flash</button><button type="button" disabled={Boolean(elgatoBusy)} onClick={() => onRemoveElgato(light.id)}>Remove</button></span></div>)}
-      </div>}
-    </div>
-  </section>;
+  </Dialog>;
 }
 
 function App() {
   const [setupOpen, setSetupOpen] = useState(false);
   const controller = useLightSocket();
-  const { devices, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight, elgatoLights } = controller;
+  const { devices, connected, toast, send, hueBridges, hueBridgeIp, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight, elgatoLights } = controller;
   useEffect(() => {
     if (huePairCount > 0) setSetupOpen(false);
   }, [huePairCount]);
@@ -334,7 +341,7 @@ function App() {
       <div><p className="eyebrow">Home lighting</p><h1>Glow control</h1><p className="subtitle">A small, local-first remote for your smart lights.</p></div>
       <div className="header-actions"><span className={`connection-status${connected ? " connected" : ""}`}><span />{connected ? "Live" : "Reconnecting"}</span><button className="secondary-button" type="button" onClick={() => setSetupOpen(!setupOpen)}>Set up lights</button><button className="secondary-button" type="button" disabled={!connected} onClick={() => send({ type: "refresh" })}>Refresh devices</button></div>
     </header>
-    <SetupPanel open={setupOpen} onClose={() => setSetupOpen(false)} bridges={hueBridges} discovering={discoveringHue} pairing={pairingHue} onDiscover={discoverHue} onPair={pairHue} elgatoDiscovered={elgatoDiscovered} discoveringElgato={discoveringElgato} elgatoBusy={elgatoBusy} elgatoLights={elgatoLights ?? []} onDiscoverElgato={discoverElgato} onAddElgato={addElgatoLight} onRemoveElgato={removeElgatoLight} onFlashElgato={flashElgatoLight} />
+    <SetupPanel open={setupOpen} onClose={() => setSetupOpen(false)} hueBridgeIp={hueBridgeIp} bridges={hueBridges} discovering={discoveringHue} pairing={pairingHue} onDiscover={discoverHue} onPair={pairHue} elgatoDiscovered={elgatoDiscovered} discoveringElgato={discoveringElgato} elgatoBusy={elgatoBusy} elgatoLights={elgatoLights ?? []} onDiscoverElgato={discoverElgato} onAddElgato={addElgatoLight} onRemoveElgato={removeElgatoLight} onFlashElgato={flashElgatoLight} />
     {devices.length === 0 && <section className="device-grid" aria-live="polite"><div className="empty">{connected ? "No lights found. Check your provider configuration." : "Connecting to the light controller…"}</div></section>}
     {onDevices.length > 0 && <>
       <h2 className="group-heading">On{onDevices.length > 1 ? ` (${onDevices.length})` : ""}</h2>

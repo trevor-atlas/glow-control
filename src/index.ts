@@ -366,6 +366,7 @@ async function sendSnapshot(socket: AppSocket): Promise<void> {
     devices: await listDevices(),
     configuredProviders: [...providers.keys()],
     hueConfigured: Boolean(hueConfig),
+    hueBridgeIp: hueConfig?.bridgeIp ?? null,
     elgatoLights: elgatoConfig,
   });
 }
@@ -378,6 +379,7 @@ async function broadcastSnapshot(): Promise<void> {
     devices,
     configuredProviders: [...providers.keys()],
     hueConfigured: Boolean(hueConfig),
+    hueBridgeIp: hueConfig?.bridgeIp ?? null,
     elgatoLights: elgatoConfig,
   });
   for (const socket of sockets) socket.send(message);

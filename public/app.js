@@ -16891,6 +16891,73 @@ var require_client = __commonJS((exports, module) => {
   }
 });
 
+// node_modules/use-sync-external-store/cjs/use-sync-external-store-with-selector.development.js
+var require_use_sync_external_store_with_selector_development = __commonJS((exports) => {
+  var React = __toESM(require_react());
+  (function() {
+    function is(x3, y5) {
+      return x3 === y5 && (x3 !== 0 || 1 / x3 === 1 / y5) || x3 !== x3 && y5 !== y5;
+    }
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function" && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
+    var objectIs = typeof Object.is === "function" ? Object.is : is, useSyncExternalStore2 = React.useSyncExternalStore, useRef2 = React.useRef, useEffect2 = React.useEffect, useMemo2 = React.useMemo, useDebugValue2 = React.useDebugValue;
+    exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
+      var instRef = useRef2(null);
+      if (instRef.current === null) {
+        var inst = { hasValue: false, value: null };
+        instRef.current = inst;
+      } else
+        inst = instRef.current;
+      instRef = useMemo2(function() {
+        function memoizedSelector(nextSnapshot) {
+          if (!hasMemo) {
+            hasMemo = true;
+            memoizedSnapshot = nextSnapshot;
+            nextSnapshot = selector(nextSnapshot);
+            if (isEqual !== undefined && inst.hasValue) {
+              var currentSelection = inst.value;
+              if (isEqual(currentSelection, nextSnapshot))
+                return memoizedSelection = currentSelection;
+            }
+            return memoizedSelection = nextSnapshot;
+          }
+          currentSelection = memoizedSelection;
+          if (objectIs(memoizedSnapshot, nextSnapshot))
+            return currentSelection;
+          var nextSelection = selector(nextSnapshot);
+          if (isEqual !== undefined && isEqual(currentSelection, nextSelection))
+            return memoizedSnapshot = nextSnapshot, currentSelection;
+          memoizedSnapshot = nextSnapshot;
+          return memoizedSelection = nextSelection;
+        }
+        var hasMemo = false, memoizedSnapshot, memoizedSelection, maybeGetServerSnapshot = getServerSnapshot === undefined ? null : getServerSnapshot;
+        return [
+          function() {
+            return memoizedSelector(getSnapshot());
+          },
+          maybeGetServerSnapshot === null ? undefined : function() {
+            return memoizedSelector(maybeGetServerSnapshot());
+          }
+        ];
+      }, [getSnapshot, getServerSnapshot, selector, isEqual]);
+      var value = useSyncExternalStore2(subscribe, instRef[0], instRef[1]);
+      useEffect2(function() {
+        inst.hasValue = true;
+        inst.value = value;
+      }, [value]);
+      useDebugValue2(value);
+      return value;
+    };
+    typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop === "function" && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
+  })();
+});
+
+// node_modules/use-sync-external-store/with-selector.js
+var require_with_selector = __commonJS((exports, module) => {
+  if (false) {} else {
+    module.exports = require_use_sync_external_store_with_selector_development();
+  }
+});
+
 // node_modules/react/cjs/react-jsx-dev-runtime.development.js
 var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
   var React = __toESM(require_react());
@@ -16936,7 +17003,7 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
             type = type._init;
             try {
               return getComponentNameFromType(type(innerType));
-            } catch (x3) {}
+            } catch (x9) {}
         }
       return null;
     }
@@ -16947,7 +17014,7 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
       try {
         testStringCoercion(value);
         var JSCompiler_inline_result = false;
-      } catch (e5) {
+      } catch (e9) {
         JSCompiler_inline_result = true;
       }
       if (JSCompiler_inline_result) {
@@ -16966,7 +17033,7 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
       try {
         var name = getComponentNameFromType(type);
         return name ? "<" + name + ">" : "<...>";
-      } catch (x3) {
+      } catch (x9) {
         return "<...>";
       }
     }
@@ -17056,8 +17123,8 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
           validateChildKeys(children);
       if (hasOwnProperty.call(config, "key")) {
         children = getComponentNameFromType(type);
-        var keys = Object.keys(config).filter(function(k4) {
-          return k4 !== "key";
+        var keys = Object.keys(config).filter(function(k8) {
+          return k8 !== "key";
         });
         isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
         didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(`A props object containing a "key" prop is being spread into JSX:
@@ -17115,7 +17182,7 @@ var require_jsx_dev_runtime = __commonJS((exports, module) => {
 });
 
 // src/ui/App.jsx
-var import_react30 = __toESM(require_react(), 1);
+var import_react54 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
 
 // node_modules/react-colorful/dist/index.mjs
@@ -18203,62 +18270,73 @@ function l2(n2) {
   var u2;
   return s2.isServer ? null : n2 == null ? document : (u2 = n2 == null ? undefined : n2.ownerDocument) != null ? u2 : document;
 }
+function r3(n2) {
+  var u2, o3;
+  return s2.isServer ? null : n2 == null ? document : (o3 = (u2 = n2 == null ? undefined : n2.getRootNode) == null ? undefined : u2.call(n2)) != null ? o3 : document;
+}
+function e2(n2) {
+  var u2, o3;
+  return (o3 = (u2 = r3(n2)) == null ? undefined : u2.activeElement) != null ? o3 : null;
+}
+function d3(n2) {
+  return e2(n2) === n2;
+}
 
 // node_modules/@headlessui/react/dist/hooks/use-disposables.js
 var import_react11 = __toESM(require_react(), 1);
 
 // node_modules/@headlessui/react/dist/utils/micro-task.js
-function t2(e2) {
-  typeof queueMicrotask == "function" ? queueMicrotask(e2) : Promise.resolve().then(e2).catch((o3) => setTimeout(() => {
+function t2(e3) {
+  typeof queueMicrotask == "function" ? queueMicrotask(e3) : Promise.resolve().then(e3).catch((o3) => setTimeout(() => {
     throw o3;
   }));
 }
 
 // node_modules/@headlessui/react/dist/utils/disposables.js
 function o3() {
-  let s3 = [], r3 = { addEventListener(e2, t3, n2, i3) {
-    return e2.addEventListener(t3, n2, i3), r3.add(() => e2.removeEventListener(t3, n2, i3));
-  }, requestAnimationFrame(...e2) {
-    let t3 = requestAnimationFrame(...e2);
-    return r3.add(() => cancelAnimationFrame(t3));
-  }, nextFrame(...e2) {
-    return r3.requestAnimationFrame(() => r3.requestAnimationFrame(...e2));
-  }, setTimeout(...e2) {
-    let t3 = setTimeout(...e2);
-    return r3.add(() => clearTimeout(t3));
-  }, microTask(...e2) {
+  let s3 = [], r4 = { addEventListener(e3, t3, n2, i3) {
+    return e3.addEventListener(t3, n2, i3), r4.add(() => e3.removeEventListener(t3, n2, i3));
+  }, requestAnimationFrame(...e3) {
+    let t3 = requestAnimationFrame(...e3);
+    return r4.add(() => cancelAnimationFrame(t3));
+  }, nextFrame(...e3) {
+    return r4.requestAnimationFrame(() => r4.requestAnimationFrame(...e3));
+  }, setTimeout(...e3) {
+    let t3 = setTimeout(...e3);
+    return r4.add(() => clearTimeout(t3));
+  }, microTask(...e3) {
     let t3 = { current: true };
     return t2(() => {
-      t3.current && e2[0]();
-    }), r3.add(() => {
+      t3.current && e3[0]();
+    }), r4.add(() => {
       t3.current = false;
     });
-  }, style(e2, t3, n2) {
-    let i3 = e2.style.getPropertyValue(t3);
-    return Object.assign(e2.style, { [t3]: n2 }), this.add(() => {
-      Object.assign(e2.style, { [t3]: i3 });
+  }, style(e3, t3, n2) {
+    let i3 = e3.style.getPropertyValue(t3);
+    return Object.assign(e3.style, { [t3]: n2 }), this.add(() => {
+      Object.assign(e3.style, { [t3]: i3 });
     });
-  }, group(e2) {
+  }, group(e3) {
     let t3 = o3();
-    return e2(t3), this.add(() => t3.dispose());
-  }, add(e2) {
-    return s3.includes(e2) || s3.push(e2), () => {
-      let t3 = s3.indexOf(e2);
+    return e3(t3), this.add(() => t3.dispose());
+  }, add(e3) {
+    return s3.includes(e3) || s3.push(e3), () => {
+      let t3 = s3.indexOf(e3);
       if (t3 >= 0)
         for (let n2 of s3.splice(t3, 1))
           n2();
     };
   }, dispose() {
-    for (let e2 of s3.splice(0))
-      e2();
+    for (let e3 of s3.splice(0))
+      e3();
   } };
-  return r3;
+  return r4;
 }
 
 // node_modules/@headlessui/react/dist/hooks/use-disposables.js
 function p2() {
-  let [e2] = import_react11.useState(o3);
-  return import_react11.useEffect(() => () => e2.dispose(), [e2]), e2;
+  let [e3] = import_react11.useState(o3);
+  return import_react11.useEffect(() => () => e3.dispose(), [e3]), e3;
 }
 
 // node_modules/@headlessui/react/dist/hooks/use-event.js
@@ -18269,80 +18347,80 @@ var import_react13 = __toESM(require_react(), 1);
 
 // node_modules/@headlessui/react/dist/hooks/use-iso-morphic-effect.js
 var import_react12 = __toESM(require_react(), 1);
-var n2 = (e2, t3) => {
-  s2.isServer ? import_react12.useEffect(e2, t3) : import_react12.useLayoutEffect(e2, t3);
+var n2 = (e3, t3) => {
+  s2.isServer ? import_react12.useEffect(e3, t3) : import_react12.useLayoutEffect(e3, t3);
 };
 
 // node_modules/@headlessui/react/dist/hooks/use-latest-value.js
-function s4(e2) {
-  let r3 = import_react13.useRef(e2);
+function s4(e3) {
+  let r4 = import_react13.useRef(e3);
   return n2(() => {
-    r3.current = e2;
-  }, [e2]), r3;
+    r4.current = e3;
+  }, [e3]), r4;
 }
 
 // node_modules/@headlessui/react/dist/hooks/use-event.js
 var o5 = function(t4) {
-  let e2 = s4(t4);
-  return import_react14.default.useCallback((...r3) => e2.current(...r3), [e2]);
+  let e3 = s4(t4);
+  return import_react14.default.useCallback((...r4) => e3.current(...r4), [e3]);
 };
 
 // node_modules/@headlessui/react/dist/hooks/use-active-press.js
-function E2(e2) {
-  let t4 = e2.width / 2, n3 = e2.height / 2;
-  return { top: e2.clientY - n3, right: e2.clientX + t4, bottom: e2.clientY + n3, left: e2.clientX - t4 };
+function E2(e3) {
+  let t4 = e3.width / 2, n3 = e3.height / 2;
+  return { top: e3.clientY - n3, right: e3.clientX + t4, bottom: e3.clientY + n3, left: e3.clientX - t4 };
 }
-function P2(e2, t4) {
-  return !(!e2 || !t4 || e2.right < t4.left || e2.left > t4.right || e2.bottom < t4.top || e2.top > t4.bottom);
+function P2(e3, t4) {
+  return !(!e3 || !t4 || e3.right < t4.left || e3.left > t4.right || e3.bottom < t4.top || e3.top > t4.bottom);
 }
-function w2({ disabled: e2 = false } = {}) {
-  let t4 = import_react15.useRef(null), [n3, l3] = import_react15.useState(false), r3 = p2(), o6 = o5(() => {
-    t4.current = null, l3(false), r3.dispose();
+function w2({ disabled: e3 = false } = {}) {
+  let t4 = import_react15.useRef(null), [n3, l3] = import_react15.useState(false), r4 = p2(), o6 = o5(() => {
+    t4.current = null, l3(false), r4.dispose();
   }), f3 = o5((s5) => {
-    if (r3.dispose(), t4.current === null) {
+    if (r4.dispose(), t4.current === null) {
       t4.current = s5.currentTarget, l3(true);
       {
         let i3 = l2(s5.currentTarget);
-        r3.addEventListener(i3, "pointerup", o6, false), r3.addEventListener(i3, "pointermove", (c3) => {
+        r4.addEventListener(i3, "pointerup", o6, false), r4.addEventListener(i3, "pointermove", (c3) => {
           if (t4.current) {
             let p3 = E2(c3);
             l3(P2(p3, t4.current.getBoundingClientRect()));
           }
-        }, false), r3.addEventListener(i3, "pointercancel", o6, false);
+        }, false), r4.addEventListener(i3, "pointercancel", o6, false);
       }
     }
   });
-  return { pressed: n3, pressProps: e2 ? {} : { onPointerDown: f3, onPointerUp: o6, onClick: o6 } };
+  return { pressed: n3, pressProps: e3 ? {} : { onPointerDown: f3, onPointerUp: o6, onClick: o6 } };
 }
 
 // node_modules/@headlessui/react/dist/hooks/use-slot.js
 var import_react16 = __toESM(require_react(), 1);
-function n3(e2) {
-  return import_react16.useMemo(() => e2, Object.values(e2));
+function n3(e3) {
+  return import_react16.useMemo(() => e3, Object.values(e3));
 }
 
 // node_modules/@headlessui/react/dist/internal/disabled.js
 var import_react17 = __toESM(require_react(), 1);
-var e2 = import_react17.createContext(undefined);
+var e3 = import_react17.createContext(undefined);
 function a4() {
-  return import_react17.useContext(e2);
+  return import_react17.useContext(e3);
 }
 
 // node_modules/@headlessui/react/dist/utils/render.js
 var import_react18 = __toESM(require_react(), 1);
 
 // node_modules/@headlessui/react/dist/utils/class-names.js
-function t5(...r4) {
-  return Array.from(new Set(r4.flatMap((n5) => typeof n5 == "string" ? n5.split(" ") : []))).filter(Boolean).join(" ");
+function t5(...r5) {
+  return Array.from(new Set(r5.flatMap((n5) => typeof n5 == "string" ? n5.split(" ") : []))).filter(Boolean).join(" ");
 }
 
 // node_modules/@headlessui/react/dist/utils/match.js
-function u2(r4, n5, ...a5) {
-  if (r4 in n5) {
-    let e3 = n5[r4];
-    return typeof e3 == "function" ? e3(...a5) : e3;
+function u2(r5, n5, ...a5) {
+  if (r5 in n5) {
+    let e4 = n5[r5];
+    return typeof e4 == "function" ? e4(...a5) : e4;
   }
-  let t6 = new Error(`Tried to handle "${r4}" but there is no handler defined. Only defined handlers are: ${Object.keys(n5).map((e3) => `"${e3}"`).join(", ")}.`);
+  let t6 = new Error(`Tried to handle "${r5}" but there is no handler defined. Only defined handlers are: ${Object.keys(n5).map((e4) => `"${e4}"`).join(", ")}.`);
   throw Error.captureStackTrace && Error.captureStackTrace(t6, u2), t6;
 }
 
@@ -18350,12 +18428,12 @@ function u2(r4, n5, ...a5) {
 var A = ((a5) => (a5[a5.None = 0] = "None", a5[a5.RenderStrategy = 1] = "RenderStrategy", a5[a5.Static = 2] = "Static", a5))(A || {});
 var C2 = ((t6) => (t6[t6.Unmount = 0] = "Unmount", t6[t6.Hidden = 1] = "Hidden", t6))(C2 || {});
 function K2() {
-  let e3 = I2();
-  return import_react18.useCallback((r4) => U2({ mergeRefs: e3, ...r4 }), [e3]);
+  let e4 = I2();
+  return import_react18.useCallback((r5) => U2({ mergeRefs: e4, ...r5 }), [e4]);
 }
-function U2({ ourProps: e3, theirProps: r4, slot: t6, defaultTag: a5, features: o6, visible: n5 = true, name: i4, mergeRefs: l3 }) {
+function U2({ ourProps: e4, theirProps: r5, slot: t6, defaultTag: a5, features: o6, visible: n5 = true, name: i4, mergeRefs: l3 }) {
   l3 = l3 != null ? l3 : H;
-  let s5 = P3(r4, e3);
+  let s5 = P3(r5, e4);
   if (n5)
     return F(s5, t6, a5, i4, l3);
   let y2 = o6 != null ? o6 : 0;
@@ -18374,15 +18452,15 @@ function U2({ ourProps: e3, theirProps: r4, slot: t6, defaultTag: a5, features: 
   }
   return F(s5, t6, a5, i4, l3);
 }
-function F(e3, r4 = {}, t6, a5, o6) {
-  let { as: n5 = t6, children: i4, refName: l3 = "ref", ...s5 } = h2(e3, ["unmount", "static"]), y2 = e3.ref !== undefined ? { [l3]: e3.ref } : {}, f3 = typeof i4 == "function" ? i4(r4) : i4;
-  f3 = E3(f3), "className" in s5 && s5.className && typeof s5.className == "function" && (s5.className = s5.className(r4)), s5["aria-labelledby"] && s5["aria-labelledby"] === s5.id && (s5["aria-labelledby"] = undefined);
+function F(e4, r5 = {}, t6, a5, o6) {
+  let { as: n5 = t6, children: i4, refName: l3 = "ref", ...s5 } = h2(e4, ["unmount", "static"]), y2 = e4.ref !== undefined ? { [l3]: e4.ref } : {}, f3 = typeof i4 == "function" ? i4(r5) : i4;
+  f3 = E3(f3), "className" in s5 && s5.className && typeof s5.className == "function" && (s5.className = s5.className(r5)), s5["aria-labelledby"] && s5["aria-labelledby"] === s5.id && (s5["aria-labelledby"] = undefined);
   let u3 = {};
-  if (r4) {
-    let d3 = false, p3 = [];
-    for (let [c3, T2] of Object.entries(r4))
-      typeof T2 == "boolean" && (d3 = true), T2 === true && p3.push(c3.replace(/([A-Z])/g, (g2) => `-${g2.toLowerCase()}`));
-    if (d3) {
+  if (r5) {
+    let d4 = false, p3 = [];
+    for (let [c3, T2] of Object.entries(r5))
+      typeof T2 == "boolean" && (d4 = true), T2 === true && p3.push(c3.replace(/([A-Z])/g, (g2) => `-${g2.toLowerCase()}`));
+    if (d4) {
       u3["data-headlessui-state"] = p3.join(" ");
       for (let c3 of p3)
         u3[`data-${c3}`] = "";
@@ -18391,12 +18469,12 @@ function F(e3, r4 = {}, t6, a5, o6) {
   if (b2(n5) && (Object.keys(m3(s5)).length > 0 || Object.keys(m3(u3)).length > 0))
     if (!import_react18.isValidElement(f3) || Array.isArray(f3) && f3.length > 1 || L2(f3)) {
       if (Object.keys(m3(s5)).length > 0)
-        throw new Error(['Passing props on "Fragment"!', "", `The current component <${a5} /> is rendering a "Fragment".`, "However we need to passthrough the following props:", Object.keys(m3(s5)).concat(Object.keys(m3(u3))).map((d3) => `  - ${d3}`).join(`
-`), "", "You can apply a few solutions:", ['Add an `as="..."` prop, to ensure that we render an actual element instead of a "Fragment".', "Render a single element as the child so that we can forward the props onto that element."].map((d3) => `  - ${d3}`).join(`
+        throw new Error(['Passing props on "Fragment"!', "", `The current component <${a5} /> is rendering a "Fragment".`, "However we need to passthrough the following props:", Object.keys(m3(s5)).concat(Object.keys(m3(u3))).map((d4) => `  - ${d4}`).join(`
+`), "", "You can apply a few solutions:", ['Add an `as="..."` prop, to ensure that we render an actual element instead of a "Fragment".', "Render a single element as the child so that we can forward the props onto that element."].map((d4) => `  - ${d4}`).join(`
 `)].join(`
 `));
     } else {
-      let d3 = f3.props, p3 = d3 == null ? undefined : d3.className, c3 = typeof p3 == "function" ? (...R2) => t5(p3(...R2), s5.className) : t5(p3, s5.className), T2 = c3 ? { className: c3 } : {}, g2 = P3(f3.props, m3(h2(s5, ["ref"])));
+      let d4 = f3.props, p3 = d4 == null ? undefined : d4.className, c3 = typeof p3 == "function" ? (...R2) => t5(p3(...R2), s5.className) : t5(p3, s5.className), T2 = c3 ? { className: c3 } : {}, g2 = P3(f3.props, m3(h2(s5, ["ref"])));
       for (let R2 in u3)
         R2 in g2 && delete u3[R2];
       return import_react18.cloneElement(f3, Object.assign({}, g2, u3, y2, { ref: o6(D(f3), y2.ref) }, T2));
@@ -18404,39 +18482,39 @@ function F(e3, r4 = {}, t6, a5, o6) {
   return import_react18.createElement(n5, Object.assign({}, h2(s5, ["ref"]), !b2(n5) && y2, !b2(n5) && u3), f3);
 }
 function I2() {
-  let e3 = import_react18.useRef([]), r4 = import_react18.useCallback((t6) => {
-    for (let a5 of e3.current)
+  let e4 = import_react18.useRef([]), r5 = import_react18.useCallback((t6) => {
+    for (let a5 of e4.current)
       a5 != null && (typeof a5 == "function" ? a5(t6) : a5.current = t6);
   }, []);
   return (...t6) => {
     if (!t6.every((a5) => a5 == null))
-      return e3.current = t6, r4;
+      return e4.current = t6, r5;
   };
 }
-function H(...e3) {
-  return e3.every((r4) => r4 == null) ? undefined : (r4) => {
-    for (let t6 of e3)
-      t6 != null && (typeof t6 == "function" ? t6(r4) : t6.current = r4);
+function H(...e4) {
+  return e4.every((r5) => r5 == null) ? undefined : (r5) => {
+    for (let t6 of e4)
+      t6 != null && (typeof t6 == "function" ? t6(r5) : t6.current = r5);
   };
 }
-function P3(...e3) {
+function P3(...e4) {
   var a5;
-  if (e3.length === 0)
+  if (e4.length === 0)
     return {};
-  if (e3.length === 1)
-    return e3[0];
-  let r4 = {}, t6 = {};
-  for (let o6 of e3)
+  if (e4.length === 1)
+    return e4[0];
+  let r5 = {}, t6 = {};
+  for (let o6 of e4)
     for (let n5 in o6)
-      n5.startsWith("on") && typeof o6[n5] == "function" ? ((a5 = t6[n5]) != null || (t6[n5] = []), t6[n5].push(o6[n5])) : r4[n5] = o6[n5];
-  if (r4.disabled || r4["aria-disabled"])
+      n5.startsWith("on") && typeof o6[n5] == "function" ? ((a5 = t6[n5]) != null || (t6[n5] = []), t6[n5].push(o6[n5])) : r5[n5] = o6[n5];
+  if (r5.disabled || r5["aria-disabled"])
     for (let o6 in t6)
       /^(on(?:Click|Pointer|Mouse|Key)(?:Down|Up|Press)?)$/.test(o6) && (t6[o6] = [(n5) => {
         var i4;
         return (i4 = n5 == null ? undefined : n5.preventDefault) == null ? undefined : i4.call(n5);
       }]);
   for (let o6 in t6)
-    Object.assign(r4, { [o6](n5, ...i4) {
+    Object.assign(r5, { [o6](n5, ...i4) {
       let l3 = t6[o6];
       for (let s5 of l3) {
         if ((n5 instanceof Event || (n5 == null ? undefined : n5.nativeEvent) instanceof Event) && n5.defaultPrevented)
@@ -18444,72 +18522,82 @@ function P3(...e3) {
         s5(n5, ...i4);
       }
     } });
-  return r4;
+  return r5;
 }
-function V2(...e3) {
+function V2(...e4) {
   var a5;
-  if (e3.length === 0)
+  if (e4.length === 0)
     return {};
-  if (e3.length === 1)
-    return e3[0];
-  let r4 = {}, t6 = {};
-  for (let o6 of e3)
+  if (e4.length === 1)
+    return e4[0];
+  let r5 = {}, t6 = {};
+  for (let o6 of e4)
     for (let n5 in o6)
-      n5.startsWith("on") && typeof o6[n5] == "function" ? ((a5 = t6[n5]) != null || (t6[n5] = []), t6[n5].push(o6[n5])) : r4[n5] = o6[n5];
+      n5.startsWith("on") && typeof o6[n5] == "function" ? ((a5 = t6[n5]) != null || (t6[n5] = []), t6[n5].push(o6[n5])) : r5[n5] = o6[n5];
   for (let o6 in t6)
-    Object.assign(r4, { [o6](...n5) {
+    Object.assign(r5, { [o6](...n5) {
       let i4 = t6[o6];
       for (let l3 of i4)
         l3 == null || l3(...n5);
     } });
-  return r4;
+  return r5;
 }
-function Y2(e3) {
-  var r4;
-  return Object.assign(import_react18.forwardRef(e3), { displayName: (r4 = e3.displayName) != null ? r4 : e3.name });
+function Y2(e4) {
+  var r5;
+  return Object.assign(import_react18.forwardRef(e4), { displayName: (r5 = e4.displayName) != null ? r5 : e4.name });
 }
-function m3(e3) {
-  let r4 = Object.assign({}, e3);
-  for (let t6 in r4)
-    r4[t6] === undefined && delete r4[t6];
-  return r4;
+function m3(e4) {
+  let r5 = Object.assign({}, e4);
+  for (let t6 in r5)
+    r5[t6] === undefined && delete r5[t6];
+  return r5;
 }
-function h2(e3, r4 = []) {
-  let t6 = Object.assign({}, e3);
-  for (let a5 of r4)
+function h2(e4, r5 = []) {
+  let t6 = Object.assign({}, e4);
+  for (let a5 of r5)
     a5 in t6 && delete t6[a5];
   return t6;
 }
-function D(e3) {
-  return import_react18.default.version.split(".")[0] >= "19" ? e3.props.ref : e3.ref;
+function D(e4) {
+  return import_react18.default.version.split(".")[0] >= "19" ? e4.props.ref : e4.ref;
 }
-function E3(e3) {
-  if (e3 != null && e3.$$typeof === Symbol.for("react.lazy")) {
-    let r4 = e3._payload;
-    if (r4 != null && r4.status === "fulfilled")
-      return E3(r4.value);
+function E3(e4) {
+  if (e4 != null && e4.$$typeof === Symbol.for("react.lazy")) {
+    let r5 = e4._payload;
+    if (r5 != null && r5.status === "fulfilled")
+      return E3(r5.value);
   }
-  return e3;
+  return e4;
 }
-function b2(e3) {
-  return e3 === import_react18.Fragment || e3 === Symbol.for("react.fragment");
+function b2(e4) {
+  return e4 === import_react18.Fragment || e4 === Symbol.for("react.fragment");
 }
-function L2(e3) {
-  return b2(e3.type);
+function L2(e4) {
+  return b2(e4.type);
 }
+
+// node_modules/@headlessui/react/dist/components/button/button.js
+"use client";
+var R2 = "button";
+function v3(s5, n5) {
+  var r5;
+  let p3 = a4(), { disabled: e4 = p3 || false, autoFocus: t6 = false, ...o6 } = s5, { isFocusVisible: a5, focusProps: l3 } = $0c4a58759813079a$export$4e328f61c538687f({ autoFocus: t6 }), { isHovered: u3, hoverProps: i4 } = $e969f22b6713ca4a$export$ae780daf29e6d456({ isDisabled: e4 }), { pressed: T2, pressProps: d4 } = w2({ disabled: e4 }), f3 = V2({ ref: n5, type: (r5 = o6.type) != null ? r5 : "button", disabled: e4 || undefined, autoFocus: t6 }, l3, i4, d4), m4 = n3({ disabled: e4, hover: u3, focus: a5, active: T2, autofocus: t6 });
+  return K2()({ ourProps: f3, theirProps: o6, slot: m4, defaultTag: R2, name: "Button" });
+}
+var L3 = Y2(v3);
 
 // node_modules/@headlessui/react/dist/hooks/use-controllable.js
 var import_react19 = __toESM(require_react(), 1);
 var import_react_dom = __toESM(require_react_dom(), 1);
-function b3(l3, r4, c3) {
-  let [i4, s5] = import_react19.useState(c3), e3 = l3 !== undefined, t6 = import_react19.useRef(e3), u3 = import_react19.useRef(false), d3 = import_react19.useRef(false);
-  return e3 && !t6.current && !u3.current ? (u3.current = true, t6.current = e3, console.error("A component is changing from uncontrolled to controlled. This may be caused by the value changing from undefined to a defined value, which should not happen.")) : !e3 && t6.current && !d3.current && (d3.current = true, t6.current = e3, console.error("A component is changing from controlled to uncontrolled. This may be caused by the value changing from a defined value to undefined, which should not happen.")), [e3 ? l3 : i4, o5((n5) => (e3 || import_react_dom.flushSync(() => s5(n5)), r4 == null ? undefined : r4(n5)))];
+function b3(l3, r5, c3) {
+  let [i4, s5] = import_react19.useState(c3), e4 = l3 !== undefined, t6 = import_react19.useRef(e4), u3 = import_react19.useRef(false), d4 = import_react19.useRef(false);
+  return e4 && !t6.current && !u3.current ? (u3.current = true, t6.current = e4, console.error("A component is changing from uncontrolled to controlled. This may be caused by the value changing from undefined to a defined value, which should not happen.")) : !e4 && t6.current && !d4.current && (d4.current = true, t6.current = e4, console.error("A component is changing from controlled to uncontrolled. This may be caused by the value changing from a defined value to undefined, which should not happen.")), [e4 ? l3 : i4, o5((n5) => (e4 || import_react_dom.flushSync(() => s5(n5)), r5 == null ? undefined : r5(n5)))];
 }
 
 // node_modules/@headlessui/react/dist/hooks/use-default-value.js
 var import_react20 = __toESM(require_react(), 1);
-function l3(e3) {
-  let [t6] = import_react20.useState(e3);
+function l3(e4) {
+  let [t6] = import_react20.useState(e4);
   return t6;
 }
 
@@ -18523,22 +18611,22 @@ var import_react_dom2 = __toESM(require_react_dom(), 1);
 // node_modules/@headlessui/react/dist/utils/form.js
 var import_react22 = __toESM(require_react(), 1);
 function p3(t6 = {}, i4 = null, n5 = []) {
-  for (let [e3, o7] of Object.entries(t6))
-    s5(n5, r5(i4, e3), o7);
+  for (let [e4, o7] of Object.entries(t6))
+    s5(n5, r6(i4, e4), o7);
   return n5;
 }
-function r5(t6, i4) {
+function r6(t6, i4) {
   return t6 ? t6 + "[" + i4 + "]" : i4;
 }
 function s5(t6, i4, n5) {
   if (Array.isArray(n5))
-    for (let [e3, o7] of n5.entries())
-      s5(t6, r5(i4, e3.toString()), o7);
+    for (let [e4, o7] of n5.entries())
+      s5(t6, r6(i4, e4.toString()), o7);
   else
     n5 instanceof Date ? t6.push([i4, n5.toISOString()]) : typeof n5 == "boolean" ? t6.push([i4, n5 ? "1" : "0"]) : typeof n5 == "string" ? t6.push([i4, n5]) : typeof n5 == "number" ? t6.push([i4, `${n5}`]) : n5 == null ? t6.push([i4, ""]) : c3(n5) && !import_react22.isValidElement(n5) && p3(n5, i4, t6);
 }
 function g2(t6) {
-  var n5, e3;
+  var n5, e4;
   let i4 = (n5 = t6 == null ? undefined : t6.form) != null ? n5 : t6.closest("form");
   if (i4) {
     for (let o7 of i4.elements)
@@ -18546,7 +18634,7 @@ function g2(t6) {
         o7.click();
         return;
       }
-    (e3 = i4.requestSubmit) == null || e3.call(i4);
+    (e4 = i4.requestSubmit) == null || e4.call(i4);
   }
 }
 function c3(t6) {
@@ -18558,93 +18646,102 @@ function c3(t6) {
 
 // node_modules/@headlessui/react/dist/internal/hidden.js
 var a6 = "span";
-var s6 = ((e3) => (e3[e3.None = 1] = "None", e3[e3.Focusable = 2] = "Focusable", e3[e3.Hidden = 4] = "Hidden", e3))(s6 || {});
-function l4(t6, r6) {
+var s6 = ((e4) => (e4[e4.None = 1] = "None", e4[e4.Focusable = 2] = "Focusable", e4[e4.Hidden = 4] = "Hidden", e4))(s6 || {});
+function l4(t6, r7) {
   var n5;
-  let { features: d3 = 1, ...e3 } = t6, o7 = { ref: r6, "aria-hidden": (d3 & 2) === 2 ? true : (n5 = e3["aria-hidden"]) != null ? n5 : undefined, hidden: (d3 & 4) === 4 ? true : undefined, style: { position: "fixed", top: 1, left: 1, width: 1, height: 0, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: "0", ...(d3 & 4) === 4 && (d3 & 2) !== 2 && { display: "none" } } };
-  return K2()({ ourProps: o7, theirProps: e3, slot: {}, defaultTag: a6, name: "Hidden" });
+  let { features: d4 = 1, ...e4 } = t6, o7 = { ref: r7, "aria-hidden": (d4 & 2) === 2 ? true : (n5 = e4["aria-hidden"]) != null ? n5 : undefined, hidden: (d4 & 4) === 4 ? true : undefined, style: { position: "fixed", top: 1, left: 1, width: 1, height: 0, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: "0", ...(d4 & 4) === 4 && (d4 & 2) !== 2 && { display: "none" } } };
+  return K2()({ ourProps: o7, theirProps: e4, slot: {}, defaultTag: a6, name: "Hidden" });
 }
 var f5 = Y2(l4);
 
 // node_modules/@headlessui/react/dist/internal/form-fields.js
 var f6 = import_react23.createContext(null);
 function c4({ children: t6 }) {
-  let e3 = import_react23.useContext(f6);
-  if (!e3)
+  let e4 = import_react23.useContext(f6);
+  if (!e4)
     return import_react23.default.createElement(import_react23.default.Fragment, null, t6);
-  let { target: r6 } = e3;
-  return r6 ? import_react_dom2.createPortal(import_react23.default.createElement(import_react23.default.Fragment, null, t6), r6) : null;
+  let { target: r7 } = e4;
+  return r7 ? import_react_dom2.createPortal(import_react23.default.createElement(import_react23.default.Fragment, null, t6), r7) : null;
 }
-function j2({ data: t6, form: e3, disabled: r6, onReset: n5, overrides: F2 }) {
+function j2({ data: t6, form: e4, disabled: r7, onReset: n5, overrides: F2 }) {
   let [i4, a7] = import_react23.useState(null), p4 = p2();
   return import_react23.useEffect(() => {
     if (n5 && i4)
       return p4.addEventListener(i4, "reset", n5);
-  }, [i4, e3, n5]), import_react23.default.createElement(c4, null, import_react23.default.createElement(C3, { setForm: a7, formId: e3 }), p3(t6).map(([s7, v3]) => import_react23.default.createElement(f5, { features: s6.Hidden, ...m3({ key: s7, as: "input", type: "hidden", hidden: true, readOnly: true, form: e3, disabled: r6, name: s7, value: v3, ...F2 }) })));
+  }, [i4, e4, n5]), import_react23.default.createElement(c4, null, import_react23.default.createElement(C3, { setForm: a7, formId: e4 }), p3(t6).map(([s7, v4]) => import_react23.default.createElement(f5, { features: s6.Hidden, ...m3({ key: s7, as: "input", type: "hidden", hidden: true, readOnly: true, form: e4, disabled: r7, name: s7, value: v4, ...F2 }) })));
 }
-function C3({ setForm: t6, formId: e3 }) {
+function C3({ setForm: t6, formId: e4 }) {
   return import_react23.useEffect(() => {
-    if (e3) {
-      let r6 = document.getElementById(e3);
-      r6 && t6(r6);
+    if (e4) {
+      let r7 = document.getElementById(e4);
+      r7 && t6(r7);
     }
-  }, [t6, e3]), e3 ? null : import_react23.default.createElement(f5, { features: s6.Hidden, as: "input", type: "hidden", hidden: true, readOnly: true, ref: (r6) => {
-    if (!r6)
+  }, [t6, e4]), e4 ? null : import_react23.default.createElement(f5, { features: s6.Hidden, as: "input", type: "hidden", hidden: true, readOnly: true, ref: (r7) => {
+    if (!r7)
       return;
-    let n5 = r6.closest("form");
+    let n5 = r7.closest("form");
     n5 && t6(n5);
   } });
 }
 
 // node_modules/@headlessui/react/dist/internal/id.js
 var import_react24 = __toESM(require_react(), 1);
-var e3 = import_react24.createContext(undefined);
+var e4 = import_react24.createContext(undefined);
 function u5() {
-  return import_react24.useContext(e3);
+  return import_react24.useContext(e4);
 }
 
 // node_modules/@headlessui/react/dist/utils/dom.js
-function o8(e4) {
-  return typeof e4 != "object" || e4 === null ? false : ("nodeType" in e4);
+function o8(e5) {
+  return typeof e5 != "object" || e5 === null ? false : ("nodeType" in e5);
 }
-function t6(e4) {
-  return o8(e4) && "tagName" in e4;
+function t6(e5) {
+  return o8(e5) && "tagName" in e5;
 }
-function n6(e4) {
-  return t6(e4) && "accessKey" in e4;
+function n6(e5) {
+  return t6(e5) && "accessKey" in e5;
 }
-function l5(e4) {
-  return n6(e4) && e4.nodeName === "INPUT";
+function i5(e5) {
+  return t6(e5) && "tabIndex" in e5;
 }
-function m5(e4) {
-  return n6(e4) && e4.nodeName === "LABEL";
+function r7(e5) {
+  return t6(e5) && "style" in e5;
 }
-function a7(e4) {
-  return n6(e4) && e4.nodeName === "FIELDSET";
+function u6(e5) {
+  return n6(e5) && e5.nodeName === "IFRAME";
 }
-function E5(e4) {
-  return n6(e4) && e4.nodeName === "LEGEND";
+function l5(e5) {
+  return n6(e5) && e5.nodeName === "INPUT";
 }
-function L3(e4) {
-  return t6(e4) ? e4.matches('a[href],audio[controls],button,details,embed,iframe,img[usemap],input:not([type="hidden"]),label,select,textarea,video[controls]') : false;
+function m5(e5) {
+  return n6(e5) && e5.nodeName === "LABEL";
+}
+function a7(e5) {
+  return n6(e5) && e5.nodeName === "FIELDSET";
+}
+function E5(e5) {
+  return n6(e5) && e5.nodeName === "LEGEND";
+}
+function L4(e5) {
+  return t6(e5) ? e5.matches('a[href],audio[controls],button,details,embed,iframe,img[usemap],input:not([type="hidden"]),label,select,textarea,video[controls]') : false;
 }
 
 // node_modules/@headlessui/react/dist/utils/bugs.js
 function s7(l6) {
-  let e4 = l6.parentElement, t7 = null;
-  for (;e4 && !a7(e4); )
-    E5(e4) && (t7 = e4), e4 = e4.parentElement;
-  let i5 = (e4 == null ? undefined : e4.getAttribute("disabled")) === "";
-  return i5 && r6(t7) ? false : i5;
+  let e5 = l6.parentElement, t7 = null;
+  for (;e5 && !a7(e5); )
+    E5(e5) && (t7 = e5), e5 = e5.parentElement;
+  let i6 = (e5 == null ? undefined : e5.getAttribute("disabled")) === "";
+  return i6 && r8(t7) ? false : i6;
 }
-function r6(l6) {
+function r8(l6) {
   if (!l6)
     return false;
-  let e4 = l6.previousElementSibling;
-  for (;e4 !== null; ) {
-    if (E5(e4))
+  let e5 = l6.previousElementSibling;
+  for (;e5 !== null; ) {
+    if (E5(e5))
       return false;
-    e4 = e4.previousElementSibling;
+    e5 = e5.previousElementSibling;
   }
   return true;
 }
@@ -18654,17 +18751,20 @@ var import_react26 = __toESM(require_react(), 1);
 
 // node_modules/@headlessui/react/dist/hooks/use-sync-refs.js
 var import_react25 = __toESM(require_react(), 1);
-var u6 = Symbol();
+var u7 = Symbol();
+function T2(t7, n7 = true) {
+  return Object.assign(t7, { [u7]: n7 });
+}
 function y2(...t7) {
   let n7 = import_react25.useRef(t7);
   import_react25.useEffect(() => {
     n7.current = t7;
   }, [t7]);
-  let c5 = o5((e4) => {
+  let c5 = o5((e5) => {
     for (let o9 of n7.current)
-      o9 != null && (typeof o9 == "function" ? o9(e4) : o9.current = e4);
+      o9 != null && (typeof o9 == "function" ? o9(e5) : o9.current = e5);
   });
-  return t7.every((e4) => e4 == null || (e4 == null ? undefined : e4[u6])) ? undefined : c5;
+  return t7.every((e5) => e5 == null || (e5 == null ? undefined : e5[u7])) ? undefined : c5;
 }
 
 // node_modules/@headlessui/react/dist/components/description/description.js
@@ -18672,47 +18772,47 @@ function y2(...t7) {
 var a8 = import_react26.createContext(null);
 a8.displayName = "DescriptionContext";
 function f7() {
-  let r7 = import_react26.useContext(a8);
-  if (r7 === null) {
-    let e4 = new Error("You used a <Description /> component, but it is not inside a relevant parent.");
-    throw Error.captureStackTrace && Error.captureStackTrace(e4, f7), e4;
+  let r9 = import_react26.useContext(a8);
+  if (r9 === null) {
+    let e5 = new Error("You used a <Description /> component, but it is not inside a relevant parent.");
+    throw Error.captureStackTrace && Error.captureStackTrace(e5, f7), e5;
   }
-  return r7;
+  return r9;
 }
 function w4() {
-  var r7, e4;
-  return (e4 = (r7 = import_react26.useContext(a8)) == null ? undefined : r7.value) != null ? e4 : undefined;
+  var r9, e5;
+  return (e5 = (r9 = import_react26.useContext(a8)) == null ? undefined : r9.value) != null ? e5 : undefined;
 }
 function H3() {
-  let [r7, e4] = import_react26.useState([]);
-  return [r7.length > 0 ? r7.join(" ") : undefined, import_react26.useMemo(() => function(t7) {
-    let i6 = o5((n7) => (e4((o9) => [...o9, n7]), () => e4((o9) => {
+  let [r9, e5] = import_react26.useState([]);
+  return [r9.length > 0 ? r9.join(" ") : undefined, import_react26.useMemo(() => function(t7) {
+    let i7 = o5((n7) => (e5((o9) => [...o9, n7]), () => e5((o9) => {
       let s8 = o9.slice(), p4 = s8.indexOf(n7);
       return p4 !== -1 && s8.splice(p4, 1), s8;
-    }))), l7 = import_react26.useMemo(() => ({ register: i6, slot: t7.slot, name: t7.name, props: t7.props, value: t7.value }), [i6, t7.slot, t7.name, t7.props, t7.value]);
+    }))), l7 = import_react26.useMemo(() => ({ register: i7, slot: t7.slot, name: t7.name, props: t7.props, value: t7.value }), [i7, t7.slot, t7.name, t7.props, t7.value]);
     return import_react26.default.createElement(a8.Provider, { value: l7 }, t7.children);
-  }, [e4])];
+  }, [e5])];
 }
 var I3 = "p";
-function C4(r7, e4) {
-  let c5 = import_react21.useId(), t7 = a4(), { id: i6 = `headlessui-description-${c5}`, ...l7 } = r7, n7 = f7(), o9 = y2(e4);
-  n2(() => n7.register(i6), [i6, n7.register]);
-  let s8 = n3({ ...n7.slot, disabled: t7 || false }), p4 = { ref: o9, ...n7.props, id: i6 };
+function C4(r9, e5) {
+  let c5 = import_react21.useId(), t7 = a4(), { id: i7 = `headlessui-description-${c5}`, ...l7 } = r9, n7 = f7(), o9 = y2(e5);
+  n2(() => n7.register(i7), [i7, n7.register]);
+  let s8 = n3({ ...n7.slot, disabled: t7 || false }), p4 = { ref: o9, ...n7.props, id: i7 };
   return K2()({ ourProps: p4, theirProps: l7, slot: s8, defaultTag: I3, name: n7.name || "Description" });
 }
 var _2 = Y2(C4);
 var M2 = Object.assign(_2, {});
 
 // node_modules/@headlessui/react/dist/components/keyboard.js
-var o9 = ((r7) => (r7.Space = " ", r7.Enter = "Enter", r7.Escape = "Escape", r7.Backspace = "Backspace", r7.Delete = "Delete", r7.ArrowLeft = "ArrowLeft", r7.ArrowUp = "ArrowUp", r7.ArrowRight = "ArrowRight", r7.ArrowDown = "ArrowDown", r7.Home = "Home", r7.End = "End", r7.PageUp = "PageUp", r7.PageDown = "PageDown", r7.Tab = "Tab", r7))(o9 || {});
+var o9 = ((r9) => (r9.Space = " ", r9.Enter = "Enter", r9.Escape = "Escape", r9.Backspace = "Backspace", r9.Delete = "Delete", r9.ArrowLeft = "ArrowLeft", r9.ArrowUp = "ArrowUp", r9.ArrowRight = "ArrowRight", r9.ArrowDown = "ArrowDown", r9.Home = "Home", r9.End = "End", r9.PageUp = "PageUp", r9.PageDown = "PageDown", r9.Tab = "Tab", r9))(o9 || {});
 
 // node_modules/@headlessui/react/dist/components/label/label.js
 var import_react27 = __toESM(require_react(), 1);
 "use client";
-var L4 = import_react27.createContext(null);
-L4.displayName = "LabelContext";
+var L5 = import_react27.createContext(null);
+L5.displayName = "LabelContext";
 function C5() {
-  let n7 = import_react27.useContext(L4);
+  let n7 = import_react27.useContext(L5);
   if (n7 === null) {
     let l7 = new Error("You used a <Label /> component, but it is not inside a relevant parent.");
     throw Error.captureStackTrace && Error.captureStackTrace(l7, C5), l7;
@@ -18720,104 +18820,1338 @@ function C5() {
   return n7;
 }
 function N(n7) {
-  var a9, e4, o10;
-  let l7 = (e4 = (a9 = import_react27.useContext(L4)) == null ? undefined : a9.value) != null ? e4 : undefined;
+  var a9, e5, o10;
+  let l7 = (e5 = (a9 = import_react27.useContext(L5)) == null ? undefined : a9.value) != null ? e5 : undefined;
   return ((o10 = n7 == null ? undefined : n7.length) != null ? o10 : 0) > 0 ? [l7, ...n7].filter(Boolean).join(" ") : l7;
 }
 function V3({ inherit: n7 = false } = {}) {
-  let l7 = N(), [a9, e4] = import_react27.useState([]), o10 = n7 ? [l7, ...a9].filter(Boolean) : a9;
+  let l7 = N(), [a9, e5] = import_react27.useState([]), o10 = n7 ? [l7, ...a9].filter(Boolean) : a9;
   return [o10.length > 0 ? o10.join(" ") : undefined, import_react27.useMemo(() => function(t7) {
-    let p4 = o5((i6) => (e4((u8) => [...u8, i6]), () => e4((u8) => {
-      let d5 = u8.slice(), f8 = d5.indexOf(i6);
-      return f8 !== -1 && d5.splice(f8, 1), d5;
+    let p4 = o5((i7) => (e5((u9) => [...u9, i7]), () => e5((u9) => {
+      let d6 = u9.slice(), f8 = d6.indexOf(i7);
+      return f8 !== -1 && d6.splice(f8, 1), d6;
     }))), b4 = import_react27.useMemo(() => ({ register: p4, slot: t7.slot, name: t7.name, props: t7.props, value: t7.value }), [p4, t7.slot, t7.name, t7.props, t7.value]);
-    return import_react27.default.createElement(L4.Provider, { value: b4 }, t7.children);
-  }, [e4])];
+    return import_react27.default.createElement(L5.Provider, { value: b4 }, t7.children);
+  }, [e5])];
 }
 var G2 = "label";
 function U3(n7, l7) {
   var y3;
-  let a9 = import_react21.useId(), e4 = C5(), o10 = u5(), T3 = a4(), { id: t7 = `headlessui-label-${a9}`, htmlFor: p4 = o10 != null ? o10 : (y3 = e4.props) == null ? undefined : y3.htmlFor, passive: b4 = false, ...i6 } = n7, u8 = y2(l7);
-  n2(() => e4.register(t7), [t7, e4.register]);
-  let d5 = o5((s8) => {
+  let a9 = import_react21.useId(), e5 = C5(), o10 = u5(), T4 = a4(), { id: t7 = `headlessui-label-${a9}`, htmlFor: p4 = o10 != null ? o10 : (y3 = e5.props) == null ? undefined : y3.htmlFor, passive: b4 = false, ...i7 } = n7, u9 = y2(l7);
+  n2(() => e5.register(t7), [t7, e5.register]);
+  let d6 = o5((s8) => {
     let g4 = s8.currentTarget;
-    if (!(s8.target !== s8.currentTarget && L3(s8.target)) && (m5(g4) && s8.preventDefault(), e4.props && ("onClick" in e4.props) && typeof e4.props.onClick == "function" && e4.props.onClick(s8), m5(g4))) {
-      let r7 = document.getElementById(g4.htmlFor);
-      if (r7) {
-        let E6 = r7.getAttribute("disabled");
+    if (!(s8.target !== s8.currentTarget && L4(s8.target)) && (m5(g4) && s8.preventDefault(), e5.props && ("onClick" in e5.props) && typeof e5.props.onClick == "function" && e5.props.onClick(s8), m5(g4))) {
+      let r9 = document.getElementById(g4.htmlFor);
+      if (r9) {
+        let E6 = r9.getAttribute("disabled");
         if (E6 === "true" || E6 === "")
           return;
-        let x2 = r7.getAttribute("aria-disabled");
+        let x2 = r9.getAttribute("aria-disabled");
         if (x2 === "true" || x2 === "")
           return;
-        (l5(r7) && (r7.type === "file" || r7.type === "radio" || r7.type === "checkbox") || r7.role === "radio" || r7.role === "checkbox" || r7.role === "switch") && r7.click(), r7.focus({ preventScroll: true });
+        (l5(r9) && (r9.type === "file" || r9.type === "radio" || r9.type === "checkbox") || r9.role === "radio" || r9.role === "checkbox" || r9.role === "switch") && r9.click(), r9.focus({ preventScroll: true });
       }
     }
-  }), f8 = n3({ ...e4.slot, disabled: T3 || false }), c5 = { ref: u8, ...e4.props, id: t7, htmlFor: p4, onClick: d5 };
-  return b4 && (("onClick" in c5) && (delete c5.htmlFor, delete c5.onClick), ("onClick" in i6) && delete i6.onClick), K2()({ ourProps: c5, theirProps: i6, slot: f8, defaultTag: p4 ? G2 : "div", name: e4.name || "Label" });
+  }), f8 = n3({ ...e5.slot, disabled: T4 || false }), c5 = { ref: u9, ...e5.props, id: t7, htmlFor: p4, onClick: d6 };
+  return b4 && (("onClick" in c5) && (delete c5.htmlFor, delete c5.onClick), ("onClick" in i7) && delete i7.onClick), K2()({ ourProps: c5, theirProps: i7, slot: f8, defaultTag: p4 ? G2 : "div", name: e5.name || "Label" });
 }
 var j3 = Y2(U3);
 var Z2 = Object.assign(j3, {});
 
-// node_modules/@headlessui/react/dist/hooks/use-resolve-button-type.js
+// node_modules/@headlessui/react/dist/components/close-button/close-button.js
+var import_react29 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/internal/close-provider.js
 var import_react28 = __toESM(require_react(), 1);
-function e4(t7, u8) {
-  return import_react28.useMemo(() => {
-    var n7;
-    if (t7.type)
-      return t7.type;
-    let r7 = (n7 = t7.as) != null ? n7 : "button";
-    if (typeof r7 == "string" && r7.toLowerCase() === "button" || (u8 == null ? undefined : u8.tagName) === "BUTTON" && !u8.hasAttribute("type"))
-      return "button";
-  }, [t7.type, t7.as, u8]);
+"use client";
+var e5 = import_react28.createContext(() => {});
+function u9() {
+  return import_react28.useContext(e5);
 }
+function C6({ value: t7, children: o10 }) {
+  return import_react28.default.createElement(e5.Provider, { value: t7 }, o10);
+}
+
+// node_modules/@headlessui/react/dist/components/close-button/close-button.js
+"use client";
+function l7(t7, e6) {
+  let o10 = u9();
+  return import_react29.default.createElement(L3, { ref: e6, ...V2({ onClick: o10 }, t7) });
+}
+var y3 = Y2(l7);
+
+// node_modules/@headlessui/react/dist/hooks/use-is-top-layer.js
+var import_react30 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/utils/default-map.js
+class a9 extends Map {
+  constructor(t7) {
+    super();
+    this.factory = t7;
+  }
+  get(t7) {
+    let e6 = super.get(t7);
+    return e6 === undefined && (e6 = this.factory(t7), this.set(t7, e6)), e6;
+  }
+}
+
+// node_modules/@headlessui/react/dist/machine.js
+var h4 = Object.defineProperty;
+var v5 = (t7, e6, r10) => (e6 in t7) ? h4(t7, e6, { enumerable: true, configurable: true, writable: true, value: r10 }) : t7[e6] = r10;
+var S3 = (t7, e6, r10) => (v5(t7, typeof e6 != "symbol" ? e6 + "" : e6, r10), r10);
+var b4 = (t7, e6, r10) => {
+  if (!e6.has(t7))
+    throw TypeError("Cannot " + r10);
+};
+var i8 = (t7, e6, r10) => (b4(t7, e6, "read from private field"), r10 ? r10.call(t7) : e6.get(t7));
+var c5 = (t7, e6, r10) => {
+  if (e6.has(t7))
+    throw TypeError("Cannot add the same private member more than once");
+  e6 instanceof WeakSet ? e6.add(t7) : e6.set(t7, r10);
+};
+var u10 = (t7, e6, r10, s8) => (b4(t7, e6, "write to private field"), s8 ? s8.call(t7, r10) : e6.set(t7, r10), r10);
+var n9;
+var a10;
+var o10;
+
+class T4 {
+  constructor(e6) {
+    c5(this, n9, {});
+    c5(this, a10, new a9(() => new Set));
+    c5(this, o10, new Set);
+    S3(this, "disposables", o3());
+    u10(this, n9, e6), s2.isServer && this.disposables.microTask(() => {
+      this.dispose();
+    });
+  }
+  dispose() {
+    this.disposables.dispose();
+  }
+  get state() {
+    return i8(this, n9);
+  }
+  subscribe(e6, r10) {
+    if (s2.isServer)
+      return () => {};
+    let s8 = { selector: e6, callback: r10, current: e6(i8(this, n9)) };
+    return i8(this, o10).add(s8), this.disposables.add(() => {
+      i8(this, o10).delete(s8);
+    });
+  }
+  on(e6, r10) {
+    return s2.isServer ? () => {} : (i8(this, a10).get(e6).add(r10), this.disposables.add(() => {
+      i8(this, a10).get(e6).delete(r10);
+    }));
+  }
+  send(e6) {
+    let r10 = this.reduce(i8(this, n9), e6);
+    if (r10 !== i8(this, n9)) {
+      u10(this, n9, r10);
+      for (let s8 of i8(this, o10)) {
+        let l8 = s8.selector(i8(this, n9));
+        j4(s8.current, l8) || (s8.current = l8, s8.callback(l8));
+      }
+      for (let s8 of i8(this, a10).get(e6.type))
+        s8(i8(this, n9), e6);
+    }
+  }
+}
+n9 = new WeakMap, a10 = new WeakMap, o10 = new WeakMap;
+function j4(t7, e6) {
+  return Object.is(t7, e6) ? true : typeof t7 != "object" || t7 === null || typeof e6 != "object" || e6 === null ? false : Array.isArray(t7) && Array.isArray(e6) ? t7.length !== e6.length ? false : f8(t7[Symbol.iterator](), e6[Symbol.iterator]()) : t7 instanceof Map && e6 instanceof Map || t7 instanceof Set && e6 instanceof Set ? t7.size !== e6.size ? false : f8(t7.entries(), e6.entries()) : p4(t7) && p4(e6) ? f8(Object.entries(t7)[Symbol.iterator](), Object.entries(e6)[Symbol.iterator]()) : false;
+}
+function f8(t7, e6) {
+  do {
+    let r10 = t7.next(), s8 = e6.next();
+    if (r10.done && s8.done)
+      return true;
+    if (r10.done || s8.done || !Object.is(r10.value, s8.value))
+      return false;
+  } while (true);
+}
+function p4(t7) {
+  if (Object.prototype.toString.call(t7) !== "[object Object]")
+    return false;
+  let e6 = Object.getPrototypeOf(t7);
+  return e6 === null || Object.getPrototypeOf(e6) === null;
+}
+
+// node_modules/@headlessui/react/dist/machines/stack-machine.js
+var a11 = Object.defineProperty;
+var r10 = (e6, c6, t7) => (c6 in e6) ? a11(e6, c6, { enumerable: true, configurable: true, writable: true, value: t7 }) : e6[c6] = t7;
+var p5 = (e6, c6, t7) => (r10(e6, typeof c6 != "symbol" ? c6 + "" : c6, t7), t7);
+var k4 = ((t7) => (t7[t7.Push = 0] = "Push", t7[t7.Pop = 1] = "Pop", t7))(k4 || {});
+var y4 = { [0](e6, c6) {
+  let t7 = c6.id, s8 = e6.stack, i9 = e6.stack.indexOf(t7);
+  if (i9 !== -1) {
+    let n10 = e6.stack.slice();
+    return n10.splice(i9, 1), n10.push(t7), s8 = n10, { ...e6, stack: s8 };
+  }
+  return { ...e6, stack: [...e6.stack, t7] };
+}, [1](e6, c6) {
+  let t7 = c6.id, s8 = e6.stack.indexOf(t7);
+  if (s8 === -1)
+    return e6;
+  let i9 = e6.stack.slice();
+  return i9.splice(s8, 1), { ...e6, stack: i9 };
+} };
+
+class o11 extends T4 {
+  constructor() {
+    super(...arguments);
+    p5(this, "actions", { push: (t7) => this.send({ type: 0, id: t7 }), pop: (t7) => this.send({ type: 1, id: t7 }) });
+    p5(this, "selectors", { isTop: (t7, s8) => t7.stack[t7.stack.length - 1] === s8, inStack: (t7, s8) => t7.stack.includes(s8) });
+  }
+  static new() {
+    return new o11({ stack: [] });
+  }
+  reduce(t7, s8) {
+    return u2(s8.type, y4, t7, s8);
+  }
+}
+var x2 = new a9(() => o11.new());
+
+// node_modules/@headlessui/react/dist/react-glue.js
+var import_with_selector = __toESM(require_with_selector(), 1);
+function S4(e6, n10, r11 = j4) {
+  return import_with_selector.useSyncExternalStoreWithSelector(o5((i9) => e6.subscribe(s8, i9)), o5(() => e6.state), o5(() => e6.state), o5(n10), r11);
+}
+function s8(e6) {
+  return e6;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-is-top-layer.js
+function I4(o12, s9) {
+  let t7 = import_react30.useId(), r11 = x2.get(s9), [i9, c6] = S4(r11, import_react30.useCallback((e6) => [r11.selectors.isTop(e6, t7), r11.selectors.inStack(e6, t7)], [r11, t7]));
+  return n2(() => {
+    if (o12)
+      return r11.actions.push(t7), () => r11.actions.pop(t7);
+  }, [r11, o12, t7]), o12 ? c6 ? i9 : true : false;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-inert-others.js
+var f9 = new Map;
+var u12 = new Map;
+function h5(t7) {
+  var e6;
+  let r11 = (e6 = u12.get(t7)) != null ? e6 : 0;
+  return u12.set(t7, r11 + 1), r11 !== 0 ? () => m7(t7) : (f9.set(t7, { "aria-hidden": t7.getAttribute("aria-hidden"), inert: t7.inert }), t7.setAttribute("aria-hidden", "true"), t7.inert = true, () => m7(t7));
+}
+function m7(t7) {
+  var i9;
+  let r11 = (i9 = u12.get(t7)) != null ? i9 : 1;
+  if (r11 === 1 ? u12.delete(t7) : u12.set(t7, r11 - 1), r11 !== 1)
+    return;
+  let e6 = f9.get(t7);
+  e6 && (e6["aria-hidden"] === null ? t7.removeAttribute("aria-hidden") : t7.setAttribute("aria-hidden", e6["aria-hidden"]), t7.inert = e6.inert, f9.delete(t7));
+}
+function y5(t7, { allowed: r11, disallowed: e6 } = {}) {
+  let i9 = I4(t7, "inert-others");
+  n2(() => {
+    var d6, c6;
+    if (!i9)
+      return;
+    let a13 = o3();
+    for (let n11 of (d6 = e6 == null ? undefined : e6()) != null ? d6 : [])
+      n11 && a13.add(h5(n11));
+    let s9 = (c6 = r11 == null ? undefined : r11()) != null ? c6 : [];
+    for (let n11 of s9) {
+      if (!n11)
+        continue;
+      let l8 = l2(n11);
+      if (!l8)
+        continue;
+      let o12 = n11.parentElement;
+      for (;o12 && o12 !== l8.body; ) {
+        for (let p6 of o12.children)
+          s9.some((E6) => p6.contains(E6)) || a13.add(h5(p6));
+        o12 = o12.parentElement;
+      }
+    }
+    return a13.dispose;
+  }, [i9, r11, e6]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-on-disappear.js
+var import_react31 = __toESM(require_react(), 1);
+function p6(s9, n11, o12) {
+  let i9 = s4((t7) => {
+    let e6 = t7.getBoundingClientRect();
+    e6.x === 0 && e6.y === 0 && e6.width === 0 && e6.height === 0 && o12();
+  });
+  import_react31.useEffect(() => {
+    if (!s9)
+      return;
+    let t7 = n11 === null ? null : n6(n11) ? n11 : n11.current;
+    if (!t7)
+      return;
+    let e6 = o3();
+    if (typeof ResizeObserver != "undefined") {
+      let r11 = new ResizeObserver(() => i9.current(t7));
+      r11.observe(t7), e6.add(() => r11.disconnect());
+    }
+    if (typeof IntersectionObserver != "undefined") {
+      let r11 = new IntersectionObserver(() => i9.current(t7));
+      r11.observe(t7), e6.add(() => r11.disconnect());
+    }
+    return () => e6.dispose();
+  }, [n11, i9, s9]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-outside-click.js
+var import_react34 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/utils/focus-management.js
+var E6 = ["[contentEditable=true]", "[tabindex]", "a[href]", "area[href]", "button:not([disabled])", "iframe", "input:not([disabled])", "select:not([disabled])", "details>summary", "textarea:not([disabled])"].map((e6) => `${e6}:not([tabindex='-1'])`).join(",");
+var S5 = ["[data-autofocus]"].map((e6) => `${e6}:not([tabindex='-1'])`).join(",");
+var T5 = ((o12) => (o12[o12.First = 1] = "First", o12[o12.Previous = 2] = "Previous", o12[o12.Next = 4] = "Next", o12[o12.Last = 8] = "Last", o12[o12.WrapAround = 16] = "WrapAround", o12[o12.NoScroll = 32] = "NoScroll", o12[o12.AutoFocus = 64] = "AutoFocus", o12))(T5 || {});
+var A2 = ((n11) => (n11[n11.Error = 0] = "Error", n11[n11.Overflow = 1] = "Overflow", n11[n11.Success = 2] = "Success", n11[n11.Underflow = 3] = "Underflow", n11))(A2 || {});
+var O2 = ((t7) => (t7[t7.Previous = -1] = "Previous", t7[t7.Next = 1] = "Next", t7))(O2 || {});
+function x3(e6 = document.body) {
+  return e6 == null ? [] : Array.from(e6.querySelectorAll(E6)).sort((r11, t7) => Math.sign((r11.tabIndex || Number.MAX_SAFE_INTEGER) - (t7.tabIndex || Number.MAX_SAFE_INTEGER)));
+}
+function h6(e6 = document.body) {
+  return e6 == null ? [] : Array.from(e6.querySelectorAll(S5)).sort((r11, t7) => Math.sign((r11.tabIndex || Number.MAX_SAFE_INTEGER) - (t7.tabIndex || Number.MAX_SAFE_INTEGER)));
+}
+var I5 = ((t7) => (t7[t7.Strict = 0] = "Strict", t7[t7.Loose = 1] = "Loose", t7))(I5 || {});
+function H4(e6, r11 = 0) {
+  var t7;
+  return e6 === ((t7 = l2(e6)) == null ? undefined : t7.body) ? false : u2(r11, { [0]() {
+    return e6.matches(E6);
+  }, [1]() {
+    let l9 = e6;
+    for (;l9 !== null; ) {
+      if (l9.matches(E6))
+        return true;
+      l9 = l9.parentElement;
+    }
+    return false;
+  } });
+}
+var g4 = ((t7) => (t7[t7.Keyboard = 0] = "Keyboard", t7[t7.Mouse = 1] = "Mouse", t7))(g4 || {});
+typeof window != "undefined" && typeof document != "undefined" && (document.addEventListener("keydown", (e6) => {
+  e6.metaKey || e6.altKey || e6.ctrlKey || (document.documentElement.dataset.headlessuiFocusVisible = "");
+}, true), document.addEventListener("click", (e6) => {
+  e6.detail === 1 ? delete document.documentElement.dataset.headlessuiFocusVisible : e6.detail === 0 && (document.documentElement.dataset.headlessuiFocusVisible = "");
+}, true));
+function w5(e6) {
+  e6 == null || e6.focus({ preventScroll: true });
+}
+var _3 = ["textarea", "input"].join(",");
+function P4(e6) {
+  var r11, t7;
+  return (t7 = (r11 = e6 == null ? undefined : e6.matches) == null ? undefined : r11.call(e6, _3)) != null ? t7 : false;
+}
+function G3(e6, r11 = (t7) => t7) {
+  return e6.slice().sort((t7, l9) => {
+    let n11 = r11(t7), a13 = r11(l9);
+    if (n11 === null || a13 === null)
+      return 0;
+    let u13 = n11.compareDocumentPosition(a13);
+    return u13 & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : u13 & Node.DOCUMENT_POSITION_PRECEDING ? 1 : 0;
+  });
+}
+function v6(e6, r11, { sorted: t7 = true, relativeTo: l9 = null, skipElements: n11 = [] } = {}) {
+  let a13 = Array.isArray(e6) ? e6.length > 0 ? r3(e6[0]) : document : r3(e6), u13 = Array.isArray(e6) ? t7 ? G3(e6) : e6 : r11 & 64 ? h6(e6) : x3(e6);
+  n11.length > 0 && u13.length > 1 && (u13 = u13.filter((i9) => !n11.some((d6) => d6 != null && ("current" in d6) ? (d6 == null ? undefined : d6.current) === i9 : d6 === i9))), l9 = l9 != null ? l9 : a13 == null ? undefined : a13.activeElement;
+  let o12 = (() => {
+    if (r11 & 5)
+      return 1;
+    if (r11 & 10)
+      return -1;
+    throw new Error("Missing Focus.First, Focus.Previous, Focus.Next or Focus.Last");
+  })(), M3 = (() => {
+    if (r11 & 1)
+      return 0;
+    if (r11 & 2)
+      return Math.max(0, u13.indexOf(l9)) - 1;
+    if (r11 & 4)
+      return Math.max(0, u13.indexOf(l9)) + 1;
+    if (r11 & 8)
+      return u13.length - 1;
+    throw new Error("Missing Focus.First, Focus.Previous, Focus.Next or Focus.Last");
+  })(), N2 = r11 & 32 ? { preventScroll: true } : {}, m8 = 0, c6 = u13.length, s9;
+  do {
+    if (m8 >= c6 || m8 + c6 <= 0)
+      return 0;
+    let i9 = M3 + m8;
+    if (r11 & 16)
+      i9 = (i9 + c6) % c6;
+    else {
+      if (i9 < 0)
+        return 3;
+      if (i9 >= c6)
+        return 1;
+    }
+    s9 = u13[i9], s9 == null || s9.focus(N2), m8 += o12;
+  } while (s9 !== e2(s9));
+  return r11 & 6 && P4(s9) && s9.select(), 2;
+}
+
+// node_modules/@headlessui/react/dist/utils/platform.js
+function t7() {
+  return /iPhone/gi.test(window.navigator.platform) || /Mac/gi.test(window.navigator.platform) && window.navigator.maxTouchPoints > 0;
+}
+function i9() {
+  return /Android/gi.test(window.navigator.userAgent);
+}
+function n11() {
+  return t7() || i9();
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-document-event.js
+var import_react32 = __toESM(require_react(), 1);
+function i10(t8, e6, o12, n12) {
+  let u13 = s4(o12);
+  import_react32.useEffect(() => {
+    if (!t8)
+      return;
+    function r11(m8) {
+      u13.current(m8);
+    }
+    return document.addEventListener(e6, r11, n12), () => document.removeEventListener(e6, r11, n12);
+  }, [t8, e6, n12]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-window-event.js
+var import_react33 = __toESM(require_react(), 1);
+function s9(t8, e6, o12, n12) {
+  let i11 = s4(o12);
+  import_react33.useEffect(() => {
+    if (!t8)
+      return;
+    function r11(d6) {
+      i11.current(d6);
+    }
+    return window.addEventListener(e6, r11, n12), () => window.removeEventListener(e6, r11, n12);
+  }, [t8, e6, n12]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-outside-click.js
+var C7 = 30;
+function k5(o12, f10, h7) {
+  let m8 = s4(h7), s10 = import_react34.useCallback(function(e6, c7) {
+    if (e6.defaultPrevented)
+      return;
+    let r11 = c7(e6);
+    if (r11 === null || !r11.getRootNode().contains(r11) || !r11.isConnected)
+      return;
+    let M3 = function u13(n12) {
+      return typeof n12 == "function" ? u13(n12()) : Array.isArray(n12) || n12 instanceof Set ? n12 : [n12];
+    }(f10);
+    for (let u13 of M3)
+      if (u13 !== null && (u13.contains(r11) || e6.composed && e6.composedPath().includes(u13)))
+        return;
+    return !H4(r11, I5.Loose) && r11.tabIndex !== -1 && e6.preventDefault(), m8.current(e6, r11);
+  }, [m8, f10]), i11 = import_react34.useRef(null);
+  i10(o12, "pointerdown", (t8) => {
+    var e6, c7;
+    n11() || (i11.current = ((c7 = (e6 = t8.composedPath) == null ? undefined : e6.call(t8)) == null ? undefined : c7[0]) || t8.target);
+  }, true), i10(o12, "pointerup", (t8) => {
+    if (n11() || !i11.current)
+      return;
+    let e6 = i11.current;
+    return i11.current = null, s10(t8, () => e6);
+  }, true);
+  let l9 = import_react34.useRef({ x: 0, y: 0 });
+  i10(o12, "touchstart", (t8) => {
+    l9.current.x = t8.touches[0].clientX, l9.current.y = t8.touches[0].clientY;
+  }, true), i10(o12, "touchend", (t8) => {
+    let e6 = { x: t8.changedTouches[0].clientX, y: t8.changedTouches[0].clientY };
+    if (!(Math.abs(e6.x - l9.current.x) >= C7 || Math.abs(e6.y - l9.current.y) >= C7))
+      return s10(t8, () => i5(t8.target) ? t8.target : null);
+  }, true), s9(o12, "blur", (t8) => s10(t8, () => u6(window.document.activeElement) ? window.document.activeElement : null), true);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-owner.js
+var import_react35 = __toESM(require_react(), 1);
+function u13(...e6) {
+  return import_react35.useMemo(() => l2(...e6), [...e6]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-event-listener.js
+var import_react36 = __toESM(require_react(), 1);
+function E8(n12, e6, a14, t8) {
+  let i11 = s4(a14);
+  import_react36.useEffect(() => {
+    n12 = n12 != null ? n12 : window;
+    function r11(o13) {
+      i11.current(o13);
+    }
+    return n12.addEventListener(e6, r11, t8), () => n12.removeEventListener(e6, r11, t8);
+  }, [n12, e6, t8]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-resolve-button-type.js
+var import_react37 = __toESM(require_react(), 1);
+function e6(t8, u14) {
+  return import_react37.useMemo(() => {
+    var n12;
+    if (t8.type)
+      return t8.type;
+    let r11 = (n12 = t8.as) != null ? n12 : "button";
+    if (typeof r11 == "string" && r11.toLowerCase() === "button" || (u14 == null ? undefined : u14.tagName) === "BUTTON" && !u14.hasAttribute("type"))
+      return "button";
+  }, [t8.type, t8.as, u14]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-store.js
+var import_react38 = __toESM(require_react(), 1);
+function o13(t8) {
+  return import_react38.useSyncExternalStore(t8.subscribe, t8.getSnapshot, t8.getSnapshot);
+}
+
+// node_modules/@headlessui/react/dist/utils/store.js
+function a15(o14, r11) {
+  let t8 = o14(), n12 = new Set;
+  return { getSnapshot() {
+    return t8;
+  }, subscribe(e8) {
+    return n12.add(e8), () => n12.delete(e8);
+  }, dispatch(e8, ...s10) {
+    let i11 = r11[e8].call(t8, ...s10);
+    i11 && (t8 = i11, n12.forEach((c7) => c7()));
+  } };
+}
+
+// node_modules/@headlessui/react/dist/hooks/document-overflow/adjust-scrollbar-padding.js
+function d7() {
+  let r11;
+  return { before({ doc: e8 }) {
+    var l9;
+    let o14 = e8.documentElement, t8 = (l9 = e8.defaultView) != null ? l9 : window;
+    r11 = Math.max(0, t8.innerWidth - o14.clientWidth);
+  }, after({ doc: e8, d: o14 }) {
+    let t8 = e8.documentElement, l9 = Math.max(0, t8.clientWidth - t8.offsetWidth), n12 = Math.max(0, r11 - l9);
+    o14.style(t8, "paddingRight", `${n12}px`);
+  } };
+}
+
+// node_modules/@headlessui/react/dist/hooks/document-overflow/handle-ios-locking.js
+function w6() {
+  return t7() ? { before({ doc: o14, d: r11, meta: m8 }) {
+    function a16(s10) {
+      for (let l9 of m8().containers)
+        for (let c7 of l9())
+          if (c7.contains(s10))
+            return true;
+      return false;
+    }
+    r11.microTask(() => {
+      var c7;
+      if (window.getComputedStyle(o14.documentElement).scrollBehavior !== "auto") {
+        let t8 = o3();
+        t8.style(o14.documentElement, "scrollBehavior", "auto"), r11.add(() => r11.microTask(() => t8.dispose()));
+      }
+      let s10 = (c7 = window.scrollY) != null ? c7 : window.pageYOffset, l9 = null;
+      r11.addEventListener(o14, "click", (t8) => {
+        if (i5(t8.target))
+          try {
+            let e8 = t8.target.closest("a");
+            if (!e8)
+              return;
+            let { hash: n12 } = new URL(e8.href), f10 = o14.querySelector(n12);
+            i5(f10) && !a16(f10) && (l9 = f10);
+          } catch {}
+      }, true), r11.group((t8) => {
+        r11.addEventListener(o14, "touchstart", (e8) => {
+          if (t8.dispose(), i5(e8.target) && r7(e8.target))
+            if (a16(e8.target)) {
+              let n12 = e8.target;
+              for (;n12.parentElement && a16(n12.parentElement); )
+                n12 = n12.parentElement;
+              t8.style(n12, "overscrollBehavior", "contain");
+            } else
+              t8.style(e8.target, "touchAction", "none");
+        });
+      }), r11.addEventListener(o14, "touchmove", (t8) => {
+        if (i5(t8.target)) {
+          if (l5(t8.target))
+            return;
+          if (a16(t8.target)) {
+            let e8 = t8.target;
+            for (;e8.parentElement && e8.dataset.headlessuiPortal !== "" && !(e8.scrollHeight > e8.clientHeight || e8.scrollWidth > e8.clientWidth); )
+              e8 = e8.parentElement;
+            e8.dataset.headlessuiPortal === "" && t8.preventDefault();
+          } else
+            t8.preventDefault();
+        }
+      }, { passive: false }), r11.add(() => {
+        var e8;
+        let t8 = (e8 = window.scrollY) != null ? e8 : window.pageYOffset;
+        s10 !== t8 && window.scrollTo(0, s10), l9 && l9.isConnected && (l9.scrollIntoView({ block: "nearest" }), l9 = null);
+      });
+    });
+  } } : {};
+}
+
+// node_modules/@headlessui/react/dist/hooks/document-overflow/prevent-scroll.js
+function r11() {
+  return { before({ doc: e8, d: o14 }) {
+    o14.style(e8.documentElement, "overflow", "hidden");
+  } };
+}
+
+// node_modules/@headlessui/react/dist/hooks/document-overflow/overflow-store.js
+function r12(e8) {
+  let o14 = {};
+  for (let t8 of e8)
+    Object.assign(o14, t8(o14));
+  return o14;
+}
+var c7 = a15(() => new Map, { PUSH(e8, o14) {
+  var n12;
+  let t8 = (n12 = this.get(e8)) != null ? n12 : { doc: e8, count: 0, d: o3(), meta: new Set, computedMeta: {} };
+  return t8.count++, t8.meta.add(o14), t8.computedMeta = r12(t8.meta), this.set(e8, t8), this;
+}, POP(e8, o14) {
+  let t8 = this.get(e8);
+  return t8 && (t8.count--, t8.meta.delete(o14), t8.computedMeta = r12(t8.meta)), this;
+}, SCROLL_PREVENT(e8) {
+  let o14 = { doc: e8.doc, d: e8.d, meta() {
+    return e8.computedMeta;
+  } }, t8 = [w6(), d7(), r11()];
+  t8.forEach(({ before: n12 }) => n12 == null ? undefined : n12(o14)), t8.forEach(({ after: n12 }) => n12 == null ? undefined : n12(o14));
+}, SCROLL_ALLOW({ d: e8 }) {
+  e8.dispose();
+}, TEARDOWN({ doc: e8 }) {
+  this.delete(e8);
+} });
+c7.subscribe(() => {
+  let e8 = c7.getSnapshot(), o14 = new Map;
+  for (let [t8] of e8)
+    o14.set(t8, t8.documentElement.style.overflow);
+  for (let t8 of e8.values()) {
+    let n12 = o14.get(t8.doc) === "hidden", a16 = t8.count !== 0;
+    (a16 && !n12 || !a16 && n12) && c7.dispatch(t8.count > 0 ? "SCROLL_PREVENT" : "SCROLL_ALLOW", t8), t8.count === 0 && c7.dispatch("TEARDOWN", t8);
+  }
+});
+
+// node_modules/@headlessui/react/dist/hooks/document-overflow/use-document-overflow.js
+function a16(r13, e8, n12 = () => ({ containers: [] })) {
+  let f10 = o13(c7), o14 = e8 ? f10.get(e8) : undefined, i11 = o14 ? o14.count > 0 : false;
+  return n2(() => {
+    if (!(!e8 || !r13))
+      return c7.dispatch("PUSH", e8, n12), () => c7.dispatch("POP", e8, n12);
+  }, [r13, e8]), i11;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-scroll-lock.js
+function f10(e8, c8, n12 = () => [document.body]) {
+  let r13 = I4(e8, "scroll-lock");
+  a16(r13, c8, (t8) => {
+    var o14;
+    return { containers: [...(o14 = t8.containers) != null ? o14 : [], n12] };
+  });
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-transition.js
+var import_react40 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/hooks/use-flags.js
+var import_react39 = __toESM(require_react(), 1);
+function c8(u14 = 0) {
+  let [r13, a17] = import_react39.useState(u14), g5 = import_react39.useCallback((e8) => a17(e8), []), s10 = import_react39.useCallback((e8) => a17((l9) => l9 | e8), []), m8 = import_react39.useCallback((e8) => (r13 & e8) === e8, [r13]), n12 = import_react39.useCallback((e8) => a17((l9) => l9 & ~e8), []), F2 = import_react39.useCallback((e8) => a17((l9) => l9 ^ e8), []);
+  return { flags: r13, setFlag: g5, addFlag: s10, hasFlag: m8, removeFlag: n12, toggleFlag: F2 };
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-transition.js
+var T7;
+var S6;
+typeof process != "undefined" && typeof globalThis != "undefined" && typeof Element != "undefined" && ((T7 = process == null ? undefined : process.env) == null ? undefined : T7["NODE_ENV"]) === "test" && typeof ((S6 = Element == null ? undefined : Element.prototype) == null ? undefined : S6.getAnimations) == "undefined" && (Element.prototype.getAnimations = function() {
+  return console.warn(["Headless UI has polyfilled `Element.prototype.getAnimations` for your tests.", "Please install a proper polyfill e.g. `jsdom-testing-mocks`, to silence these warnings.", "", "Example usage:", "```js", "import { mockAnimationsApi } from 'jsdom-testing-mocks'", "mockAnimationsApi()", "```"].join(`
+`)), [];
+});
+var A3 = ((i11) => (i11[i11.None = 0] = "None", i11[i11.Closed = 1] = "Closed", i11[i11.Enter = 2] = "Enter", i11[i11.Leave = 4] = "Leave", i11))(A3 || {});
+function x4(e8) {
+  let r13 = {};
+  for (let t9 in e8)
+    e8[t9] === true && (r13[`data-${t9}`] = "");
+  return r13;
+}
+function N2(e8, r13, t9, n12) {
+  let [i11, a17] = import_react40.useState(t9), { hasFlag: s10, addFlag: o14, removeFlag: l9 } = c8(e8 && i11 ? 3 : 0), u14 = import_react40.useRef(false), f11 = import_react40.useRef(false), E9 = p2();
+  return n2(() => {
+    var d8;
+    if (e8) {
+      if (t9 && a17(true), !r13) {
+        t9 && o14(3);
+        return;
+      }
+      return (d8 = n12 == null ? undefined : n12.start) == null || d8.call(n12, t9), C8(r13, { inFlight: u14, prepare() {
+        f11.current ? f11.current = false : f11.current = u14.current, u14.current = true, !f11.current && (t9 ? (o14(3), l9(4)) : (o14(4), l9(2)));
+      }, run() {
+        f11.current ? t9 ? (l9(3), o14(4)) : (l9(4), o14(3)) : t9 ? l9(1) : o14(1);
+      }, done() {
+        var p7;
+        f11.current && D4(r13) || (u14.current = false, l9(7), t9 || a17(false), (p7 = n12 == null ? undefined : n12.end) == null || p7.call(n12, t9));
+      } });
+    }
+  }, [e8, t9, r13, E9]), e8 ? [i11, { closed: s10(1), enter: s10(2), leave: s10(4), transition: s10(2) || s10(4) }] : [t9, { closed: undefined, enter: undefined, leave: undefined, transition: undefined }];
+}
+function C8(e8, { prepare: r13, run: t9, done: n12, inFlight: i11 }) {
+  let a17 = o3();
+  return j5(e8, { prepare: r13, inFlight: i11 }), a17.nextFrame(() => {
+    t9(), a17.requestAnimationFrame(() => {
+      a17.add(M3(e8, n12));
+    });
+  }), a17.dispose;
+}
+function M3(e8, r13) {
+  var a17, s10;
+  let t9 = o3();
+  if (!e8)
+    return t9.dispose;
+  let n12 = false;
+  t9.add(() => {
+    n12 = true;
+  });
+  let i11 = (s10 = (a17 = e8.getAnimations) == null ? undefined : a17.call(e8).filter((o14) => o14 instanceof CSSTransition)) != null ? s10 : [];
+  return i11.length === 0 ? (r13(), t9.dispose) : (Promise.allSettled(i11.map((o14) => o14.finished)).then(() => {
+    n12 || r13();
+  }), t9.dispose);
+}
+function j5(e8, { inFlight: r13, prepare: t9 }) {
+  if (r13 != null && r13.current) {
+    t9();
+    return;
+  }
+  let n12 = e8.style.transition;
+  e8.style.transition = "none", t9(), e8.offsetHeight, e8.style.transition = n12;
+}
+function D4(e8) {
+  var t9, n12;
+  return ((n12 = (t9 = e8.getAnimations) == null ? undefined : t9.call(e8)) != null ? n12 : []).some((i11) => i11 instanceof CSSTransition && i11.playState !== "finished");
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-watch.js
+var import_react41 = __toESM(require_react(), 1);
+function m8(u14, t9) {
+  let e8 = import_react41.useRef([]), r13 = o5(u14);
+  import_react41.useEffect(() => {
+    let o14 = [...e8.current];
+    for (let [a17, l9] of t9.entries())
+      if (e8.current[a17] !== l9) {
+        let n12 = r13(t9, o14);
+        return e8.current = t9, n12;
+      }
+  }, [r13, ...t9]);
+}
+
+// node_modules/@headlessui/react/dist/internal/open-closed.js
+var import_react42 = __toESM(require_react(), 1);
+var n12 = import_react42.createContext(null);
+n12.displayName = "OpenClosedContext";
+var i11 = ((e8) => (e8[e8.Open = 1] = "Open", e8[e8.Closed = 2] = "Closed", e8[e8.Closing = 4] = "Closing", e8[e8.Opening = 8] = "Opening", e8))(i11 || {});
+function u14() {
+  return import_react42.useContext(n12);
+}
+function c10({ value: o14, children: t9 }) {
+  return import_react42.default.createElement(n12.Provider, { value: o14 }, t9);
+}
+function s11({ children: o14 }) {
+  return import_react42.default.createElement(n12.Provider, { value: null }, o14);
+}
+
+// node_modules/@headlessui/react/dist/utils/document-ready.js
+function t9(n13) {
+  function e8() {
+    document.readyState !== "loading" && (n13(), document.removeEventListener("DOMContentLoaded", e8));
+  }
+  typeof window != "undefined" && typeof document != "undefined" && (document.addEventListener("DOMContentLoaded", e8), e8());
+}
+
+// node_modules/@headlessui/react/dist/utils/active-element-history.js
+var n13 = [];
+t9(() => {
+  function e8(t10) {
+    if (!i5(t10.target) || t10.target === document.body || n13[0] === t10.target)
+      return;
+    let r14 = t10.target;
+    r14 = r14.closest(E6), n13.unshift(r14 != null ? r14 : t10.target), n13 = n13.filter((o14) => o14 != null && o14.isConnected), n13.splice(10);
+  }
+  window.addEventListener("click", e8, { capture: true }), window.addEventListener("mousedown", e8, { capture: true }), window.addEventListener("focus", e8, { capture: true }), document.body.addEventListener("click", e8, { capture: true }), document.body.addEventListener("mousedown", e8, { capture: true }), document.body.addEventListener("focus", e8, { capture: true });
+});
+
+// node_modules/@headlessui/react/dist/components/portal/portal.js
+var import_react45 = __toESM(require_react(), 1);
+var import_react_dom3 = __toESM(require_react_dom(), 1);
+
+// node_modules/@headlessui/react/dist/hooks/use-on-unmount.js
+var import_react43 = __toESM(require_react(), 1);
+function c11(t10) {
+  let r14 = o5(t10), e8 = import_react43.useRef(false);
+  import_react43.useEffect(() => (e8.current = false, () => {
+    e8.current = true, t2(() => {
+      e8.current && r14();
+    });
+  }), [r14]);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-server-handoff-complete.js
+var t10 = __toESM(require_react(), 1);
+function s12() {
+  let r14 = typeof document == "undefined";
+  return "useSyncExternalStore" in t10 ? ((o14) => o14.useSyncExternalStore)(t10)(() => () => {}, () => false, () => !r14) : false;
+}
+function l10() {
+  let r14 = s12(), [e8, n15] = t10.useState(s2.isHandoffComplete);
+  return e8 && s2.isHandoffComplete === false && n15(false), t10.useEffect(() => {
+    e8 !== true && n15(true);
+  }, [e8]), t10.useEffect(() => s2.handoff(), []), r14 ? false : e8;
+}
+
+// node_modules/@headlessui/react/dist/internal/portal-force-root.js
+var import_react44 = __toESM(require_react(), 1);
+var e8 = import_react44.createContext(false);
+function a17() {
+  return import_react44.useContext(e8);
+}
+function l11(o14) {
+  return import_react44.default.createElement(e8.Provider, { value: o14.force }, o14.children);
+}
+
+// node_modules/@headlessui/react/dist/components/portal/portal.js
+"use client";
+function j6(e9) {
+  let o14 = a17(), l12 = import_react45.useContext(c13), [r15, p7] = import_react45.useState(() => {
+    var s13;
+    if (!o14 && l12 !== null)
+      return (s13 = l12.current) != null ? s13 : null;
+    if (s2.isServer)
+      return null;
+    let t12 = e9 == null ? undefined : e9.getElementById("headlessui-portal-root");
+    if (t12)
+      return t12;
+    if (e9 === null)
+      return null;
+    let n15 = e9.createElement("div");
+    return n15.setAttribute("id", "headlessui-portal-root"), e9.body.appendChild(n15);
+  });
+  return import_react45.useEffect(() => {
+    r15 !== null && (e9 != null && e9.body.contains(r15) || e9 == null || e9.body.appendChild(r15));
+  }, [r15, e9]), import_react45.useEffect(() => {
+    o14 || l12 !== null && p7(l12.current);
+  }, [l12, p7, o14]), r15;
+}
+var _4 = import_react45.Fragment;
+var I6 = Y2(function(o14, l12) {
+  let { ownerDocument: r15 = null, ...p7 } = o14, t12 = import_react45.useRef(null), n15 = y2(T2((a18) => {
+    t12.current = a18;
+  }), l12), s13 = u13(t12.current), C9 = r15 != null ? r15 : s13, u16 = j6(C9), y6 = import_react45.useContext(m9), g5 = p2(), v7 = l10(), M4 = K2();
+  return c11(() => {
+    var a18;
+    u16 && u16.childNodes.length <= 0 && ((a18 = u16.parentElement) == null || a18.removeChild(u16));
+  }), !u16 || !v7 ? null : import_react_dom3.createPortal(import_react45.default.createElement("div", { "data-headlessui-portal": "", ref: (a18) => {
+    g5.dispose(), y6 && a18 && g5.add(y6.register(a18));
+  } }, M4({ ourProps: { ref: n15 }, theirProps: p7, slot: {}, defaultTag: _4, name: "Portal" })), u16);
+});
+function D5(e9, o14) {
+  let l12 = y2(o14), { enabled: r15 = true, ownerDocument: p7, ...t12 } = e9, n15 = K2();
+  return r15 ? import_react45.default.createElement(I6, { ...t12, ownerDocument: p7, ref: l12 }) : n15({ ourProps: { ref: l12 }, theirProps: t12, slot: {}, defaultTag: _4, name: "Portal" });
+}
+var J2 = import_react45.Fragment;
+var c13 = import_react45.createContext(null);
+function X2(e9, o14) {
+  let { target: l12, ...r15 } = e9, t12 = { ref: y2(o14) }, n15 = K2();
+  return import_react45.default.createElement(c13.Provider, { value: l12 }, n15({ ourProps: t12, theirProps: r15, defaultTag: J2, name: "Popover.Group" }));
+}
+var m9 = import_react45.createContext(null);
+function oe() {
+  let e9 = import_react45.useContext(m9), o14 = import_react45.useRef([]), l12 = o5((t12) => (o14.current.push(t12), e9 && e9.register(t12), () => r15(t12))), r15 = o5((t12) => {
+    let n15 = o14.current.indexOf(t12);
+    n15 !== -1 && o14.current.splice(n15, 1), e9 && e9.unregister(t12);
+  }), p7 = import_react45.useMemo(() => ({ register: l12, unregister: r15, portals: o14 }), [l12, r15, o14]);
+  return [o14, import_react45.useMemo(() => function({ children: n15 }) {
+    return import_react45.default.createElement(m9.Provider, { value: p7 }, n15);
+  }, [p7])];
+}
+var k6 = Y2(D5);
+var B2 = Y2(X2);
+var le = Object.assign(k6, { Group: B2 });
+
+// node_modules/@headlessui/react/dist/components/dialog/dialog.js
+var import_react52 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/hooks/use-escape.js
+function a18(o14, r15 = typeof document != "undefined" ? document.defaultView : null, t12) {
+  let n15 = I4(o14, "escape");
+  E8(r15, "keydown", (e9) => {
+    n15 && (e9.defaultPrevented || e9.key === o9.Escape && t12(e9));
+  });
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-is-touch-device.js
+var import_react46 = __toESM(require_react(), 1);
+function f13() {
+  var t12;
+  let [e9] = import_react46.useState(() => typeof window != "undefined" && typeof window.matchMedia == "function" ? window.matchMedia("(pointer: coarse)") : null), [o14, c14] = import_react46.useState((t12 = e9 == null ? undefined : e9.matches) != null ? t12 : false);
+  return n2(() => {
+    if (!e9)
+      return;
+    function n15(r15) {
+      c14(r15.matches);
+    }
+    return e9.addEventListener("change", n15), () => e9.removeEventListener("change", n15);
+  }, [e9]), o14;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-root-containers.js
+var import_react47 = __toESM(require_react(), 1);
+function S7({ defaultContainers: l12 = [], portals: n15, mainTreeNode: o14 } = {}) {
+  let c14 = o5(() => {
+    var r15, u16;
+    let i14 = l2(o14), t12 = [];
+    for (let e9 of l12)
+      e9 !== null && (t6(e9) ? t12.push(e9) : ("current" in e9) && t6(e9.current) && t12.push(e9.current));
+    if (n15 != null && n15.current)
+      for (let e9 of n15.current)
+        t12.push(e9);
+    for (let e9 of (r15 = i14 == null ? undefined : i14.querySelectorAll("html > *, body > *")) != null ? r15 : [])
+      e9 !== document.body && e9 !== document.head && t6(e9) && e9.id !== "headlessui-portal-root" && (o14 && (e9.contains(o14) || e9.contains((u16 = o14 == null ? undefined : o14.getRootNode()) == null ? undefined : u16.host)) || t12.some((E10) => e9.contains(E10)) || t12.push(e9));
+    return t12;
+  });
+  return { resolveContainers: c14, contains: o5((i14) => c14().some((t12) => t12.contains(i14))) };
+}
+var d9 = import_react47.createContext(null);
+function j7({ children: l12, node: n15 }) {
+  let [o14, c14] = import_react47.useState(null), i14 = x6(n15 != null ? n15 : o14);
+  return import_react47.default.createElement(d9.Provider, { value: i14 }, l12, i14 === null && import_react47.default.createElement(f5, { features: s6.Hidden, ref: (t12) => {
+    var r15, u16;
+    if (t12) {
+      for (let e9 of (u16 = (r15 = l2(t12)) == null ? undefined : r15.querySelectorAll("html > *, body > *")) != null ? u16 : [])
+        if (e9 !== document.body && e9 !== document.head && t6(e9) && e9 != null && e9.contains(t12)) {
+          c14(e9);
+          break;
+        }
+    }
+  } }));
+}
+function x6(l12 = null) {
+  var n15;
+  return (n15 = import_react47.useContext(d9)) != null ? n15 : l12;
+}
+
+// node_modules/@headlessui/react/dist/components/focus-trap/focus-trap.js
+var import_react50 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/hooks/use-is-mounted.js
+var import_react48 = __toESM(require_react(), 1);
+function f14() {
+  let e9 = import_react48.useRef(false);
+  return n2(() => (e9.current = true, () => {
+    e9.current = false;
+  }), []), e9;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-tab-direction.js
+var import_react49 = __toESM(require_react(), 1);
+var a19 = ((r16) => (r16[r16.Forwards = 0] = "Forwards", r16[r16.Backwards = 1] = "Backwards", r16))(a19 || {});
+function u16() {
+  let e9 = import_react49.useRef(0);
+  return s9(true, "keydown", (r16) => {
+    r16.key === "Tab" && (e9.current = r16.shiftKey ? 1 : 0);
+  }, true), e9;
+}
+
+// node_modules/@headlessui/react/dist/components/focus-trap/focus-trap.js
+"use client";
+function x7(o15) {
+  if (!o15)
+    return new Set;
+  if (typeof o15 == "function")
+    return new Set(o15());
+  let t12 = new Set;
+  for (let e9 of o15.current)
+    t6(e9.current) && t12.add(e9.current);
+  return t12;
+}
+var $2 = "div";
+var G5 = ((n15) => (n15[n15.None = 0] = "None", n15[n15.InitialFocus = 1] = "InitialFocus", n15[n15.TabLock = 2] = "TabLock", n15[n15.FocusLock = 4] = "FocusLock", n15[n15.RestoreFocus = 8] = "RestoreFocus", n15[n15.AutoFocus = 16] = "AutoFocus", n15))(G5 || {});
+function w7(o15, t12) {
+  let e9 = import_react50.useRef(null), r16 = y2(e9, t12), { initialFocus: u17, initialFocusFallback: a20, containers: n15, features: s14 = 15, ...f15 } = o15;
+  l10() || (s14 = 0);
+  let l12 = u13(e9.current);
+  re(s14, { ownerDocument: l12 });
+  let T8 = ne(s14, { ownerDocument: l12, container: e9, initialFocus: u17, initialFocusFallback: a20 });
+  oe2(s14, { ownerDocument: l12, container: e9, containers: n15, previousActiveElement: T8 });
+  let g5 = u16(), A5 = o5((c14) => {
+    if (!n6(e9.current))
+      return;
+    let E10 = e9.current;
+    ((V4) => V4())(() => {
+      u2(g5.current, { [a19.Forwards]: () => {
+        v6(E10, T5.First, { skipElements: [c14.relatedTarget, a20] });
+      }, [a19.Backwards]: () => {
+        v6(E10, T5.Last, { skipElements: [c14.relatedTarget, a20] });
+      } });
+    });
+  }), v7 = I4(!!(s14 & 2), "focus-trap#tab-lock"), N3 = p2(), b9 = import_react50.useRef(false), k7 = { ref: r16, onKeyDown(c14) {
+    c14.key == "Tab" && (b9.current = true, N3.requestAnimationFrame(() => {
+      b9.current = false;
+    }));
+  }, onBlur(c14) {
+    if (!(s14 & 4))
+      return;
+    let E10 = x7(n15);
+    n6(e9.current) && E10.add(e9.current);
+    let L6 = c14.relatedTarget;
+    i5(L6) && L6.dataset.headlessuiFocusGuard !== "true" && (I7(E10, L6) || (b9.current ? v6(e9.current, u2(g5.current, { [a19.Forwards]: () => T5.Next, [a19.Backwards]: () => T5.Previous }) | T5.WrapAround, { relativeTo: c14.target }) : i5(c14.target) && w5(c14.target)));
+  } }, B3 = K2();
+  return import_react50.default.createElement(import_react50.default.Fragment, null, v7 && import_react50.default.createElement(f5, { as: "button", type: "button", "data-headlessui-focus-guard": true, onFocus: A5, features: s6.Focusable }), B3({ ourProps: k7, theirProps: f15, defaultTag: $2, name: "FocusTrap" }), v7 && import_react50.default.createElement(f5, { as: "button", type: "button", "data-headlessui-focus-guard": true, onFocus: A5, features: s6.Focusable }));
+}
+var ee = Y2(w7);
+var ge = Object.assign(ee, { features: G5 });
+function te(o15 = true) {
+  let t12 = import_react50.useRef(n13.slice());
+  return m8(([e9], [r16]) => {
+    r16 === true && e9 === false && t2(() => {
+      t12.current.splice(0);
+    }), r16 === false && e9 === true && (t12.current = n13.slice());
+  }, [o15, n13, t12]), o5(() => {
+    var e9;
+    return (e9 = t12.current.find((r16) => r16 != null && r16.isConnected)) != null ? e9 : null;
+  });
+}
+function re(o15, { ownerDocument: t12 }) {
+  let e9 = !!(o15 & 8), r16 = te(e9);
+  m8(() => {
+    e9 || d3(t12 == null ? undefined : t12.body) && w5(r16());
+  }, [e9]), c11(() => {
+    e9 && w5(r16());
+  });
+}
+function ne(o15, { ownerDocument: t12, container: e9, initialFocus: r16, initialFocusFallback: u17 }) {
+  let a20 = import_react50.useRef(null), n15 = I4(!!(o15 & 1), "focus-trap#initial-focus"), s14 = f14();
+  return m8(() => {
+    if (o15 === 0)
+      return;
+    if (!n15) {
+      u17 != null && u17.current && w5(u17.current);
+      return;
+    }
+    let f15 = e9.current;
+    f15 && t2(() => {
+      if (!s14.current)
+        return;
+      let l12 = t12 == null ? undefined : t12.activeElement;
+      if (r16 != null && r16.current) {
+        if ((r16 == null ? undefined : r16.current) === l12) {
+          a20.current = l12;
+          return;
+        }
+      } else if (f15.contains(l12)) {
+        a20.current = l12;
+        return;
+      }
+      if (r16 != null && r16.current)
+        w5(r16.current);
+      else {
+        if (o15 & 16) {
+          if (v6(f15, T5.First | T5.AutoFocus) !== A2.Error)
+            return;
+        } else if (v6(f15, T5.First) !== A2.Error)
+          return;
+        if (u17 != null && u17.current && (w5(u17.current), (t12 == null ? undefined : t12.activeElement) === u17.current))
+          return;
+        console.warn("There are no focusable elements inside the <FocusTrap />");
+      }
+      a20.current = t12 == null ? undefined : t12.activeElement;
+    });
+  }, [u17, n15, o15]), a20;
+}
+function oe2(o15, { ownerDocument: t12, container: e9, containers: r16, previousActiveElement: u17 }) {
+  let a20 = f14(), n15 = !!(o15 & 4);
+  E8(t12 == null ? undefined : t12.defaultView, "focus", (s14) => {
+    if (!n15 || !a20.current)
+      return;
+    let f15 = x7(r16);
+    n6(e9.current) && f15.add(e9.current);
+    let l12 = u17.current;
+    if (!l12)
+      return;
+    let T8 = s14.target;
+    n6(T8) ? I7(f15, T8) ? (u17.current = T8, w5(T8)) : (s14.preventDefault(), s14.stopPropagation(), w5(l12)) : w5(u17.current);
+  }, true);
+}
+function I7(o15, t12) {
+  for (let e9 of o15)
+    if (e9.contains(t12))
+      return true;
+  return false;
+}
+
+// node_modules/@headlessui/react/dist/components/transition/transition.js
+var import_react51 = __toESM(require_react(), 1);
+"use client";
+function ue(e9) {
+  var t12;
+  return !!(e9.enter || e9.enterFrom || e9.enterTo || e9.leave || e9.leaveFrom || e9.leaveTo) || !b2((t12 = e9.as) != null ? t12 : de) || import_react51.default.Children.count(e9.children) === 1;
+}
+var V4 = import_react51.createContext(null);
+V4.displayName = "TransitionContext";
+var De = ((n15) => (n15.Visible = "visible", n15.Hidden = "hidden", n15))(De || {});
+function He() {
+  let e9 = import_react51.useContext(V4);
+  if (e9 === null)
+    throw new Error("A <Transition.Child /> is used but it is missing a parent <Transition /> or <Transition.Root />.");
+  return e9;
+}
+function Ae() {
+  let e9 = import_react51.useContext(w8);
+  if (e9 === null)
+    throw new Error("A <Transition.Child /> is used but it is missing a parent <Transition /> or <Transition.Root />.");
+  return e9;
+}
+var w8 = import_react51.createContext(null);
+w8.displayName = "NestingContext";
+function M5(e9) {
+  return "children" in e9 ? M5(e9.children) : e9.current.filter(({ el: t12 }) => t12.current !== null).filter(({ state: t12 }) => t12 === "visible").length > 0;
+}
+function Te(e9, t12) {
+  let n15 = s4(e9), l12 = import_react51.useRef([]), S8 = f14(), R5 = p2(), d10 = o5((o15, i14 = C2.Hidden) => {
+    let a20 = l12.current.findIndex(({ el: s14 }) => s14 === o15);
+    a20 !== -1 && (u2(i14, { [C2.Unmount]() {
+      l12.current.splice(a20, 1);
+    }, [C2.Hidden]() {
+      l12.current[a20].state = "hidden";
+    } }), R5.microTask(() => {
+      var s14;
+      !M5(l12) && S8.current && ((s14 = n15.current) == null || s14.call(n15));
+    }));
+  }), y6 = o5((o15) => {
+    let i14 = l12.current.find(({ el: a20 }) => a20 === o15);
+    return i14 ? i14.state !== "visible" && (i14.state = "visible") : l12.current.push({ el: o15, state: "visible" }), () => d10(o15, C2.Unmount);
+  }), C9 = import_react51.useRef([]), p8 = import_react51.useRef(Promise.resolve()), h8 = import_react51.useRef({ enter: [], leave: [] }), g5 = o5((o15, i14, a20) => {
+    C9.current.splice(0), t12 && (t12.chains.current[i14] = t12.chains.current[i14].filter(([s14]) => s14 !== o15)), t12 == null || t12.chains.current[i14].push([o15, new Promise((s14) => {
+      C9.current.push(s14);
+    })]), t12 == null || t12.chains.current[i14].push([o15, new Promise((s14) => {
+      Promise.all(h8.current[i14].map(([r16, f15]) => f15)).then(() => s14());
+    })]), i14 === "enter" ? p8.current = p8.current.then(() => t12 == null ? undefined : t12.wait.current).then(() => a20(i14)) : a20(i14);
+  }), v7 = o5((o15, i14, a20) => {
+    Promise.all(h8.current[i14].splice(0).map(([s14, r16]) => r16)).then(() => {
+      var s14;
+      (s14 = C9.current.shift()) == null || s14();
+    }).then(() => a20(i14));
+  });
+  return import_react51.useMemo(() => ({ children: l12, register: y6, unregister: d10, onStart: g5, onStop: v7, wait: p8, chains: h8 }), [y6, d10, l12, g5, v7, h8, p8]);
+}
+var de = import_react51.Fragment;
+var fe = A.RenderStrategy;
+function Fe(e9, t12) {
+  var ee2, te2;
+  let { transition: n15 = true, beforeEnter: l12, afterEnter: S8, beforeLeave: R5, afterLeave: d10, enter: y6, enterFrom: C9, enterTo: p8, entered: h8, leave: g5, leaveFrom: v7, leaveTo: o15, ...i14 } = e9, [a20, s14] = import_react51.useState(null), r16 = import_react51.useRef(null), f15 = ue(e9), U4 = y2(...f15 ? [r16, t12, s14] : t12 === null ? [] : [t12]), H6 = (ee2 = i14.unmount) == null || ee2 ? C2.Unmount : C2.Hidden, { show: u17, appear: z, initial: K3 } = He(), [m10, j8] = import_react51.useState(u17 ? "visible" : "hidden"), Q2 = Ae(), { register: A5, unregister: F3 } = Q2;
+  n2(() => A5(r16), [A5, r16]), n2(() => {
+    if (H6 === C2.Hidden && r16.current) {
+      if (u17 && m10 !== "visible") {
+        j8("visible");
+        return;
+      }
+      return u2(m10, { ["hidden"]: () => F3(r16), ["visible"]: () => A5(r16) });
+    }
+  }, [m10, r16, A5, F3, u17, H6]);
+  let G6 = l10();
+  n2(() => {
+    if (f15 && G6 && m10 === "visible" && r16.current === null)
+      throw new Error("Did you forget to passthrough the `ref` to the actual DOM node?");
+  }, [r16, m10, G6, f15]);
+  let ce = K3 && !z, Y3 = z && u17 && K3, B3 = import_react51.useRef(false), I8 = Te(() => {
+    B3.current || (j8("hidden"), F3(r16));
+  }, Q2), Z3 = o5((W) => {
+    B3.current = true;
+    let L6 = W ? "enter" : "leave";
+    I8.onStart(r16, L6, (_5) => {
+      _5 === "enter" ? l12 == null || l12() : _5 === "leave" && (R5 == null || R5());
+    });
+  }), $3 = o5((W) => {
+    let L6 = W ? "enter" : "leave";
+    B3.current = false, I8.onStop(r16, L6, (_5) => {
+      _5 === "enter" ? S8 == null || S8() : _5 === "leave" && (d10 == null || d10());
+    }), L6 === "leave" && !M5(I8) && (j8("hidden"), F3(r16));
+  });
+  import_react51.useEffect(() => {
+    f15 && n15 || (Z3(u17), $3(u17));
+  }, [u17, f15, n15]);
+  let pe = (() => !(!n15 || !f15 || !G6 || ce))(), [, T8] = N2(pe, a20, u17, { start: Z3, end: $3 }), Ce = m3({ ref: U4, className: ((te2 = t5(i14.className, Y3 && y6, Y3 && C9, T8.enter && y6, T8.enter && T8.closed && C9, T8.enter && !T8.closed && p8, T8.leave && g5, T8.leave && !T8.closed && v7, T8.leave && T8.closed && o15, !T8.transition && u17 && h8)) == null ? undefined : te2.trim()) || undefined, ...x4(T8) }), N3 = 0;
+  m10 === "visible" && (N3 |= i11.Open), m10 === "hidden" && (N3 |= i11.Closed), u17 && m10 === "hidden" && (N3 |= i11.Opening), !u17 && m10 === "visible" && (N3 |= i11.Closing);
+  let he = K2();
+  return import_react51.default.createElement(w8.Provider, { value: I8 }, import_react51.default.createElement(c10, { value: N3 }, he({ ourProps: Ce, theirProps: i14, defaultTag: de, features: fe, visible: m10 === "visible", name: "Transition.Child" })));
+}
+function Ie2(e9, t12) {
+  let { show: n15, appear: l12 = false, unmount: S8 = true, ...R5 } = e9, d10 = import_react51.useRef(null), y6 = ue(e9), C9 = y2(...y6 ? [d10, t12] : t12 === null ? [] : [t12]);
+  l10();
+  let p8 = u14();
+  if (n15 === undefined && p8 !== null && (n15 = (p8 & i11.Open) === i11.Open), n15 === undefined)
+    throw new Error("A <Transition /> is used but it is missing a `show={true | false}` prop.");
+  let [h8, g5] = import_react51.useState(n15 ? "visible" : "hidden"), v7 = Te(() => {
+    n15 || g5("hidden");
+  }), [o15, i14] = import_react51.useState(true), a20 = import_react51.useRef([n15]);
+  n2(() => {
+    o15 !== false && a20.current[a20.current.length - 1] !== n15 && (a20.current.push(n15), i14(false));
+  }, [a20, n15]);
+  let s14 = import_react51.useMemo(() => ({ show: n15, appear: l12, initial: o15 }), [n15, l12, o15]);
+  n2(() => {
+    n15 ? g5("visible") : !M5(v7) && d10.current !== null && g5("hidden");
+  }, [n15, v7]);
+  let r16 = { unmount: S8 }, f15 = o5(() => {
+    var u17;
+    o15 && i14(false), (u17 = e9.beforeEnter) == null || u17.call(e9);
+  }), U4 = o5(() => {
+    var u17;
+    o15 && i14(false), (u17 = e9.beforeLeave) == null || u17.call(e9);
+  }), H6 = K2();
+  return import_react51.default.createElement(w8.Provider, { value: v7 }, import_react51.default.createElement(V4.Provider, { value: s14 }, H6({ ourProps: { ...r16, as: import_react51.Fragment, children: import_react51.default.createElement(me, { ref: C9, ...r16, ...R5, beforeEnter: f15, beforeLeave: U4 }) }, theirProps: {}, defaultTag: import_react51.Fragment, features: fe, visible: h8 === "visible", name: "Transition" })));
+}
+function Le(e9, t12) {
+  let n15 = import_react51.useContext(V4) !== null, l12 = u14() !== null;
+  return import_react51.default.createElement(import_react51.default.Fragment, null, !n15 && l12 ? import_react51.default.createElement(X3, { ref: t12, ...e9 }) : import_react51.default.createElement(me, { ref: t12, ...e9 }));
+}
+var X3 = Y2(Ie2);
+var me = Y2(Fe);
+var Oe2 = Y2(Le);
+var Ke = Object.assign(X3, { Child: Oe2, Root: X3 });
+
+// node_modules/@headlessui/react/dist/components/dialog/dialog.js
+"use client";
+var we = ((o15) => (o15[o15.Open = 0] = "Open", o15[o15.Closed = 1] = "Closed", o15))(we || {});
+var Be = ((t12) => (t12[t12.SetTitleId = 0] = "SetTitleId", t12))(Be || {});
+var Ue = { [0](e9, t12) {
+  return e9.titleId === t12.id ? e9 : { ...e9, titleId: t12.id };
+} };
+var w9 = import_react52.createContext(null);
+w9.displayName = "DialogContext";
+function O4(e9) {
+  let t12 = import_react52.useContext(w9);
+  if (t12 === null) {
+    let o15 = new Error(`<${e9} /> is missing a parent <Dialog /> component.`);
+    throw Error.captureStackTrace && Error.captureStackTrace(o15, O4), o15;
+  }
+  return t12;
+}
+function He2(e9, t12) {
+  return u2(t12.type, Ue, e9, t12);
+}
+var z = Y2(function(t12, o15) {
+  let a20 = import_react21.useId(), { id: n15 = `headlessui-dialog-${a20}`, open: i14, onClose: p8, initialFocus: d10, role: s14 = "dialog", autoFocus: f15 = true, __demoMode: u17 = false, unmount: y6 = false, ...S8 } = t12, R5 = import_react52.useRef(false);
+  s14 = function() {
+    return s14 === "dialog" || s14 === "alertdialog" ? s14 : (R5.current || (R5.current = true, console.warn(`Invalid role [${s14}] passed to <Dialog />. Only \`dialog\` and and \`alertdialog\` are supported. Using \`dialog\` instead.`)), "dialog");
+  }();
+  let g5 = u14();
+  i14 === undefined && g5 !== null && (i14 = (g5 & i11.Open) === i11.Open);
+  let T8 = import_react52.useRef(null), I8 = y2(T8, o15), F3 = u13(T8.current), c15 = i14 ? 0 : 1, [b10, Q2] = import_react52.useReducer(He2, { titleId: null, descriptionId: null, panelRef: import_react52.createRef() }), m10 = o5(() => p8(false)), B3 = o5((r16) => Q2({ type: 0, id: r16 })), D6 = l10() ? c15 === 0 : false, [Z3, ee2] = oe(), te2 = { get current() {
+    var r16;
+    return (r16 = b10.panelRef.current) != null ? r16 : T8.current;
+  } }, v7 = x6(), { resolveContainers: M6 } = S7({ mainTreeNode: v7, portals: Z3, defaultContainers: [te2] }), U4 = g5 !== null ? (g5 & i11.Closing) === i11.Closing : false;
+  y5(u17 || U4 ? false : D6, { allowed: o5(() => {
+    var r16, W;
+    return [(W = (r16 = T8.current) == null ? undefined : r16.closest("[data-headlessui-portal]")) != null ? W : null];
+  }), disallowed: o5(() => {
+    var r16;
+    return [(r16 = v7 == null ? undefined : v7.closest("body > *:not(#headlessui-portal-root)")) != null ? r16 : null];
+  }) });
+  let P5 = x2.get(null);
+  n2(() => {
+    if (D6)
+      return P5.actions.push(n15), () => P5.actions.pop(n15);
+  }, [P5, n15, D6]);
+  let H6 = S4(P5, import_react52.useCallback((r16) => P5.selectors.isTop(r16, n15), [P5, n15]));
+  k5(H6, M6, (r16) => {
+    r16.preventDefault(), m10();
+  }), a18(H6, F3 == null ? undefined : F3.defaultView, (r16) => {
+    r16.preventDefault(), r16.stopPropagation(), document.activeElement && "blur" in document.activeElement && typeof document.activeElement.blur == "function" && document.activeElement.blur(), m10();
+  }), f10(u17 || U4 ? false : D6, F3, M6), p6(D6, T8, m10);
+  let [oe3, ne3] = H3(), re2 = import_react52.useMemo(() => [{ dialogState: c15, close: m10, setTitleId: B3, unmount: y6 }, b10], [c15, m10, B3, y6, b10]), N3 = n3({ open: c15 === 0 }), le2 = { ref: I8, id: n15, role: s14, tabIndex: -1, "aria-modal": u17 ? undefined : c15 === 0 ? true : undefined, "aria-labelledby": b10.titleId, "aria-describedby": oe3, unmount: y6 }, ae = !f13(), E10 = G5.None;
+  D6 && !u17 && (E10 |= G5.RestoreFocus, E10 |= G5.TabLock, f15 && (E10 |= G5.AutoFocus), ae && (E10 |= G5.InitialFocus));
+  let ie2 = K2();
+  return import_react52.default.createElement(s11, null, import_react52.default.createElement(l11, { force: true }, import_react52.default.createElement(le, null, import_react52.default.createElement(w9.Provider, { value: re2 }, import_react52.default.createElement(B2, { target: T8 }, import_react52.default.createElement(l11, { force: false }, import_react52.default.createElement(ne3, { slot: N3 }, import_react52.default.createElement(ee2, null, import_react52.default.createElement(ge, { initialFocus: d10, initialFocusFallback: T8, containers: M6, features: E10 }, import_react52.default.createElement(C6, { value: m10 }, ie2({ ourProps: le2, theirProps: S8, slot: N3, defaultTag: Ne, features: We, visible: c15 === 0, name: "Dialog" })))))))))));
+});
+var Ne = "div";
+var We = A.RenderStrategy | A.Static;
+function $e(e9, t12) {
+  let { transition: o15 = false, open: a20, ...n15 } = e9, i14 = u14(), p8 = e9.hasOwnProperty("open") || i14 !== null, d10 = e9.hasOwnProperty("onClose");
+  if (!p8 && !d10)
+    throw new Error("You have to provide an `open` and an `onClose` prop to the `Dialog` component.");
+  if (!p8)
+    throw new Error("You provided an `onClose` prop to the `Dialog`, but forgot an `open` prop.");
+  if (!d10)
+    throw new Error("You provided an `open` prop to the `Dialog`, but forgot an `onClose` prop.");
+  if (!i14 && typeof e9.open != "boolean")
+    throw new Error(`You provided an \`open\` prop to the \`Dialog\`, but the value is not a boolean. Received: ${e9.open}`);
+  if (typeof e9.onClose != "function")
+    throw new Error(`You provided an \`onClose\` prop to the \`Dialog\`, but the value is not a function. Received: ${e9.onClose}`);
+  return (a20 !== undefined || o15) && !n15.static ? import_react52.default.createElement(j7, null, import_react52.default.createElement(Ke, { show: a20, transition: o15, unmount: n15.unmount }, import_react52.default.createElement(z, { ref: t12, ...n15 }))) : import_react52.default.createElement(j7, null, import_react52.default.createElement(z, { ref: t12, open: a20, ...n15 }));
+}
+var je = "div";
+function Ye(e9, t12) {
+  let o15 = import_react21.useId(), { id: a20 = `headlessui-dialog-panel-${o15}`, transition: n15 = false, ...i14 } = e9, [{ dialogState: p8, unmount: d10 }, s14] = O4("Dialog.Panel"), f15 = y2(t12, s14.panelRef), u17 = n3({ open: p8 === 0 }), y6 = o5((I8) => {
+    I8.stopPropagation();
+  }), S8 = { ref: f15, id: a20, onClick: y6 }, R5 = n15 ? Oe2 : import_react52.Fragment, g5 = n15 ? { unmount: d10 } : {}, T8 = K2();
+  return import_react52.default.createElement(R5, { ...g5 }, T8({ ourProps: S8, theirProps: i14, slot: u17, defaultTag: je, name: "Dialog.Panel" }));
+}
+var Je = "div";
+function Ke2(e9, t12) {
+  let { transition: o15 = false, ...a20 } = e9, [{ dialogState: n15, unmount: i14 }] = O4("Dialog.Backdrop"), p8 = n3({ open: n15 === 0 }), d10 = { ref: t12, "aria-hidden": true }, s14 = o15 ? Oe2 : import_react52.Fragment, f15 = o15 ? { unmount: i14 } : {}, u17 = K2();
+  return import_react52.default.createElement(s14, { ...f15 }, u17({ ourProps: d10, theirProps: a20, slot: p8, defaultTag: Je, name: "Dialog.Backdrop" }));
+}
+var Xe = "h2";
+function Ve(e9, t12) {
+  let o15 = import_react21.useId(), { id: a20 = `headlessui-dialog-title-${o15}`, ...n15 } = e9, [{ dialogState: i14, setTitleId: p8 }] = O4("Dialog.Title"), d10 = y2(t12);
+  import_react52.useEffect(() => (p8(a20), () => p8(null)), [a20, p8]);
+  let s14 = n3({ open: i14 === 0 }), f15 = { ref: d10, id: a20 };
+  return K2()({ ourProps: f15, theirProps: n15, slot: s14, defaultTag: Xe, name: "Dialog.Title" });
+}
+var qe2 = Y2($e);
+var ze = Y2(Ye);
+var Lt = Y2(Ke2);
+var Qe = Y2(Ve);
+var ht = Object.assign(qe2, { Panel: ze, Title: Qe, Description: M2 });
 
 // node_modules/@headlessui/react/dist/components/input/input.js
 "use client";
-var x2 = "input";
-function h4(r7, p4) {
-  let n7 = import_react21.useId(), s8 = u5(), a10 = a4(), { id: l7 = s8 || `headlessui-input-${n7}`, disabled: e5 = a10 || false, autoFocus: o10 = false, invalid: t7 = false, ...i6 } = r7, d5 = N(), u8 = w4(), { isFocused: f8, focusProps: m7 } = $0c4a58759813079a$export$4e328f61c538687f({ autoFocus: o10 }), { isHovered: T3, hoverProps: b4 } = $e969f22b6713ca4a$export$ae780daf29e6d456({ isDisabled: e5 }), y3 = V2({ ref: p4, id: l7, "aria-labelledby": d5, "aria-describedby": u8, "aria-invalid": t7 ? "true" : undefined, disabled: e5 || undefined, autoFocus: o10 }, m7, b4), I4 = n3({ disabled: e5, invalid: t7, hover: T3, focus: f8, autofocus: o10 });
-  return K2()({ ourProps: y3, theirProps: i6, slot: I4, defaultTag: x2, name: "Input" });
+var x8 = "input";
+function h8(r16, p8) {
+  let n15 = import_react21.useId(), s14 = u5(), a20 = a4(), { id: l13 = s14 || `headlessui-input-${n15}`, disabled: e9 = a20 || false, autoFocus: o15 = false, invalid: t12 = false, ...i14 } = r16, d10 = N(), u17 = w4(), { isFocused: f15, focusProps: m10 } = $0c4a58759813079a$export$4e328f61c538687f({ autoFocus: o15 }), { isHovered: T8, hoverProps: b10 } = $e969f22b6713ca4a$export$ae780daf29e6d456({ isDisabled: e9 }), y6 = V2({ ref: p8, id: l13, "aria-labelledby": d10, "aria-describedby": u17, "aria-invalid": t12 ? "true" : undefined, disabled: e9 || undefined, autoFocus: o15 }, m10, b10), I8 = n3({ disabled: e9, invalid: t12, hover: T8, focus: f15, autofocus: o15 });
+  return K2()({ ourProps: y6, theirProps: i14, slot: I8, defaultTag: x8, name: "Input" });
 }
-var X2 = Y2(h4);
+var X4 = Y2(h8);
 
 // node_modules/@headlessui/react/dist/components/switch/switch.js
-var import_react29 = __toESM(require_react(), 1);
+var import_react53 = __toESM(require_react(), 1);
 "use client";
-var E6 = import_react29.createContext(null);
-E6.displayName = "GroupContext";
-var ve = import_react29.Fragment;
-function xe(n7) {
-  var c5;
-  let [t7, a10] = import_react29.useState(null), [f8, h5] = V3(), [b4, o10] = H3(), s8 = import_react29.useMemo(() => ({ switch: t7, setSwitch: a10 }), [t7, a10]), T3 = {}, y3 = n7, p4 = K2();
-  return import_react29.default.createElement(o10, { name: "Switch.Description", value: b4 }, import_react29.default.createElement(h5, { name: "Switch.Label", value: f8, props: { htmlFor: (c5 = s8.switch) == null ? undefined : c5.id, onClick(u8) {
-    t7 && (m5(u8.currentTarget) && u8.preventDefault(), t7.click(), t7.focus({ preventScroll: true }));
-  } } }, import_react29.default.createElement(E6.Provider, { value: s8 }, p4({ ourProps: T3, theirProps: y3, slot: {}, defaultTag: ve, name: "Switch.Group" }))));
+var E10 = import_react53.createContext(null);
+E10.displayName = "GroupContext";
+var ve = import_react53.Fragment;
+function xe(n15) {
+  var c15;
+  let [t12, a20] = import_react53.useState(null), [f15, h9] = V3(), [b10, o15] = H3(), s14 = import_react53.useMemo(() => ({ switch: t12, setSwitch: a20 }), [t12, a20]), T8 = {}, y6 = n15, p8 = K2();
+  return import_react53.default.createElement(o15, { name: "Switch.Description", value: b10 }, import_react53.default.createElement(h9, { name: "Switch.Label", value: f15, props: { htmlFor: (c15 = s14.switch) == null ? undefined : c15.id, onClick(u17) {
+    t12 && (m5(u17.currentTarget) && u17.preventDefault(), t12.click(), t12.focus({ preventScroll: true }));
+  } } }, import_react53.default.createElement(E10.Provider, { value: s14 }, p8({ ourProps: T8, theirProps: y6, slot: {}, defaultTag: ve, name: "Switch.Group" }))));
 }
 var Ce = "button";
-function Le(n7, t7) {
-  var g4;
-  let a10 = import_react21.useId(), f8 = u5(), h5 = a4(), { id: b4 = f8 || `headlessui-switch-${a10}`, disabled: o10 = h5 || false, checked: s8, defaultChecked: T3, onChange: y3, name: p4, value: c5, form: u8, autoFocus: S3 = false, ...C6 } = n7, _3 = import_react29.useContext(E6), [L5, R3] = import_react29.useState(null), G3 = import_react29.useRef(null), A2 = y2(G3, t7, _3 === null ? null : _3.setSwitch, R3), l7 = l3(T3), [d5, r7] = b3(s8, y3, l7 != null ? l7 : false), F2 = p2(), [H4, P4] = import_react29.useState(false), D4 = o5(() => {
-    P4(true), r7 == null || r7(!d5), F2.nextFrame(() => {
-      P4(false);
+function Le2(n15, t12) {
+  var g5;
+  let a20 = import_react21.useId(), f15 = u5(), h9 = a4(), { id: b10 = f15 || `headlessui-switch-${a20}`, disabled: o15 = h9 || false, checked: s14, defaultChecked: T8, onChange: y6, name: p8, value: c15, form: u17, autoFocus: S8 = false, ...C9 } = n15, _5 = import_react53.useContext(E10), [L6, R5] = import_react53.useState(null), G6 = import_react53.useRef(null), A5 = y2(G6, t12, _5 === null ? null : _5.setSwitch, R5), l13 = l3(T8), [d10, r16] = b3(s14, y6, l13 != null ? l13 : false), F3 = p2(), [H6, P5] = import_react53.useState(false), D6 = o5(() => {
+    P5(true), r16 == null || r16(!d10), F3.nextFrame(() => {
+      P5(false);
     });
-  }), k4 = o5((e5) => {
-    if (s7(e5.currentTarget))
-      return e5.preventDefault();
-    e5.preventDefault(), D4();
-  }), M3 = o5((e5) => {
-    e5.key === o9.Space ? (e5.preventDefault(), D4()) : e5.key === o9.Enter && g2(e5.currentTarget);
-  }), U4 = o5((e5) => e5.preventDefault()), I4 = N(), B2 = w4(), { isFocusVisible: K3, focusProps: O2 } = $0c4a58759813079a$export$4e328f61c538687f({ autoFocus: S3 }), { isHovered: W, hoverProps: N2 } = $e969f22b6713ca4a$export$ae780daf29e6d456({ isDisabled: o10 }), { pressed: J2, pressProps: V4 } = w2({ disabled: o10 }), X3 = n3({ checked: d5, disabled: o10, hover: W, focus: K3, active: J2, autofocus: S3, changing: H4 }), j4 = V2({ id: b4, ref: A2, role: "switch", type: e4(n7, L5), tabIndex: n7.tabIndex === -1 ? 0 : (g4 = n7.tabIndex) != null ? g4 : 0, "aria-checked": d5, "aria-labelledby": I4, "aria-describedby": B2, disabled: o10 || undefined, autoFocus: S3, onClick: k4, onKeyUp: M3, onKeyPress: U4 }, O2, N2, V4), $2 = import_react29.useCallback(() => {
-    if (l7 !== undefined)
-      return r7 == null ? undefined : r7(l7);
-  }, [r7, l7]), q = K2();
-  return import_react29.default.createElement(import_react29.default.Fragment, null, p4 != null && import_react29.default.createElement(j2, { disabled: o10, data: { [p4]: c5 || "on" }, overrides: { type: "checkbox", checked: d5 }, form: u8, onReset: $2 }), q({ ourProps: j4, theirProps: C6, slot: X3, defaultTag: Ce, name: "Switch" }));
+  }), k8 = o5((e9) => {
+    if (s7(e9.currentTarget))
+      return e9.preventDefault();
+    e9.preventDefault(), D6();
+  }), M6 = o5((e9) => {
+    e9.key === o9.Space ? (e9.preventDefault(), D6()) : e9.key === o9.Enter && g2(e9.currentTarget);
+  }), U4 = o5((e9) => e9.preventDefault()), I8 = N(), B3 = w4(), { isFocusVisible: K3, focusProps: O5 } = $0c4a58759813079a$export$4e328f61c538687f({ autoFocus: S8 }), { isHovered: W, hoverProps: N3 } = $e969f22b6713ca4a$export$ae780daf29e6d456({ isDisabled: o15 }), { pressed: J3, pressProps: V5 } = w2({ disabled: o15 }), X5 = n3({ checked: d10, disabled: o15, hover: W, focus: K3, active: J3, autofocus: S8, changing: H6 }), j9 = V2({ id: b10, ref: A5, role: "switch", type: e6(n15, L6), tabIndex: n15.tabIndex === -1 ? 0 : (g5 = n15.tabIndex) != null ? g5 : 0, "aria-checked": d10, "aria-labelledby": I8, "aria-describedby": B3, disabled: o15 || undefined, autoFocus: S8, onClick: k8, onKeyUp: M6, onKeyPress: U4 }, O5, N3, V5), $4 = import_react53.useCallback(() => {
+    if (l13 !== undefined)
+      return r16 == null ? undefined : r16(l13);
+  }, [r16, l13]), q2 = K2();
+  return import_react53.default.createElement(import_react53.default.Fragment, null, p8 != null && import_react53.default.createElement(j2, { disabled: o15, data: { [p8]: c15 || "on" }, overrides: { type: "checkbox", checked: d10 }, form: u17, onReset: $4 }), q2({ ourProps: j9, theirProps: C9, slot: X5, defaultTag: Ce, name: "Switch" }));
 }
-var Re = Y2(Le);
+var Re = Y2(Le2);
 var Ge = xe;
-var Ae = Z2;
-var Fe = M2;
-var tt = Object.assign(Re, { Group: Ge, Label: Ae, Description: Fe });
+var Ae2 = Z2;
+var Fe2 = M2;
+var tt = Object.assign(Re, { Group: Ge, Label: Ae2, Description: Fe2 });
 
 // src/ui/App.jsx
 var jsx_dev_runtime = __toESM(require_jsx_dev_runtime(), 1);
@@ -18825,24 +20159,24 @@ function hasCapability(device, type, instance) {
   return device.capabilities.some((capability) => capability.type === type && capability.instance === instance);
 }
 function useLightSocket() {
-  const socketRef = import_react30.useRef(null);
-  const reconnectTimer = import_react30.useRef(null);
-  const [connected, setConnected] = import_react30.useState(false);
-  const [snapshot, setSnapshot] = import_react30.useState({ devices: [], configuredProviders: [], hueConfigured: false, elgatoLights: [] });
-  const [toast, setToast] = import_react30.useState(null);
-  const [hueBridges, setHueBridges] = import_react30.useState([]);
-  const [discoveringHue, setDiscoveringHue] = import_react30.useState(false);
-  const [pairingHue, setPairingHue] = import_react30.useState(false);
-  const [huePairCount, setHuePairCount] = import_react30.useState(0);
-  const [elgatoDiscovered, setElgatoDiscovered] = import_react30.useState([]);
-  const [discoveringElgato, setDiscoveringElgato] = import_react30.useState(false);
-  const [elgatoBusy, setElgatoBusy] = import_react30.useState("");
-  const notify = import_react30.useCallback((message, error = false) => {
+  const socketRef = import_react54.useRef(null);
+  const reconnectTimer = import_react54.useRef(null);
+  const [connected, setConnected] = import_react54.useState(false);
+  const [snapshot, setSnapshot] = import_react54.useState({ devices: [], configuredProviders: [], hueConfigured: false, hueBridgeIp: null, elgatoLights: [] });
+  const [toast, setToast] = import_react54.useState(null);
+  const [hueBridges, setHueBridges] = import_react54.useState([]);
+  const [discoveringHue, setDiscoveringHue] = import_react54.useState(false);
+  const [pairingHue, setPairingHue] = import_react54.useState(false);
+  const [huePairCount, setHuePairCount] = import_react54.useState(0);
+  const [elgatoDiscovered, setElgatoDiscovered] = import_react54.useState([]);
+  const [discoveringElgato, setDiscoveringElgato] = import_react54.useState(false);
+  const [elgatoBusy, setElgatoBusy] = import_react54.useState("");
+  const notify = import_react54.useCallback((message, error = false) => {
     setToast({ message, error });
     window.clearTimeout(notify.timer);
     notify.timer = window.setTimeout(() => setToast(null), 2600);
   }, []);
-  const send = import_react30.useCallback((message) => {
+  const send = import_react54.useCallback((message) => {
     const socket = socketRef.current;
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       notify("Connecting to the light controller…", true);
@@ -18851,7 +20185,7 @@ function useLightSocket() {
     socket.send(JSON.stringify({ ...message, requestId: crypto.randomUUID() }));
     return true;
   }, [notify]);
-  import_react30.useEffect(() => {
+  import_react54.useEffect(() => {
     let stopped = false;
     const connect = () => {
       if (stopped)
@@ -18905,32 +20239,32 @@ function useLightSocket() {
       socketRef.current?.close();
     };
   }, [notify]);
-  const discoverHue = import_react30.useCallback(() => {
+  const discoverHue = import_react54.useCallback(() => {
     setDiscoveringHue(true);
     if (!send({ type: "discover-hue" }))
       setDiscoveringHue(false);
   }, [send]);
-  const pairHue = import_react30.useCallback((bridgeIp) => {
+  const pairHue = import_react54.useCallback((bridgeIp) => {
     setPairingHue(true);
     if (!send({ type: "pair-hue", bridgeIp }))
       setPairingHue(false);
   }, [send]);
-  const discoverElgato = import_react30.useCallback(() => {
+  const discoverElgato = import_react54.useCallback(() => {
     setDiscoveringElgato(true);
     if (!send({ type: "discover-elgato" }))
       setDiscoveringElgato(false);
   }, [send]);
-  const addElgatoLight = import_react30.useCallback((ip) => {
+  const addElgatoLight = import_react54.useCallback((ip) => {
     setElgatoBusy(`add:${ip}`);
     if (!send({ type: "add-elgato-light", ip }))
       setElgatoBusy("");
   }, [send]);
-  const removeElgatoLight = import_react30.useCallback((id) => {
+  const removeElgatoLight = import_react54.useCallback((id) => {
     setElgatoBusy(`remove:${id}`);
     if (!send({ type: "remove-elgato-light", id }))
       setElgatoBusy("");
   }, [send]);
-  const flashElgatoLight = import_react30.useCallback((id) => {
+  const flashElgatoLight = import_react54.useCallback((id) => {
     setElgatoBusy(`flash:${id}`);
     if (!send({ type: "flash-elgato-light", id }))
       setElgatoBusy("");
@@ -18938,10 +20272,10 @@ function useLightSocket() {
   return { ...snapshot, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight };
 }
 function ColorControl({ device, connected, send }) {
-  const [color, setColor] = import_react30.useState("#ffffff");
-  const [open, setOpen] = import_react30.useState(false);
-  const rootRef = import_react30.useRef(null);
-  const commit = import_react30.useCallback((value) => {
+  const [color, setColor] = import_react54.useState("#ffffff");
+  const [open, setOpen] = import_react54.useState(false);
+  const rootRef = import_react54.useRef(null);
+  const commit = import_react54.useCallback((value) => {
     const hex = (typeof value === "string" ? value : color).replace("#", "");
     if (!/^[0-9a-f]{6}$/i.test(hex))
       return;
@@ -18953,23 +20287,23 @@ function ColorControl({ device, connected, send }) {
   const palette = device.palette ?? [];
   const paletteFull = palette.length >= 12;
   const inPalette = palette.some((entry) => entry.toLowerCase() === color.toLowerCase());
-  const applyPreset = import_react30.useCallback((hex) => {
+  const applyPreset = import_react54.useCallback((hex) => {
     setColor(hex);
     const red = parseInt(hex.slice(1, 3), 16);
     const green = parseInt(hex.slice(3, 5), 16);
     const blue = parseInt(hex.slice(5, 7), 16);
     send({ type: "control", providerId: device.provider, deviceId: device.id, command: { type: "color", red, green, blue } });
   }, [device, send]);
-  const addPreset = import_react30.useCallback(() => {
+  const addPreset = import_react54.useCallback(() => {
     if (palette.some((entry) => entry.toLowerCase() === color.toLowerCase()))
       return;
     send({ type: "add-palette-color", providerId: device.provider, deviceId: device.id, color });
     setOpen(false);
   }, [palette, color, device, send]);
-  const removePreset = import_react30.useCallback((hex) => {
+  const removePreset = import_react54.useCallback((hex) => {
     send({ type: "remove-palette-color", providerId: device.provider, deviceId: device.id, color: hex });
   }, [device, send]);
-  import_react30.useEffect(() => {
+  import_react54.useEffect(() => {
     if (!open)
       return;
     const close = (event) => {
@@ -19084,16 +20418,16 @@ function ColorControl({ device, connected, send }) {
   }, undefined, true, undefined, this);
 }
 function DeviceCard({ device, connected, send }) {
-  const [name, setName] = import_react30.useState(device.customName ?? "");
-  const [powerOn, setPowerOn] = import_react30.useState(device.state?.on ?? false);
-  const [brightness, setBrightness] = import_react30.useState(50);
-  const [temperature, setTemperature] = import_react30.useState(4000);
-  const [editing, setEditing] = import_react30.useState(false);
-  import_react30.useEffect(() => {
+  const [name, setName] = import_react54.useState(device.customName ?? "");
+  const [powerOn, setPowerOn] = import_react54.useState(device.state?.on ?? false);
+  const [brightness, setBrightness] = import_react54.useState(50);
+  const [temperature, setTemperature] = import_react54.useState(4000);
+  const [editing, setEditing] = import_react54.useState(false);
+  import_react54.useEffect(() => {
     if (!editing)
       setName(device.customName ?? "");
   }, [device.customName, editing]);
-  import_react30.useEffect(() => {
+  import_react54.useEffect(() => {
     if (device.state?.on !== undefined)
       setPowerOn(device.state.on);
   }, [device.state?.on]);
@@ -19132,7 +20466,7 @@ function DeviceCard({ device, connected, send }) {
         children: [
           /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
             children: [
-              editing ? /* @__PURE__ */ jsx_dev_runtime.jsxDEV(X2, {
+              editing ? /* @__PURE__ */ jsx_dev_runtime.jsxDEV(X4, {
                 className: "name-input",
                 value: name,
                 onChange: (event) => setName(event.target.value),
@@ -19266,235 +20600,266 @@ function DeviceCard({ device, connected, send }) {
     ]
   }, undefined, true, undefined, this);
 }
-function SetupPanel({ open, onClose, bridges, discovering, pairing, onDiscover, onPair, elgatoDiscovered, discoveringElgato, elgatoBusy, elgatoLights, onDiscoverElgato, onAddElgato, onRemoveElgato, onFlashElgato }) {
-  const [bridgeIp, setBridgeIp] = import_react30.useState("");
-  const [elgatoIp, setElgatoIp] = import_react30.useState("");
-  if (!open)
-    return null;
-  return /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
-    className: "setup-panel",
+function SetupPanel({ open, onClose, hueBridgeIp, bridges, discovering, pairing, onDiscover, onPair, elgatoDiscovered, discoveringElgato, elgatoBusy, elgatoLights, onDiscoverElgato, onAddElgato, onRemoveElgato, onFlashElgato }) {
+  const [bridgeIp, setBridgeIp] = import_react54.useState("");
+  const [elgatoIp, setElgatoIp] = import_react54.useState("");
+  return /* @__PURE__ */ jsx_dev_runtime.jsxDEV(ht, {
+    open,
+    onClose,
+    transition: true,
+    className: "dialog-root",
     children: [
+      /* @__PURE__ */ jsx_dev_runtime.jsxDEV(Lt, {
+        transition: true,
+        className: "dialog-backdrop"
+      }, undefined, false, undefined, this),
       /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "setup-heading",
-        children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
-                className: "eyebrow",
-                children: "Local connections"
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("h2", {
-                children: "Set up lights"
-              }, undefined, false, undefined, this)
-            ]
-          }, undefined, true, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-            className: "close-button",
-            type: "button",
-            onClick: onClose,
-            "aria-label": "Close setup",
-            children: "×"
-          }, undefined, false, undefined, this)
-        ]
-      }, undefined, true, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "setup-block",
-        children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
-            className: "setup-copy",
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("strong", {
-                children: "Philips Hue"
-              }, undefined, false, undefined, this),
-              " — find your bridge on the local network. Press the round link button on top of the bridge, then click Pair bridge within 30 seconds."
-            ]
-          }, undefined, true, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-            className: "secondary-button",
-            type: "button",
-            onClick: onDiscover,
-            disabled: discovering,
-            children: discovering ? "Searching…" : "Find Hue bridges"
-          }, undefined, false, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "hue-bridges",
-            "aria-live": "polite",
-            children: [
-              !discovering && bridges.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                className: "device-meta",
-                children: "No bridges found. Enter the bridge IP address below."
-              }, undefined, false, undefined, this),
-              bridges.map((bridge) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-                className: "bridge-option",
-                children: [
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                    children: bridge.internalipaddress
-                  }, undefined, false, undefined, this),
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                    type: "button",
-                    onClick: () => setBridgeIp(bridge.internalipaddress),
-                    children: "Use this bridge"
+        className: "dialog-positioner",
+        children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV(ze, {
+          transition: true,
+          className: "setup-panel",
+          children: [
+            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+              className: "setup-heading",
+              children: [
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                  children: [
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
+                      className: "eyebrow",
+                      children: "Local connections"
+                    }, undefined, false, undefined, this),
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV(Qe, {
+                      children: "Set up lights"
+                    }, undefined, false, undefined, this)
+                  ]
+                }, undefined, true, undefined, this),
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV(y3, {
+                  className: "close-button",
+                  "aria-label": "Close setup",
+                  children: "×"
+                }, undefined, false, undefined, this)
+              ]
+            }, undefined, true, undefined, this),
+            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+              className: "setup-block",
+              children: [
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
+                  className: "setup-copy",
+                  children: [
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("strong", {
+                      children: "Philips Hue"
+                    }, undefined, false, undefined, this),
+                    " — find your bridge on the local network. Press the round link button on top of the bridge, then click Pair bridge within 30 seconds."
+                  ]
+                }, undefined, true, undefined, this),
+                hueBridgeIp && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                  className: "hue-bridges",
+                  children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                    className: "bridge-option",
+                    children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                      children: [
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                          className: "connection-status connected",
+                          children: [
+                            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {}, undefined, false, undefined, this),
+                            "Connected"
+                          ]
+                        }, undefined, true, undefined, this),
+                        " · ",
+                        hueBridgeIp
+                      ]
+                    }, undefined, true, undefined, this)
                   }, undefined, false, undefined, this)
-                ]
-              }, bridge.internalipaddress, true, undefined, this))
-            ]
-          }, undefined, true, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("form", {
-            className: "hue-pair-form",
-            onSubmit: (event) => {
-              event.preventDefault();
-              onPair(bridgeIp);
-            },
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("label", {
-                className: "setup-label",
-                htmlFor: "hue-bridge-ip",
-                children: "Bridge IP address"
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-                className: "setup-row",
-                children: [
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
-                    id: "hue-bridge-ip",
-                    type: "text",
-                    inputMode: "url",
-                    value: bridgeIp,
-                    onChange: (event) => setBridgeIp(event.target.value),
-                    placeholder: "192.168.1.100",
-                    required: true
-                  }, undefined, false, undefined, this),
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                    className: "save-name-button",
-                    type: "submit",
-                    disabled: pairing,
-                    children: pairing ? "Pairing…" : "Pair bridge"
-                  }, undefined, false, undefined, this)
-                ]
-              }, undefined, true, undefined, this)
-            ]
-          }, undefined, true, undefined, this)
-        ]
-      }, undefined, true, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "setup-block",
-        children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
-            className: "setup-copy",
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("strong", {
-                children: "Elgato Key Lights"
-              }, undefined, false, undefined, this),
-              " — find your lights on the local network, or add one by IP address."
-            ]
-          }, undefined, true, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "setup-row",
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
-                id: "elgato-ip",
-                type: "text",
-                inputMode: "url",
-                value: elgatoIp,
-                onChange: (event) => setElgatoIp(event.target.value),
-                placeholder: "192.168.1.100"
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                className: "save-name-button",
-                type: "button",
-                disabled: Boolean(elgatoBusy),
-                onClick: () => {
-                  const ip = elgatoIp.trim();
-                  if (ip)
-                    onAddElgato(ip);
-                },
-                children: "Add by IP"
-              }, undefined, false, undefined, this)
-            ]
-          }, undefined, true, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-            className: "secondary-button",
-            type: "button",
-            onClick: onDiscoverElgato,
-            disabled: discoveringElgato,
-            children: discoveringElgato ? "Searching…" : "Find Elgato lights"
-          }, undefined, false, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "hue-bridges",
-            "aria-live": "polite",
-            children: [
-              !discoveringElgato && elgatoDiscovered.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                className: "device-meta",
-                children: "No lights found. Elgato lights advertise on the local network via mDNS."
-              }, undefined, false, undefined, this),
-              elgatoDiscovered.map((light) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-                className: "bridge-option",
-                children: [
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                    children: [
-                      light.name,
-                      light.model ? ` (${light.model})` : "",
-                      " · ",
-                      light.ip
-                    ]
-                  }, undefined, true, undefined, this),
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                    type: "button",
-                    disabled: Boolean(elgatoBusy),
-                    onClick: () => onAddElgato(light.ip),
-                    children: "Add"
-                  }, undefined, false, undefined, this)
-                ]
-              }, `${light.id}@${light.ip}`, true, undefined, this))
-            ]
-          }, undefined, true, undefined, this),
-          elgatoLights.length > 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "hue-bridges",
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                className: "device-meta",
-                children: "Added lights"
-              }, undefined, false, undefined, this),
-              elgatoLights.map((light) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-                className: "bridge-option",
-                children: [
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                    children: [
-                      light.name ?? light.id,
-                      " · ",
-                      light.ip
-                    ]
-                  }, undefined, true, undefined, this),
-                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                    className: "setup-row",
-                    children: [
-                      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                        type: "button",
-                        disabled: Boolean(elgatoBusy),
-                        onClick: () => onFlashElgato(light.id),
-                        children: "Flash"
-                      }, undefined, false, undefined, this),
-                      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                        type: "button",
-                        disabled: Boolean(elgatoBusy),
-                        onClick: () => onRemoveElgato(light.id),
-                        children: "Remove"
-                      }, undefined, false, undefined, this)
-                    ]
-                  }, undefined, true, undefined, this)
-                ]
-              }, light.id, true, undefined, this))
-            ]
-          }, undefined, true, undefined, this)
-        ]
-      }, undefined, true, undefined, this)
+                }, undefined, false, undefined, this),
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                  className: "secondary-button",
+                  type: "button",
+                  onClick: onDiscover,
+                  disabled: discovering,
+                  children: discovering ? "Searching…" : "Find Hue bridges"
+                }, undefined, false, undefined, this),
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                  className: "hue-bridges",
+                  "aria-live": "polite",
+                  children: [
+                    !discovering && !hueBridgeIp && bridges.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                      className: "device-meta",
+                      children: "No bridges found. Enter the bridge IP address below."
+                    }, undefined, false, undefined, this),
+                    bridges.filter((bridge) => bridge.internalipaddress !== hueBridgeIp).map((bridge) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                      className: "bridge-option",
+                      children: [
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                          children: bridge.internalipaddress
+                        }, undefined, false, undefined, this),
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                          type: "button",
+                          onClick: () => setBridgeIp(bridge.internalipaddress),
+                          children: "Use this bridge"
+                        }, undefined, false, undefined, this)
+                      ]
+                    }, bridge.internalipaddress, true, undefined, this))
+                  ]
+                }, undefined, true, undefined, this),
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("form", {
+                  className: "hue-pair-form",
+                  onSubmit: (event) => {
+                    event.preventDefault();
+                    onPair(bridgeIp);
+                  },
+                  children: [
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("label", {
+                      className: "setup-label",
+                      htmlFor: "hue-bridge-ip",
+                      children: "Bridge IP address"
+                    }, undefined, false, undefined, this),
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                      className: "setup-row",
+                      children: [
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
+                          id: "hue-bridge-ip",
+                          type: "text",
+                          inputMode: "url",
+                          value: bridgeIp,
+                          onChange: (event) => setBridgeIp(event.target.value),
+                          placeholder: "192.168.1.100",
+                          required: true
+                        }, undefined, false, undefined, this),
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                          className: "save-name-button",
+                          type: "submit",
+                          disabled: pairing,
+                          children: pairing ? "Pairing…" : "Pair bridge"
+                        }, undefined, false, undefined, this)
+                      ]
+                    }, undefined, true, undefined, this)
+                  ]
+                }, undefined, true, undefined, this)
+              ]
+            }, undefined, true, undefined, this),
+            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+              className: "setup-block",
+              children: [
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
+                  className: "setup-copy",
+                  children: [
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("strong", {
+                      children: "Elgato Key Lights"
+                    }, undefined, false, undefined, this),
+                    " — find your lights on the local network, or add one by IP address."
+                  ]
+                }, undefined, true, undefined, this),
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                  className: "setup-row",
+                  children: [
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
+                      id: "elgato-ip",
+                      type: "text",
+                      inputMode: "url",
+                      value: elgatoIp,
+                      onChange: (event) => setElgatoIp(event.target.value),
+                      placeholder: "192.168.1.100"
+                    }, undefined, false, undefined, this),
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                      className: "save-name-button",
+                      type: "button",
+                      disabled: Boolean(elgatoBusy),
+                      onClick: () => {
+                        const ip = elgatoIp.trim();
+                        if (ip)
+                          onAddElgato(ip);
+                      },
+                      children: "Add by IP"
+                    }, undefined, false, undefined, this)
+                  ]
+                }, undefined, true, undefined, this),
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                  className: "secondary-button",
+                  type: "button",
+                  onClick: onDiscoverElgato,
+                  disabled: discoveringElgato,
+                  children: discoveringElgato ? "Searching…" : "Find Elgato lights"
+                }, undefined, false, undefined, this),
+                /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                  className: "hue-bridges",
+                  "aria-live": "polite",
+                  children: [
+                    !discoveringElgato && elgatoDiscovered.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                      className: "device-meta",
+                      children: "No lights found. Elgato lights advertise on the local network via mDNS."
+                    }, undefined, false, undefined, this),
+                    elgatoDiscovered.map((light) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                      className: "bridge-option",
+                      children: [
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                          children: [
+                            light.name,
+                            light.model ? ` (${light.model})` : "",
+                            " · ",
+                            light.ip
+                          ]
+                        }, undefined, true, undefined, this),
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                          type: "button",
+                          disabled: Boolean(elgatoBusy),
+                          onClick: () => onAddElgato(light.ip),
+                          children: "Add"
+                        }, undefined, false, undefined, this)
+                      ]
+                    }, `${light.id}@${light.ip}`, true, undefined, this))
+                  ]
+                }, undefined, true, undefined, this),
+                elgatoLights.length > 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                  className: "hue-bridges",
+                  children: [
+                    /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                      className: "device-meta",
+                      children: "Added lights"
+                    }, undefined, false, undefined, this),
+                    elgatoLights.map((light) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                      className: "bridge-option",
+                      children: [
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                          children: [
+                            light.name ?? light.id,
+                            " · ",
+                            light.ip
+                          ]
+                        }, undefined, true, undefined, this),
+                        /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                          className: "setup-row",
+                          children: [
+                            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                              type: "button",
+                              disabled: Boolean(elgatoBusy),
+                              onClick: () => onFlashElgato(light.id),
+                              children: "Flash"
+                            }, undefined, false, undefined, this),
+                            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                              type: "button",
+                              disabled: Boolean(elgatoBusy),
+                              onClick: () => onRemoveElgato(light.id),
+                              children: "Remove"
+                            }, undefined, false, undefined, this)
+                          ]
+                        }, undefined, true, undefined, this)
+                      ]
+                    }, light.id, true, undefined, this))
+                  ]
+                }, undefined, true, undefined, this)
+              ]
+            }, undefined, true, undefined, this)
+          ]
+        }, undefined, true, undefined, this)
+      }, undefined, false, undefined, this)
     ]
   }, undefined, true, undefined, this);
 }
 function App() {
-  const [setupOpen, setSetupOpen] = import_react30.useState(false);
+  const [setupOpen, setSetupOpen] = import_react54.useState(false);
   const controller = useLightSocket();
-  const { devices, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight, elgatoLights } = controller;
-  import_react30.useEffect(() => {
+  const { devices, connected, toast, send, hueBridges, hueBridgeIp, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight, elgatoLights } = controller;
+  import_react54.useEffect(() => {
     if (huePairCount > 0)
       setSetupOpen(false);
   }, [huePairCount]);
@@ -19551,6 +20916,7 @@ function App() {
       /* @__PURE__ */ jsx_dev_runtime.jsxDEV(SetupPanel, {
         open: setupOpen,
         onClose: () => setSetupOpen(false),
+        hueBridgeIp,
         bridges: hueBridges,
         discovering: discoveringHue,
         pairing: pairingHue,
