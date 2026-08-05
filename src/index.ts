@@ -6,16 +6,24 @@ import { discoverHueBridges } from "./providers/hue-discovery";
 import type { LightCommand, LightDevice, LightProvider } from "./providers/types";
 
 type DeviceNames = Record<string, Record<string, string>>;
+type DevicePalettes = Record<string, Record<string, string[]>>;
+
+const DEFAULT_PALETTE = ["#ffffff", "#ff9500", "#ff3b30", "#34c759", "#007aff"];
+const MAX_PALETTE_SIZE = 12;
+const hexColorPattern = /^#[0-9a-f]{6}$/;
 
 const port = Number(Bun.env.PORT ?? 3000);
 const publicDirectory = `${import.meta.dir}/../public`;
 const dataDirectory = `${import.meta.dir}/../data`;
 const deviceNamesFile = `${dataDirectory}/device-names.json`;
+const devicePalettesFile = `${dataDirectory}/device-palettes.json`;
 const hueConfigFile = `${dataDirectory}/hue-bridge.json`;
 const providers = new Map<string, LightProvider>();
 let deviceNames = await loadDeviceNames();
+let devicePalettes = await loadDevicePalettes();
 let hueConfig = await loadHueConfig();
 let nameWriteQueue = Promise.resolve();
+let paletteWriteQueue = Promise.resolve();
 
 if (Bun.env.GOVEE_API_KEY && Bun.env.GOVEE_API_KEY !== "replace-me") {
   providers.set("govee", new GoveeProvider(Bun.env.GOVEE_API_KEY));
@@ -93,13 +101,110 @@ async function saveDeviceName(providerId: string, deviceId: string, name: string
   await nameWriteQueue;
 }
 
-type AppDevice = LightDevice & { customName: string };
+async function loadDevicePalettes(): Promise<DevicePalettes> {
+  const file = Bun.file(devicePalettesFile);
+  if (!(await file.exists())) return {};
+
+  try {
+    const parsed = await file.json();
+    return parsed && typeof parsed === "object" ? parsed as DevicePalettes : {};
+  } catch {
+    console.warn(`Could not read ${devicePalettesFile}; starting with default palettes.`);
+    return {};
+  }
+}
+
+async function savePalette(providerId: string, deviceId: string, colors: string[]): Promise<void> {
+  const providerPalettes = { ...(devicePalettes[providerId] ?? {}) };
+  providerPalettes[deviceId] = colors;
+
+  devicePalettes = { ...devicePalettes, [providerId]: providerPalettes };
+  paletteWriteQueue = paletteWriteQueue.then(async () => {
+    await mkdir(dataDirectory, { recursive: true });
+    const temporaryFile = `${devicePalettesFile}.tmp`;
+    await Bun.write(temporaryFile, `${JSON.stringify(devicePalettes, null, 2)}\n`);
+    await rename(temporaryFile, devicePalettesFile);
+  });
+  await paletteWriteQueue;
+}
+
+// Devices without a stored palette fall back to the defaults; an explicit empty
+// array is kept so removing every color stays removed.
+function paletteFor(providerId: string, deviceId: string): string[] {
+  return devicePalettes[providerId]?.[deviceId] ?? DEFAULT_PALETTE;
+}
+
+async function addPaletteColor(providerId: string, deviceId: string, rawColor: string): Promise<boolean> {
+  return runPaletteMutation(async () => {
+    const color = rawColor.toLowerCase();
+    if (!hexColorPattern.test(color)) {
+      throw new ProviderError("Colors must be hex values like #ff9500", 400);
+    }
+    const palette = paletteFor(providerId, deviceId);
+    if (palette.includes(color)) return false;
+    if (palette.length >= MAX_PALETTE_SIZE) {
+      throw new ProviderError(`Palettes can hold up to ${MAX_PALETTE_SIZE} colors`, 400);
+    }
+    await savePalette(providerId, deviceId, [...palette, color]);
+    return true;
+  });
+}
+
+async function removePaletteColor(providerId: string, deviceId: string, rawColor: string): Promise<boolean> {
+  return runPaletteMutation(async () => {
+    const color = rawColor.toLowerCase();
+    if (!hexColorPattern.test(color)) {
+      throw new ProviderError("Colors must be hex values like #ff9500", 400);
+    }
+    const palette = paletteFor(providerId, deviceId);
+    if (!palette.includes(color)) return false;
+    await savePalette(providerId, deviceId, palette.filter((entry) => entry !== color));
+    return true;
+  });
+}
+
+// Palette mutations are read-modify-write on shared state, so they are
+// serialized to prevent concurrent adds/removes from overwriting each other.
+let paletteMutationQueue = Promise.resolve();
+
+function runPaletteMutation<T>(task: () => Promise<T>): Promise<T> {
+  const result = paletteMutationQueue.then(task, task);
+  paletteMutationQueue = result.then(() => undefined, () => undefined);
+  return result;
+}
+
+// Cached on/off state, keyed by `${providerId}:${deviceId}`. The cache is the
+// source of truth for snapshots: providers that report live state (Hue) win,
+// and the cache is refreshed on connect / updated on every successful control.
+const deviceStates = new Map<string, { on?: boolean }>();
+let lastStateRefresh = 0;
+const STATE_REFRESH_MS = 30_000;
+
+function deviceKey(providerId: string, deviceId: string): string {
+  return `${providerId}:${deviceId}`;
+}
+
+type AppDevice = LightDevice & { customName: string; palette: string[] };
 
 function withCustomNames(devices: LightDevice[]): AppDevice[] {
   return devices.map((device) => ({
     ...device,
     name: deviceNames[device.provider]?.[device.id] ?? device.name,
     customName: deviceNames[device.provider]?.[device.id] ?? "",
+  }));
+}
+
+function withPalettes(devices: AppDevice[]): AppDevice[] {
+  return devices.map((device) => ({
+    ...device,
+    palette: [...paletteFor(device.provider, device.id)],
+  }));
+}
+
+function withStates(devices: AppDevice[]): AppDevice[] {
+  return devices.map((device) => ({
+    ...device,
+    state: device.state ?? deviceStates.get(deviceKey(device.provider, device.id)),
   }));
 }
 
@@ -115,13 +220,36 @@ async function listDevices(): Promise<AppDevice[]> {
       console.error("Could not load a light provider:", result.reason);
     }
   }
-  return withCustomNames(devices);
+  return withStates(withPalettes(withCustomNames(devices)));
+}
+
+// Poll each provider that supports getState (Govee) once per STATE_REFRESH_MS
+// window. Hue devices carry live state on every listDevices and are skipped.
+async function refreshDeviceStates(): Promise<void> {
+  const now = Date.now();
+  if (now - lastStateRefresh < STATE_REFRESH_MS) return;
+  lastStateRefresh = now;
+  const devices = await listDevices();
+  for (const device of devices) {
+    if (device.state) continue;
+    const provider = providers.get(device.provider);
+    if (!provider?.getState) continue;
+    const state = await provider.getState(device.id).catch(() => null);
+    if (state) deviceStates.set(deviceKey(device.provider, device.id), state);
+  }
 }
 
 async function controlDevice(providerId: string, deviceId: string, command: LightCommand): Promise<void> {
   const provider = providers.get(providerId);
   if (!provider) throw new ProviderError(`Provider ${providerId} is not configured`, 404);
   await provider.control(deviceId, command);
+  const key = deviceKey(providerId, deviceId);
+  if (command.type === "power") {
+    deviceStates.set(key, { on: command.on });
+  } else {
+    // Any brightness/color/temperature change turns the light on.
+    deviceStates.set(key, { ...deviceStates.get(key), on: true });
+  }
 }
 
 async function readJson(request: Request): Promise<Record<string, unknown>> {
@@ -177,6 +305,7 @@ type SocketMessage = {
   deviceId?: string;
   bridgeIp?: string;
   name?: string;
+  color?: string;
   command?: Record<string, unknown>;
 };
 
@@ -244,6 +373,24 @@ async function handleSocketMessage(socket: AppSocket, rawMessage: string | Buffe
         await broadcastSnapshot();
         return;
       }
+      case "add-palette-color": {
+        if (typeof message.providerId !== "string" || typeof message.deviceId !== "string" || typeof message.color !== "string") {
+          throw new ProviderError("A provider, device, and color are required", 400);
+        }
+        const added = await addPaletteColor(message.providerId, message.deviceId, message.color);
+        sendSocket(socket, { type: "ack", requestId: message.requestId, message: added ? "Color added to presets" : "Color already in presets" });
+        await broadcastSnapshot();
+        return;
+      }
+      case "remove-palette-color": {
+        if (typeof message.providerId !== "string" || typeof message.deviceId !== "string" || typeof message.color !== "string") {
+          throw new ProviderError("A provider, device, and color are required", 400);
+        }
+        const removed = await removePaletteColor(message.providerId, message.deviceId, message.color);
+        sendSocket(socket, { type: "ack", requestId: message.requestId, message: removed ? "Color removed from presets" : "Color not in presets" });
+        await broadcastSnapshot();
+        return;
+      }
       case "discover-hue":
         sendSocket(socket, { type: "hue-discovery", bridges: await discoverHueBridges() });
         return;
@@ -267,6 +414,8 @@ async function handleSocketMessage(socket: AppSocket, rawMessage: string | Buffe
       requestId: message.requestId,
       error: error instanceof Error ? error.message : "Request failed",
     });
+    // Broadcast so clients revert their optimistic UI to the cached truth.
+    if (message.type === "control") void broadcastSnapshot();
   }
 }
 
@@ -342,7 +491,10 @@ const server = Bun.serve({
   websocket: {
     open(socket) {
       sockets.add(socket);
-      void sendSnapshot(socket);
+      void (async () => {
+        await refreshDeviceStates();
+        await sendSnapshot(socket);
+      })();
     },
     message(socket, message) {
       void handleSocketMessage(socket, message);

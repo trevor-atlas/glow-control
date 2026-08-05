@@ -64,6 +64,7 @@ export class HueProvider implements LightProvider {
       name: light.name,
       model: "Hue light",
       capabilities: capabilitiesFor(light),
+      state: light.state ? { on: light.state.on } : undefined,
     }));
   }
 

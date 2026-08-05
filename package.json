@@ -11,8 +11,10 @@
     "check": "bun build src/index.ts --target bun --outdir .tmp-build && bun build src/ui/App.jsx --target browser --outfile .tmp-build-ui/app.js"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.10",
     "mqtt": "^5.15.2",
     "react": "19.2.8",
+    "react-colorful": "^5.8.0",
     "react-dom": "19.2.8"
   }
 }

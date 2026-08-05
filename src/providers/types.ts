@@ -10,6 +10,8 @@ export type LightDevice = {
   name: string;
   model: string;
   capabilities: LightCapability[];
+  /** Known on/off state; undefined when unknown. */
+  state?: { on?: boolean };
 };
 
 export type LightCommand =
@@ -23,4 +25,6 @@ export interface LightProvider {
   readonly name: string;
   listDevices(): Promise<LightDevice[]>;
   control(deviceId: string, command: LightCommand): Promise<void>;
+  /** Fetch a device's current on/off state; null when unknown. */
+  getState?(deviceId: string): Promise<{ on?: boolean } | null>;
 }

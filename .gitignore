@@ -4,5 +4,7 @@
 .tmp-build/
 .tmp-build-ui/
 data/device-names.json
+data/device-palettes.json
 data/bridge-rules.json
 data/hue-bridge.json
+node_modules/

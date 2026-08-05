@@ -8,6 +8,7 @@ import type {
 const API_BASE = "https://openapi.api.govee.com";
 const DEVICE_PATH = "/router/api/v1/user/devices";
 const CONTROL_PATH = "/router/api/v1/device/control";
+const STATE_PATH = "/router/api/v1/device/state";
 
 export class ProviderError extends Error {
   constructor(
@@ -29,6 +30,19 @@ type GoveeResponse<T> = {
   code: number;
   message: string;
   data: T;
+};
+
+type GoveeStateCapability = {
+  type: string;
+  instance: string;
+  state?: { value?: unknown };
+};
+
+type GoveeStateResponse = {
+  code: number;
+  payload?: {
+    capabilities?: GoveeStateCapability[];
+  };
 };
 
 export class GoveeProvider implements LightProvider {
@@ -89,6 +103,29 @@ export class GoveeProvider implements LightProvider {
         },
       }),
     });
+  }
+
+  async getState(deviceId: string): Promise<{ on?: boolean } | null> {
+    let device = this.devices.get(deviceId);
+    if (!device) {
+      await this.listDevices();
+      device = this.devices.get(deviceId);
+    }
+    if (!device) return null;
+
+    const response = await this.request<GoveeStateResponse>(STATE_PATH, {
+      method: "POST",
+      body: JSON.stringify({
+        requestId: crypto.randomUUID(),
+        payload: { sku: device.sku, device: device.device },
+      }),
+    });
+    const capability = response.payload?.capabilities?.find(
+      (entry) => entry.type === "devices.capabilities.on_off" && entry.instance === "powerSwitch",
+    );
+    const value = capability?.state?.value;
+    if (value === undefined) return null;
+    return { on: value === 1 || value === true };
   }
 
   private capabilityFor(

@@ -1919,9 +1919,9 @@ var require_react_dom_client_development = __commonJS((exports) => {
               if (typeof entry.name === "string") {
                 var JSCompiler_temp_const = info;
                 a: {
-                  var { name, env, debugLocation: location } = entry;
-                  if (location != null) {
-                    var childStack = formatOwnerStack(location), idx = childStack.lastIndexOf(`
+                  var { name, env, debugLocation: location2 } = entry;
+                  if (location2 != null) {
+                    var childStack = formatOwnerStack(location2), idx = childStack.lastIndexOf(`
 `), lastLine = idx === -1 ? childStack : childStack.slice(idx + 1);
                     if (lastLine.indexOf(name) !== -1) {
                       var JSCompiler_inline_result = `
@@ -16936,7 +16936,7 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
             type = type._init;
             try {
               return getComponentNameFromType(type(innerType));
-            } catch (x) {}
+            } catch (x3) {}
         }
       return null;
     }
@@ -16947,7 +16947,7 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
       try {
         testStringCoercion(value);
         var JSCompiler_inline_result = false;
-      } catch (e) {
+      } catch (e5) {
         JSCompiler_inline_result = true;
       }
       if (JSCompiler_inline_result) {
@@ -16966,7 +16966,7 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
       try {
         var name = getComponentNameFromType(type);
         return name ? "<" + name + ">" : "<...>";
-      } catch (x) {
+      } catch (x3) {
         return "<...>";
       }
     }
@@ -17056,8 +17056,8 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
           validateChildKeys(children);
       if (hasOwnProperty.call(config, "key")) {
         children = getComponentNameFromType(type);
-        var keys = Object.keys(config).filter(function(k) {
-          return k !== "key";
+        var keys = Object.keys(config).filter(function(k4) {
+          return k4 !== "key";
         });
         isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
         didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(`A props object containing a "key" prop is being spread into JSX:
@@ -17115,28 +17115,1731 @@ var require_jsx_dev_runtime = __commonJS((exports, module) => {
 });
 
 // src/ui/App.jsx
-var import_react = __toESM(require_react(), 1);
+var import_react30 = __toESM(require_react(), 1);
 var import_client = __toESM(require_client(), 1);
+
+// node_modules/react-colorful/dist/index.mjs
+var import_react = __toESM(require_react(), 1);
+function l() {
+  return (l = Object.assign || function(e2) {
+    for (var r2 = 1;r2 < arguments.length; r2++) {
+      var n2 = arguments[r2];
+      for (var t2 in n2)
+        Object.prototype.hasOwnProperty.call(n2, t2) && (e2[t2] = n2[t2]);
+    }
+    return e2;
+  }).apply(this, arguments);
+}
+function c(e2, r2) {
+  if (e2 == null)
+    return {};
+  var n2, t2, o2 = {}, a2 = Object.keys(e2);
+  for (t2 = 0;t2 < a2.length; t2++)
+    r2.indexOf(n2 = a2[t2]) >= 0 || (o2[n2] = e2[n2]);
+  return o2;
+}
+function i(e2) {
+  var n2 = import_react.useRef(e2), t2 = import_react.useRef(function(e3) {
+    n2.current && n2.current(e3);
+  });
+  return n2.current = e2, t2.current;
+}
+var s = function(e2, r2, n2) {
+  return r2 === undefined && (r2 = 0), n2 === undefined && (n2 = 1), e2 > n2 ? n2 : e2 < r2 ? r2 : e2;
+};
+var f = function(e2) {
+  return "touches" in e2;
+};
+var d = function(e2) {
+  return e2 && e2.ownerDocument.defaultView || self;
+};
+var v = function(e2, r2, n2) {
+  var t2 = e2.getBoundingClientRect(), o2 = f(r2) ? function(e3, r3) {
+    for (var n3 = 0;n3 < e3.length; n3++)
+      if (e3[n3].identifier === r3)
+        return e3[n3];
+    return e3[0];
+  }(r2.touches, n2) : r2;
+  return { left: s((o2.pageX - (t2.left + d(e2).pageXOffset)) / t2.width), top: s((o2.pageY - (t2.top + d(e2).pageYOffset)) / t2.height) };
+};
+var h = function(e2) {
+  !f(e2) && e2.preventDefault();
+};
+var g = import_react.default.memo(function(o2) {
+  var { onMove: a2, onKey: u2, onEnd: s2 } = o2, g2 = c(o2, ["onMove", "onKey", "onEnd"]), m = import_react.useRef(null), p = i(a2), b = i(u2), _ = i(s2), E = import_react.useRef(null), C = import_react.useRef(false), x = import_react.useMemo(function() {
+    var e2 = function(e3) {
+      h(e3), (f(e3) ? e3.touches.length > 0 : e3.buttons > 0) && m.current ? p(v(m.current, e3, E.current)) : (n2(false), _());
+    }, r2 = function() {
+      n2(false), _();
+    };
+    function n2(n3) {
+      var t2 = C.current, o3 = d(m.current), a3 = n3 ? o3.addEventListener : o3.removeEventListener;
+      a3(t2 ? "touchmove" : "mousemove", e2), a3(t2 ? "touchend" : "mouseup", r2);
+    }
+    return [function(e3) {
+      var r3 = e3.nativeEvent, t2 = m.current;
+      if (t2 && (h(r3), !function(e4, r4) {
+        return r4 && !f(e4);
+      }(r3, C.current) && t2)) {
+        if (f(r3)) {
+          C.current = true;
+          var o3 = r3.changedTouches || [];
+          o3.length && (E.current = o3[0].identifier);
+        }
+        t2.focus(), p(v(t2, r3, E.current)), n2(true);
+      }
+    }, function(e3) {
+      var r3 = e3.which || e3.keyCode;
+      r3 < 37 || r3 > 40 || (e3.preventDefault(), b({ left: r3 === 39 ? 0.05 : r3 === 37 ? -0.05 : 0, top: r3 === 40 ? 0.05 : r3 === 38 ? -0.05 : 0 }));
+    }, function(e3) {
+      var r3 = e3.which || e3.keyCode;
+      r3 >= 37 && r3 <= 40 && _();
+    }, n2];
+  }, [b, p, _]), H = x[0], M = x[1], N = x[2], w = x[3];
+  return import_react.useEffect(function() {
+    return w;
+  }, [w]), import_react.default.createElement("div", l({}, g2, { onTouchStart: H, onMouseDown: H, className: "react-colorful__interactive", ref: m, onKeyDown: M, onKeyUp: N, tabIndex: 0, role: "slider" }));
+});
+var m = function(e2) {
+  return e2.filter(Boolean).join(" ");
+};
+var p = function(r2) {
+  var { color: n2, left: t2, top: o2 } = r2, a2 = o2 === undefined ? 0.5 : o2, u2 = m(["react-colorful__pointer", r2.className]);
+  return import_react.default.createElement("div", { className: u2, style: { top: 100 * a2 + "%", left: 100 * t2 + "%" } }, import_react.default.createElement("div", { className: "react-colorful__pointer-fill", style: { backgroundColor: n2 } }));
+};
+var b = function(e2, r2, n2) {
+  return r2 === undefined && (r2 = 0), n2 === undefined && (n2 = Math.pow(10, r2)), Math.round(n2 * e2) / n2;
+};
+var _ = { grad: 0.9, turn: 360, rad: 360 / (2 * Math.PI) };
+var E = function(e2) {
+  return L(C(e2));
+};
+var C = function(e2) {
+  return e2[0] === "#" && (e2 = e2.substring(1)), e2.length < 6 ? { r: parseInt(e2[0] + e2[0], 16), g: parseInt(e2[1] + e2[1], 16), b: parseInt(e2[2] + e2[2], 16), a: e2.length === 4 ? b(parseInt(e2[3] + e2[3], 16) / 255, 2) : 1 } : { r: parseInt(e2.substring(0, 2), 16), g: parseInt(e2.substring(2, 4), 16), b: parseInt(e2.substring(4, 6), 16), a: e2.length === 8 ? b(parseInt(e2.substring(6, 8), 16) / 255, 2) : 1 };
+};
+var w = function(e2) {
+  return B(I(e2));
+};
+var y = function(e2) {
+  var { s: r2, v: n2, a: t2 } = e2, o2 = (200 - r2) * n2 / 100;
+  return { h: b(e2.h), s: b(o2 > 0 && o2 < 200 ? r2 * n2 / 100 / (o2 <= 100 ? o2 : 200 - o2) * 100 : 0), l: b(o2 / 2), a: b(t2, 2) };
+};
+var k = function(e2) {
+  var r2 = y(e2);
+  return "hsl(" + r2.h + ", " + r2.s + "%, " + r2.l + "%)";
+};
+var I = function(e2) {
+  var { h: r2, s: n2, v: t2, a: o2 } = e2;
+  r2 = r2 / 360 * 6, n2 /= 100, t2 /= 100;
+  var a2 = Math.floor(r2), u2 = t2 * (1 - n2), l2 = t2 * (1 - (r2 - a2) * n2), c2 = t2 * (1 - (1 - r2 + a2) * n2), i2 = a2 % 6;
+  return { r: b(255 * [t2, l2, u2, u2, c2, t2][i2]), g: b(255 * [c2, t2, t2, l2, u2, u2][i2]), b: b(255 * [u2, u2, c2, t2, t2, l2][i2]), a: b(o2, 2) };
+};
+var K = function(e2) {
+  var r2 = e2.toString(16);
+  return r2.length < 2 ? "0" + r2 : r2;
+};
+var B = function(e2) {
+  var { r: r2, g: n2, b: t2, a: o2 } = e2, a2 = o2 < 1 ? K(b(255 * o2)) : "";
+  return "#" + K(r2) + K(n2) + K(t2) + a2;
+};
+var L = function(e2) {
+  var { r: r2, g: n2, b: t2, a: o2 } = e2, a2 = Math.max(r2, n2, t2), u2 = a2 - Math.min(r2, n2, t2), l2 = u2 ? a2 === r2 ? (n2 - t2) / u2 : a2 === n2 ? 2 + (t2 - r2) / u2 : 4 + (r2 - n2) / u2 : 0;
+  return { h: b(60 * (l2 < 0 ? l2 + 6 : l2)), s: b(a2 ? u2 / a2 * 100 : 0), v: b(a2 / 255 * 100), a: o2 };
+};
+var R = import_react.default.memo(function(r2) {
+  var { hue: n2, onChange: t2, onChangeEnd: o2 } = r2, a2 = m(["react-colorful__hue", r2.className]);
+  return import_react.default.createElement("div", { className: a2 }, import_react.default.createElement(g, { onMove: function(e2) {
+    t2({ h: 360 * e2.left });
+  }, onKey: function(e2) {
+    t2({ h: s(n2 + 360 * e2.left, 0, 360) });
+  }, onEnd: o2, "aria-label": "Hue", "aria-valuenow": b(n2), "aria-valuemax": "360", "aria-valuemin": "0" }, import_react.default.createElement(p, { className: "react-colorful__hue-pointer", left: n2 / 360, color: k({ h: n2, s: 100, v: 100, a: 1 }) })));
+});
+var S = import_react.default.memo(function(r2) {
+  var { hsva: n2, onChange: t2, onChangeEnd: o2 } = r2, a2 = { backgroundColor: k({ h: n2.h, s: 100, v: 100, a: 1 }) };
+  return import_react.default.createElement("div", { className: "react-colorful__saturation", style: a2 }, import_react.default.createElement(g, { onMove: function(e2) {
+    t2({ s: 100 * e2.left, v: 100 - 100 * e2.top });
+  }, onKey: function(e2) {
+    t2({ s: s(n2.s + 100 * e2.left, 0, 100), v: s(n2.v - 100 * e2.top, 0, 100) });
+  }, onEnd: o2, "aria-label": "Color", "aria-valuetext": "Saturation " + b(n2.s) + "%, Brightness " + b(n2.v) + "%" }, import_react.default.createElement(p, { className: "react-colorful__saturation-pointer", top: 1 - n2.v / 100, left: n2.s / 100, color: k(n2) })));
+});
+var T = function(e2, r2) {
+  if (e2 === r2)
+    return true;
+  for (var n2 in e2)
+    if (e2[n2] !== r2[n2])
+      return false;
+  return true;
+};
+var P = function(e2, r2) {
+  return e2.toLowerCase() === r2.toLowerCase() || T(C(e2), C(r2));
+};
+function X(e2, n2, u2, l2) {
+  var c2 = i(u2), s2 = i(l2), f2 = import_react.useState(function() {
+    return e2.toHsva(n2);
+  }), d2 = f2[0], v2 = f2[1], h2 = import_react.useRef({ color: n2, hsva: d2 }), g2 = import_react.useRef(false);
+  import_react.useEffect(function() {
+    if (!e2.equal(n2, h2.current.color)) {
+      var r2 = e2.toHsva(n2);
+      h2.current = { hsva: r2, color: n2 }, v2(r2), g2.current = false;
+    }
+  }, [n2, e2]), import_react.useEffect(function() {
+    var r2;
+    T(d2, h2.current.hsva) || e2.equal(r2 = e2.fromHsva(d2), h2.current.color) || (h2.current = { hsva: d2, color: r2 }, c2(r2), g2.current = true);
+  }, [d2, e2, c2]);
+  var m2 = import_react.useCallback(function(e3) {
+    v2(function(r2) {
+      return Object.assign({}, r2, e3);
+    });
+  }, []), p2 = import_react.useCallback(function() {
+    g2.current && (g2.current = false, s2(h2.current.color));
+  }, [s2]);
+  return [d2, m2, p2];
+}
+var Y;
+var U = typeof window != "undefined" ? import_react.useLayoutEffect : import_react.useEffect;
+var V = function() {
+  return Y || (typeof __webpack_nonce__ != "undefined" ? __webpack_nonce__ : undefined);
+};
+var $ = new WeakMap;
+var G = function(e2) {
+  U(function() {
+    var r2 = e2.current;
+    if (typeof document != "undefined" && r2) {
+      var n2 = r2.getRootNode ? r2.getRootNode() : r2.ownerDocument, t2 = n2 && (("head" in n2) || ("host" in n2)) ? n2 : r2.ownerDocument;
+      if (!$.has(t2)) {
+        var o2 = "head" in t2 ? t2.head : t2, a2 = (o2.ownerDocument || document).createElement("style");
+        a2.innerHTML = '.react-colorful{position:relative;display:flex;flex-direction:column;width:200px;height:200px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.react-colorful__saturation{position:relative;flex-grow:1;border-color:transparent;border-bottom:12px solid #000;border-radius:8px 8px 0 0;background-image:linear-gradient(0deg,#000,transparent),linear-gradient(90deg,#fff,hsla(0,0%,100%,0))}.react-colorful__alpha-gradient,.react-colorful__pointer-fill{content:"";position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;border-radius:inherit}.react-colorful__alpha-gradient,.react-colorful__saturation{box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}.react-colorful__alpha,.react-colorful__hue{position:relative;height:24px}.react-colorful__hue{background:linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)}.react-colorful__last-control{border-radius:0 0 8px 8px}.react-colorful__interactive{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;outline:none;touch-action:none}.react-colorful__pointer{position:absolute;z-index:1;box-sizing:border-box;width:28px;height:28px;transform:translate(-50%,-50%);background-color:#fff;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2)}.react-colorful__interactive:focus .react-colorful__pointer{transform:translate(-50%,-50%) scale(1.1)}.react-colorful__alpha,.react-colorful__alpha-pointer{background-color:#fff;background-image:url(\'data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill-opacity=".05"><path d="M8 0h8v8H8zM0 8h8v8H0z"/></svg>\')}.react-colorful__saturation-pointer{z-index:3}.react-colorful__hue-pointer{z-index:2}';
+        var u2 = V();
+        u2 && a2.setAttribute("nonce", u2), $.set(t2, a2), o2.appendChild(a2);
+      }
+    }
+  }, []);
+};
+var J = function(n2) {
+  var { className: t2, colorModel: o2, color: a2 } = n2, u2 = a2 === undefined ? o2.defaultColor : a2, i2 = n2.onChange, s2 = n2.onChangeEnd, f2 = c(n2, ["className", "colorModel", "color", "onChange", "onChangeEnd"]), d2 = import_react.useRef(null);
+  G(d2);
+  var v2 = X(o2, u2, i2, s2), h2 = v2[0], g2 = v2[1], p2 = v2[2], b2 = m(["react-colorful", t2]);
+  return import_react.default.createElement("div", l({}, f2, { ref: d2, className: b2 }), import_react.default.createElement(S, { hsva: h2, onChange: g2, onChangeEnd: p2 }), import_react.default.createElement(R, { hue: h2.h, onChange: g2, onChangeEnd: p2, className: "react-colorful__last-control" }));
+};
+var Q = { defaultColor: "000", toHsva: E, fromHsva: function(e2) {
+  return w({ h: e2.h, s: e2.s, v: e2.v, a: 1 });
+}, equal: P };
+var Z = function(r2) {
+  return import_react.default.createElement(J, l({}, r2, { colorModel: Q }));
+};
+var ke = /^#?([0-9A-F]{3,8})$/i;
+var qe = function(r2) {
+  var n2 = r2.color, u2 = n2 === undefined ? "" : n2, s2 = r2.onChange, f2 = r2.onBlur, d2 = r2.escape, v2 = r2.validate, h2 = r2.format, g2 = r2.process, m2 = c(r2, ["color", "onChange", "onBlur", "escape", "validate", "format", "process"]), p2 = import_react.useState(function() {
+    return d2(u2);
+  }), b2 = p2[0], _2 = p2[1], E2 = i(s2), C2 = i(f2), x = import_react.useCallback(function(e2) {
+    var r3 = d2(e2.target.value);
+    _2(r3), v2(r3) && E2(g2 ? g2(r3) : r3);
+  }, [d2, g2, v2, E2]), H = import_react.useCallback(function(e2) {
+    v2(e2.target.value) || _2(d2(u2)), C2(e2);
+  }, [u2, d2, v2, C2]);
+  return import_react.useEffect(function() {
+    _2(d2(u2));
+  }, [u2, d2]), import_react.default.createElement("input", l({}, m2, { value: h2 ? h2(b2) : b2, spellCheck: "false", onChange: x, onBlur: H }));
+};
+var Ie = function(e2) {
+  return "#" + e2;
+};
+var Oe = function(r2) {
+  var { prefixed: n2, alpha: t2 } = r2, o2 = c(r2, ["prefixed", "alpha"]), u2 = import_react.useCallback(function(e2) {
+    return e2.replace(/([^0-9A-F]+)/gi, "").substring(0, t2 ? 8 : 6);
+  }, [t2]), i2 = import_react.useCallback(function(e2) {
+    return function(e3, r3) {
+      var n3 = ke.exec(e3), t3 = n3 ? n3[1].length : 0;
+      return t3 === 3 || t3 === 6 || !!r3 && t3 === 4 || !!r3 && t3 === 8;
+    }(e2, t2);
+  }, [t2]);
+  return import_react.default.createElement(qe, l({}, o2, { escape: u2, format: n2 ? Ie : undefined, process: Ie, validate: i2 }));
+};
+// node_modules/react-aria/dist/private/utils/domHelpers.mjs
+var $d447af545b77c9f1$export$b204af158042fbac = (target) => {
+  if ($d447af545b77c9f1$var$isWindow(target))
+    return target.document;
+  if ($d447af545b77c9f1$export$62858bae88b53fd0(target))
+    return target;
+  return target?.ownerDocument ?? (typeof document !== "undefined" ? document : undefined);
+};
+var $d447af545b77c9f1$export$f21a1ffae260145a = (target) => {
+  let ownerDocument = $d447af545b77c9f1$export$b204af158042fbac(target);
+  return ownerDocument?.defaultView ?? (typeof window !== "undefined" ? window : undefined);
+};
+function $d447af545b77c9f1$export$8ee0fc9ee280b4ee(value) {
+  return value !== null && typeof value === "object" && "nodeType" in value && typeof value.nodeType === "number";
+}
+function $d447af545b77c9f1$var$isWindow(value) {
+  return typeof value === "object" && value != null && "window" in value && value.window === value;
+}
+function $d447af545b77c9f1$export$62858bae88b53fd0(value) {
+  return $d447af545b77c9f1$export$8ee0fc9ee280b4ee(value) && value.nodeType === 9;
+}
+function $d447af545b77c9f1$export$af51f0f06c0f328a(value) {
+  return $d447af545b77c9f1$export$8ee0fc9ee280b4ee(value) && value.nodeType === 11 && "host" in value;
+}
+
+// node_modules/react-stately/dist/private/flags/flags.mjs
+var $6a20a7989e6c817a$var$_shadowDOM = false;
+function $6a20a7989e6c817a$export$98658e8c59125e6a() {
+  return $6a20a7989e6c817a$var$_shadowDOM;
+}
+
+// node_modules/react-aria/dist/private/utils/shadowdom/DOMFunctions.mjs
+function $23f2114a1b82827e$export$4282f70798064fe0(node, otherNode) {
+  if (!(0, $6a20a7989e6c817a$export$98658e8c59125e6a)())
+    return otherNode && node ? node.contains(otherNode) : false;
+  if (!node || !otherNode)
+    return false;
+  let currentNode = otherNode;
+  while (currentNode !== null) {
+    if (currentNode === node)
+      return true;
+    if (typeof currentNode.assignedElements !== "function" && currentNode.assignedSlot?.parentNode)
+      currentNode = currentNode.assignedSlot.parentNode;
+    else if ((0, $d447af545b77c9f1$export$af51f0f06c0f328a)(currentNode))
+      currentNode = currentNode.host;
+    else
+      currentNode = currentNode.parentNode;
+  }
+  return false;
+}
+var $23f2114a1b82827e$export$cd4e5573fbe2b576 = (doc = document) => {
+  if (!(0, $6a20a7989e6c817a$export$98658e8c59125e6a)())
+    return doc.activeElement;
+  let activeElement = doc.activeElement;
+  while (activeElement && "shadowRoot" in activeElement && activeElement.shadowRoot?.activeElement)
+    activeElement = activeElement.shadowRoot.activeElement;
+  return activeElement;
+};
+function $23f2114a1b82827e$export$e58f029f0fbfdb29(event) {
+  if ((0, $6a20a7989e6c817a$export$98658e8c59125e6a)() && event.target instanceof Element && event.target.shadowRoot) {
+    if ("composedPath" in event)
+      return event.composedPath()[0] ?? null;
+    else if ("composedPath" in event.nativeEvent)
+      return event.nativeEvent.composedPath()[0] ?? null;
+  }
+  return event.target;
+}
+
+// node_modules/react-aria/dist/private/utils/focusWithoutScrolling.mjs
+function $1969ac565cfec8d0$export$de79e2c695e052f3(element) {
+  if ($1969ac565cfec8d0$var$supportsPreventScroll())
+    element.focus({
+      preventScroll: true
+    });
+  else {
+    let scrollableElements = $1969ac565cfec8d0$var$getScrollableElements(element);
+    element.focus();
+    $1969ac565cfec8d0$var$restoreScrollPosition(scrollableElements);
+  }
+}
+var $1969ac565cfec8d0$var$supportsPreventScrollCached = null;
+function $1969ac565cfec8d0$var$supportsPreventScroll() {
+  if ($1969ac565cfec8d0$var$supportsPreventScrollCached == null) {
+    $1969ac565cfec8d0$var$supportsPreventScrollCached = false;
+    try {
+      let focusElem = document.createElement("div");
+      focusElem.focus({
+        get preventScroll() {
+          $1969ac565cfec8d0$var$supportsPreventScrollCached = true;
+          return true;
+        }
+      });
+    } catch {}
+  }
+  return $1969ac565cfec8d0$var$supportsPreventScrollCached;
+}
+function $1969ac565cfec8d0$var$getScrollableElements(element) {
+  let parent = element.parentNode;
+  let scrollableElements = [];
+  let rootScrollingElement = document.scrollingElement || document.documentElement;
+  while (parent instanceof HTMLElement && parent !== rootScrollingElement) {
+    if (parent.offsetHeight < parent.scrollHeight || parent.offsetWidth < parent.scrollWidth)
+      scrollableElements.push({
+        element: parent,
+        scrollTop: parent.scrollTop,
+        scrollLeft: parent.scrollLeft
+      });
+    parent = parent.parentNode;
+  }
+  if (rootScrollingElement instanceof HTMLElement)
+    scrollableElements.push({
+      element: rootScrollingElement,
+      scrollTop: rootScrollingElement.scrollTop,
+      scrollLeft: rootScrollingElement.scrollLeft
+    });
+  return scrollableElements;
+}
+function $1969ac565cfec8d0$var$restoreScrollPosition(scrollableElements) {
+  for (let { element, scrollTop, scrollLeft } of scrollableElements) {
+    element.scrollTop = scrollTop;
+    element.scrollLeft = scrollLeft;
+  }
+}
+
+// node_modules/react-aria/dist/private/utils/useLayoutEffect.mjs
+var import_react2 = __toESM(require_react(), 1);
+var $c4867b2f328c2698$export$e5c5a5f917a5871c = typeof document !== "undefined" ? (0, import_react2.default).useLayoutEffect : () => {};
+
+// node_modules/react-aria/dist/private/interactions/utils.mjs
+var import_react3 = __toESM(require_react(), 1);
+function $a92dc41f639950be$export$525bc4921d56d4a(nativeEvent) {
+  let event = nativeEvent;
+  event.nativeEvent = nativeEvent;
+  event.isDefaultPrevented = () => event.defaultPrevented;
+  event.isPropagationStopped = () => event.cancelBubble;
+  event.persist = () => {};
+  return event;
+}
+function $a92dc41f639950be$export$c2b7abe5d61ec696(event, target) {
+  Object.defineProperty(event, "target", {
+    value: target
+  });
+  Object.defineProperty(event, "currentTarget", {
+    value: target
+  });
+}
+function $a92dc41f639950be$export$715c682d09d639cc(onBlur) {
+  let stateRef = (0, import_react3.useRef)({
+    isFocused: false,
+    observer: null
+  });
+  (0, $c4867b2f328c2698$export$e5c5a5f917a5871c)(() => {
+    const state = stateRef.current;
+    return () => {
+      if (state.observer) {
+        state.observer.disconnect();
+        state.observer = null;
+      }
+    };
+  }, []);
+  return (0, import_react3.useCallback)((e2) => {
+    let eventTarget = (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2);
+    if (eventTarget instanceof HTMLButtonElement || eventTarget instanceof HTMLInputElement || eventTarget instanceof HTMLTextAreaElement || eventTarget instanceof HTMLSelectElement) {
+      stateRef.current.isFocused = true;
+      let target = eventTarget;
+      let onBlurHandler = (e3) => {
+        stateRef.current.isFocused = false;
+        if (target.disabled) {
+          let event = $a92dc41f639950be$export$525bc4921d56d4a(e3);
+          onBlur?.(event);
+        }
+        if (stateRef.current.observer) {
+          stateRef.current.observer.disconnect();
+          stateRef.current.observer = null;
+        }
+      };
+      target.addEventListener("focusout", onBlurHandler, {
+        once: true
+      });
+      stateRef.current.observer = new MutationObserver(() => {
+        if (stateRef.current.isFocused && target.disabled) {
+          stateRef.current.observer?.disconnect();
+          let relatedTargetEl = target === (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)() ? null : (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)();
+          target.dispatchEvent(new FocusEvent("blur", {
+            relatedTarget: relatedTargetEl
+          }));
+          target.dispatchEvent(new FocusEvent("focusout", {
+            bubbles: true,
+            relatedTarget: relatedTargetEl
+          }));
+        }
+      });
+      stateRef.current.observer.observe(target, {
+        attributes: true,
+        attributeFilter: [
+          "disabled"
+        ]
+      });
+    }
+  }, [
+    onBlur
+  ]);
+}
+var $a92dc41f639950be$export$fda7da73ab5d4c48 = false;
+
+// node_modules/react-aria/dist/private/utils/platform.mjs
+function $2add3ce32c6007eb$var$testUserAgent(re) {
+  if (typeof window === "undefined" || window.navigator == null)
+    return false;
+  let brands = window.navigator["userAgentData"]?.brands;
+  return Array.isArray(brands) && brands.some((brand) => re.test(brand.brand)) || re.test(window.navigator.userAgent);
+}
+function $2add3ce32c6007eb$var$testPlatform(re) {
+  return typeof window !== "undefined" && window.navigator != null ? re.test(window.navigator["userAgentData"]?.platform || window.navigator.platform) : false;
+}
+function $2add3ce32c6007eb$var$cached(fn) {
+  if (false)
+    ;
+  let res = null;
+  return () => {
+    if (res == null)
+      res = fn();
+    return res;
+  };
+}
+var $2add3ce32c6007eb$export$9ac100e40613ea10 = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$var$testPlatform(/^Mac/i);
+});
+var $2add3ce32c6007eb$export$186c6964ca17d99 = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$var$testPlatform(/^iPhone/i);
+});
+var $2add3ce32c6007eb$export$7bef049ce92e4224 = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$var$testPlatform(/^iPad/i) || $2add3ce32c6007eb$export$9ac100e40613ea10() && navigator.maxTouchPoints > 1;
+});
+var $2add3ce32c6007eb$export$fedb369cb70207f1 = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$export$186c6964ca17d99() || $2add3ce32c6007eb$export$7bef049ce92e4224();
+});
+var $2add3ce32c6007eb$export$e1865c3bedcd822b = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$export$9ac100e40613ea10() || $2add3ce32c6007eb$export$fedb369cb70207f1();
+});
+var $2add3ce32c6007eb$export$78551043582a6a98 = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$var$testUserAgent(/AppleWebKit/i) && ($2add3ce32c6007eb$export$fedb369cb70207f1() || !$2add3ce32c6007eb$export$6446a186d09e379e());
+});
+var $2add3ce32c6007eb$export$95df08bae54cb4df = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$export$78551043582a6a98() && !$2add3ce32c6007eb$export$6446a186d09e379e() && !$2add3ce32c6007eb$export$b7d78993b74f766d();
+});
+var $2add3ce32c6007eb$export$6446a186d09e379e = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$var$testUserAgent(/Chrome|CriOS|CrMo/i);
+});
+var $2add3ce32c6007eb$export$a11b0059900ceec8 = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$var$testUserAgent(/Android/i);
+});
+var $2add3ce32c6007eb$export$b7d78993b74f766d = $2add3ce32c6007eb$var$cached(function() {
+  return $2add3ce32c6007eb$var$testUserAgent(/(Firefox|FxiOS)/i);
+});
+
+// node_modules/react-aria/dist/private/utils/isVirtualEvent.mjs
+function $b5c62b033c25b96d$export$60278871457622de(event) {
+  if (event.pointerType === "" && event.isTrusted)
+    return true;
+  if ((0, $2add3ce32c6007eb$export$a11b0059900ceec8)() && event.pointerType)
+    return event.type === "click" && event.buttons === 1;
+  return event.detail === 0 && !event.pointerType;
+}
+
+// node_modules/react-aria/dist/private/utils/openLink.mjs
+var import_react4 = __toESM(require_react(), 1);
+function $caaf0dd3060ed57c$export$95185d699e05d4d7(target, modifiers, setOpening = true) {
+  let { metaKey, ctrlKey, altKey, shiftKey } = modifiers;
+  if (!(0, $2add3ce32c6007eb$export$78551043582a6a98)() && (0, $2add3ce32c6007eb$export$b7d78993b74f766d)() && window.event?.type?.startsWith("key") && target.target === "_blank") {
+    if ((0, $2add3ce32c6007eb$export$9ac100e40613ea10)())
+      metaKey = true;
+    else
+      ctrlKey = true;
+  }
+  let event = (0, $2add3ce32c6007eb$export$78551043582a6a98)() && (0, $2add3ce32c6007eb$export$9ac100e40613ea10)() && !(0, $2add3ce32c6007eb$export$7bef049ce92e4224)() ? new KeyboardEvent("keydown", {
+    keyIdentifier: "Enter",
+    metaKey,
+    ctrlKey,
+    altKey,
+    shiftKey
+  }) : new MouseEvent("click", {
+    metaKey,
+    ctrlKey,
+    altKey,
+    shiftKey,
+    detail: 1,
+    bubbles: true,
+    cancelable: true
+  });
+  $caaf0dd3060ed57c$export$95185d699e05d4d7.isOpening = setOpening;
+  (0, $1969ac565cfec8d0$export$de79e2c695e052f3)(target);
+  target.dispatchEvent(event);
+  $caaf0dd3060ed57c$export$95185d699e05d4d7.isOpening = false;
+}
+$caaf0dd3060ed57c$export$95185d699e05d4d7.isOpening = false;
+
+// node_modules/react-aria/dist/private/interactions/useFocusVisible.mjs
+var import_react5 = __toESM(require_react(), 1);
+var $8f5a2122b0992be3$var$currentModality = null;
+var $8f5a2122b0992be3$var$currentPointerType = "keyboard";
+var $8f5a2122b0992be3$export$901e90a13c50a14e = new Set;
+var $8f5a2122b0992be3$export$d90243b58daecda7 = new Map;
+var $8f5a2122b0992be3$var$hasEventBeforeFocus = false;
+var $8f5a2122b0992be3$var$hasBlurredWindowRecently = false;
+var $8f5a2122b0992be3$var$FOCUS_VISIBLE_INPUT_KEYS = {
+  Tab: true,
+  Escape: true
+};
+function $8f5a2122b0992be3$var$triggerChangeHandlers(modality, e2) {
+  for (let handler of $8f5a2122b0992be3$export$901e90a13c50a14e)
+    handler(modality, e2);
+}
+function $8f5a2122b0992be3$var$isValidKey(e2) {
+  return !(e2.metaKey || !(0, $2add3ce32c6007eb$export$9ac100e40613ea10)() && e2.altKey || e2.ctrlKey || e2.key === "Control" || e2.key === "Shift" || e2.key === "Meta");
+}
+function $8f5a2122b0992be3$var$handleKeyboardEvent(e2) {
+  $8f5a2122b0992be3$var$hasEventBeforeFocus = true;
+  if (!(0, $caaf0dd3060ed57c$export$95185d699e05d4d7).isOpening && $8f5a2122b0992be3$var$isValidKey(e2)) {
+    $8f5a2122b0992be3$var$currentModality = "keyboard";
+    $8f5a2122b0992be3$var$currentPointerType = "keyboard";
+    $8f5a2122b0992be3$var$triggerChangeHandlers("keyboard", e2);
+  }
+}
+function $8f5a2122b0992be3$var$handlePointerEvent(e2) {
+  $8f5a2122b0992be3$var$currentModality = "pointer";
+  $8f5a2122b0992be3$var$currentPointerType = "pointerType" in e2 ? e2.pointerType : "mouse";
+  if (e2.type === "mousedown" || e2.type === "pointerdown") {
+    $8f5a2122b0992be3$var$hasEventBeforeFocus = true;
+    $8f5a2122b0992be3$var$triggerChangeHandlers("pointer", e2);
+  }
+}
+function $8f5a2122b0992be3$var$handleClickEvent(e2) {
+  if (!(0, $caaf0dd3060ed57c$export$95185d699e05d4d7).isOpening && (0, $b5c62b033c25b96d$export$60278871457622de)(e2)) {
+    $8f5a2122b0992be3$var$hasEventBeforeFocus = true;
+    $8f5a2122b0992be3$var$currentModality = "virtual";
+    $8f5a2122b0992be3$var$currentPointerType = "virtual";
+  }
+}
+function $8f5a2122b0992be3$var$handleFocusEvent(e2) {
+  let ownerWindow = (0, $d447af545b77c9f1$export$f21a1ffae260145a)((0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2));
+  let ownerDocument = (0, $d447af545b77c9f1$export$b204af158042fbac)((0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2));
+  if ((0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2) === ownerWindow || (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2) === ownerDocument || (0, $a92dc41f639950be$export$fda7da73ab5d4c48) || !e2.isTrusted)
+    return;
+  if (!$8f5a2122b0992be3$var$hasEventBeforeFocus && !$8f5a2122b0992be3$var$hasBlurredWindowRecently) {
+    $8f5a2122b0992be3$var$currentModality = "virtual";
+    $8f5a2122b0992be3$var$currentPointerType = "virtual";
+    $8f5a2122b0992be3$var$triggerChangeHandlers("virtual", e2);
+  }
+  $8f5a2122b0992be3$var$hasEventBeforeFocus = false;
+  $8f5a2122b0992be3$var$hasBlurredWindowRecently = false;
+}
+function $8f5a2122b0992be3$var$handleWindowBlur() {
+  if (0, $a92dc41f639950be$export$fda7da73ab5d4c48)
+    return;
+  $8f5a2122b0992be3$var$hasEventBeforeFocus = false;
+  $8f5a2122b0992be3$var$hasBlurredWindowRecently = true;
+}
+function $8f5a2122b0992be3$var$setupGlobalFocusEvents(element) {
+  if (typeof window === "undefined" || typeof document === "undefined")
+    return;
+  const windowObject = (0, $d447af545b77c9f1$export$f21a1ffae260145a)(element);
+  const documentObject = (0, $d447af545b77c9f1$export$b204af158042fbac)(element);
+  if ($8f5a2122b0992be3$export$d90243b58daecda7.get(windowObject))
+    return;
+  let focus = windowObject.HTMLElement.prototype.focus;
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, "focus", {
+    configurable: true,
+    writable: true,
+    value: function() {
+      $8f5a2122b0992be3$var$hasEventBeforeFocus = true;
+      focus.apply(this, arguments);
+    }
+  });
+  documentObject.addEventListener("keydown", $8f5a2122b0992be3$var$handleKeyboardEvent, true);
+  documentObject.addEventListener("keyup", $8f5a2122b0992be3$var$handleKeyboardEvent, true);
+  documentObject.addEventListener("click", $8f5a2122b0992be3$var$handleClickEvent, true);
+  windowObject.addEventListener("focus", $8f5a2122b0992be3$var$handleFocusEvent, true);
+  windowObject.addEventListener("blur", $8f5a2122b0992be3$var$handleWindowBlur, false);
+  if (typeof PointerEvent !== "undefined") {
+    documentObject.addEventListener("pointerdown", $8f5a2122b0992be3$var$handlePointerEvent, true);
+    documentObject.addEventListener("pointermove", $8f5a2122b0992be3$var$handlePointerEvent, true);
+    documentObject.addEventListener("pointerup", $8f5a2122b0992be3$var$handlePointerEvent, true);
+  } else if (false) {}
+  windowObject.addEventListener("beforeunload", () => {
+    $8f5a2122b0992be3$var$tearDownWindowFocusTracking(element);
+  }, {
+    once: true
+  });
+  $8f5a2122b0992be3$export$d90243b58daecda7.set(windowObject, {
+    focus
+  });
+}
+var $8f5a2122b0992be3$var$tearDownWindowFocusTracking = (element, loadListener) => {
+  const windowObject = (0, $d447af545b77c9f1$export$f21a1ffae260145a)(element);
+  const documentObject = (0, $d447af545b77c9f1$export$b204af158042fbac)(element);
+  if (loadListener)
+    documentObject.removeEventListener("DOMContentLoaded", loadListener);
+  if (!$8f5a2122b0992be3$export$d90243b58daecda7.has(windowObject))
+    return;
+  Reflect.defineProperty(windowObject.HTMLElement.prototype, "focus", {
+    configurable: true,
+    writable: true,
+    value: $8f5a2122b0992be3$export$d90243b58daecda7.get(windowObject).focus
+  });
+  documentObject.removeEventListener("keydown", $8f5a2122b0992be3$var$handleKeyboardEvent, true);
+  documentObject.removeEventListener("keyup", $8f5a2122b0992be3$var$handleKeyboardEvent, true);
+  documentObject.removeEventListener("click", $8f5a2122b0992be3$var$handleClickEvent, true);
+  windowObject.removeEventListener("focus", $8f5a2122b0992be3$var$handleFocusEvent, true);
+  windowObject.removeEventListener("blur", $8f5a2122b0992be3$var$handleWindowBlur, false);
+  if (typeof PointerEvent !== "undefined") {
+    documentObject.removeEventListener("pointerdown", $8f5a2122b0992be3$var$handlePointerEvent, true);
+    documentObject.removeEventListener("pointermove", $8f5a2122b0992be3$var$handlePointerEvent, true);
+    documentObject.removeEventListener("pointerup", $8f5a2122b0992be3$var$handlePointerEvent, true);
+  } else if (false) {}
+  $8f5a2122b0992be3$export$d90243b58daecda7.delete(windowObject);
+};
+function $8f5a2122b0992be3$export$2f1888112f558a7d(element) {
+  const documentObject = (0, $d447af545b77c9f1$export$b204af158042fbac)(element);
+  let loadListener;
+  if (documentObject.readyState !== "loading")
+    $8f5a2122b0992be3$var$setupGlobalFocusEvents(element);
+  else {
+    loadListener = () => {
+      $8f5a2122b0992be3$var$setupGlobalFocusEvents(element);
+    };
+    documentObject.addEventListener("DOMContentLoaded", loadListener);
+  }
+  return () => $8f5a2122b0992be3$var$tearDownWindowFocusTracking(element, loadListener);
+}
+if (typeof document !== "undefined")
+  $8f5a2122b0992be3$export$2f1888112f558a7d();
+function $8f5a2122b0992be3$export$b9b3dfddab17db27() {
+  return $8f5a2122b0992be3$var$currentModality !== "pointer";
+}
+var $8f5a2122b0992be3$var$nonTextInputTypes = new Set([
+  "checkbox",
+  "radio",
+  "range",
+  "color",
+  "file",
+  "image",
+  "button",
+  "submit",
+  "reset"
+]);
+function $8f5a2122b0992be3$var$isKeyboardFocusEvent(isTextInput, modality, e2) {
+  let eventTarget = e2 ? (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2) : undefined;
+  let ownerDocument = (0, $d447af545b77c9f1$export$b204af158042fbac)(eventTarget);
+  let ownerWindow = (0, $d447af545b77c9f1$export$f21a1ffae260145a)(eventTarget);
+  const IHTMLInputElement = typeof ownerWindow !== "undefined" ? ownerWindow.HTMLInputElement : HTMLInputElement;
+  const IHTMLTextAreaElement = typeof ownerWindow !== "undefined" ? ownerWindow.HTMLTextAreaElement : HTMLTextAreaElement;
+  const IHTMLElement = typeof ownerWindow !== "undefined" ? ownerWindow.HTMLElement : HTMLElement;
+  const IKeyboardEvent = typeof ownerWindow !== "undefined" ? ownerWindow.KeyboardEvent : KeyboardEvent;
+  let activeElement = (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)(ownerDocument);
+  isTextInput = isTextInput || activeElement instanceof IHTMLInputElement && !$8f5a2122b0992be3$var$nonTextInputTypes.has(activeElement.type) || activeElement instanceof IHTMLTextAreaElement || activeElement instanceof IHTMLElement && activeElement.isContentEditable;
+  return !(isTextInput && modality === "keyboard" && e2 instanceof IKeyboardEvent && !$8f5a2122b0992be3$var$FOCUS_VISIBLE_INPUT_KEYS[e2.key]);
+}
+function $8f5a2122b0992be3$export$ec71b4b83ac08ec3(fn, deps, opts) {
+  $8f5a2122b0992be3$var$setupGlobalFocusEvents();
+  (0, import_react5.useEffect)(() => {
+    if (opts?.enabled === false)
+      return;
+    let handler = (modality, e2) => {
+      if (!$8f5a2122b0992be3$var$isKeyboardFocusEvent(!!opts?.isTextInput, modality, e2))
+        return;
+      fn($8f5a2122b0992be3$export$b9b3dfddab17db27());
+    };
+    $8f5a2122b0992be3$export$901e90a13c50a14e.add(handler);
+    return () => {
+      $8f5a2122b0992be3$export$901e90a13c50a14e.delete(handler);
+    };
+  }, deps);
+}
+
+// node_modules/react-aria/dist/private/interactions/useFocus.mjs
+var import_react6 = __toESM(require_react(), 1);
+function $1e74c67db218ce67$export$f8168d8dd8fd66e6(props) {
+  let { isDisabled, onFocus: onFocusProp, onBlur: onBlurProp, onFocusChange } = props;
+  const onBlur = (0, import_react6.useCallback)((e2) => {
+    if ((0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2) === e2.currentTarget) {
+      if (onBlurProp)
+        onBlurProp(e2);
+      if (onFocusChange)
+        onFocusChange(false);
+      return true;
+    }
+  }, [
+    onBlurProp,
+    onFocusChange
+  ]);
+  const onSyntheticFocus = (0, $a92dc41f639950be$export$715c682d09d639cc)(onBlur);
+  const onFocus = (0, import_react6.useCallback)((e2) => {
+    let eventTarget = (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2);
+    const ownerDocument = (0, $d447af545b77c9f1$export$b204af158042fbac)(eventTarget);
+    const activeElement = ownerDocument ? (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)(ownerDocument) : (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)();
+    if (eventTarget === e2.currentTarget && eventTarget === activeElement) {
+      if (onFocusProp)
+        onFocusProp(e2);
+      if (onFocusChange)
+        onFocusChange(true);
+      onSyntheticFocus(e2);
+    }
+  }, [
+    onFocusChange,
+    onFocusProp,
+    onSyntheticFocus
+  ]);
+  return {
+    focusProps: {
+      onFocus: !isDisabled && (onFocusProp || onFocusChange || onBlurProp) ? onFocus : undefined,
+      onBlur: !isDisabled && (onBlurProp || onFocusChange) ? onBlur : undefined
+    }
+  };
+}
+
+// node_modules/react-aria/dist/private/utils/useGlobalListeners.mjs
+var import_react7 = __toESM(require_react(), 1);
+function $48a7d519b337145d$export$4eaf04e54aa8eed6() {
+  let globalListeners = (0, import_react7.useRef)(new Map);
+  let addGlobalListener = (0, import_react7.useCallback)((eventTarget, type, listener, options) => {
+    let fn = options?.once ? (...args) => {
+      globalListeners.current.delete(listener);
+      listener(...args);
+    } : listener;
+    globalListeners.current.set(listener, {
+      type,
+      eventTarget,
+      fn,
+      options
+    });
+    eventTarget.addEventListener(type, fn, options);
+  }, []);
+  let removeGlobalListener = (0, import_react7.useCallback)((eventTarget, type, listener, options) => {
+    let fn = globalListeners.current.get(listener)?.fn || listener;
+    eventTarget.removeEventListener(type, fn, options);
+    globalListeners.current.delete(listener);
+  }, []);
+  let removeAllGlobalListeners = (0, import_react7.useCallback)(() => {
+    globalListeners.current.forEach((value, key) => {
+      removeGlobalListener(value.eventTarget, value.type, key, value.options);
+    });
+  }, [
+    removeGlobalListener
+  ]);
+  (0, import_react7.useEffect)(() => {
+    return removeAllGlobalListeners;
+  }, [
+    removeAllGlobalListeners
+  ]);
+  return {
+    addGlobalListener,
+    removeGlobalListener,
+    removeAllGlobalListeners
+  };
+}
+
+// node_modules/react-aria/dist/private/interactions/useFocusWithin.mjs
+var import_react8 = __toESM(require_react(), 1);
+function $2c9edc598a03d523$export$420e68273165f4ec(props) {
+  let { isDisabled, onBlurWithin, onFocusWithin, onFocusWithinChange } = props;
+  let state = (0, import_react8.useRef)({
+    isFocusWithin: false
+  });
+  let { addGlobalListener, removeAllGlobalListeners } = (0, $48a7d519b337145d$export$4eaf04e54aa8eed6)();
+  let onBlur = (0, import_react8.useCallback)((e2) => {
+    if (!(0, $23f2114a1b82827e$export$4282f70798064fe0)(e2.currentTarget, (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2)))
+      return;
+    if (state.current.isFocusWithin && !(0, $23f2114a1b82827e$export$4282f70798064fe0)(e2.currentTarget, e2.relatedTarget)) {
+      state.current.isFocusWithin = false;
+      removeAllGlobalListeners();
+      if (onBlurWithin)
+        onBlurWithin(e2);
+      if (onFocusWithinChange)
+        onFocusWithinChange(false);
+    }
+  }, [
+    onBlurWithin,
+    onFocusWithinChange,
+    state,
+    removeAllGlobalListeners
+  ]);
+  let onSyntheticFocus = (0, $a92dc41f639950be$export$715c682d09d639cc)(onBlur);
+  let onFocus = (0, import_react8.useCallback)((e2) => {
+    if (!(0, $23f2114a1b82827e$export$4282f70798064fe0)(e2.currentTarget, (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2)))
+      return;
+    let eventTarget = (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2);
+    const ownerDocument = (0, $d447af545b77c9f1$export$b204af158042fbac)(eventTarget);
+    const activeElement = (0, $23f2114a1b82827e$export$cd4e5573fbe2b576)(ownerDocument);
+    if (!state.current.isFocusWithin && activeElement === eventTarget) {
+      if (onFocusWithin)
+        onFocusWithin(e2);
+      if (onFocusWithinChange)
+        onFocusWithinChange(true);
+      state.current.isFocusWithin = true;
+      onSyntheticFocus(e2);
+      let currentTarget = e2.currentTarget;
+      addGlobalListener(ownerDocument, "focus", (e3) => {
+        let eventTarget2 = (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e3);
+        if (state.current.isFocusWithin && !(0, $23f2114a1b82827e$export$4282f70798064fe0)(currentTarget, eventTarget2)) {
+          let nativeEvent = new ownerDocument.defaultView.FocusEvent("blur", {
+            relatedTarget: eventTarget2
+          });
+          (0, $a92dc41f639950be$export$c2b7abe5d61ec696)(nativeEvent, currentTarget);
+          let event = (0, $a92dc41f639950be$export$525bc4921d56d4a)(nativeEvent);
+          onBlur(event);
+        }
+      }, {
+        capture: true
+      });
+    }
+  }, [
+    onFocusWithin,
+    onFocusWithinChange,
+    onSyntheticFocus,
+    addGlobalListener,
+    onBlur
+  ]);
+  if (isDisabled)
+    return {
+      focusWithinProps: {
+        onFocus: undefined,
+        onBlur: undefined
+      }
+    };
+  return {
+    focusWithinProps: {
+      onFocus,
+      onBlur
+    }
+  };
+}
+
+// node_modules/react-aria/dist/private/focus/useFocusRing.mjs
+var import_react9 = __toESM(require_react(), 1);
+function $0c4a58759813079a$export$4e328f61c538687f(props = {}) {
+  let { autoFocus = false, isTextInput, within } = props;
+  let state = (0, import_react9.useRef)({
+    isFocused: false,
+    isFocusVisible: autoFocus || (0, $8f5a2122b0992be3$export$b9b3dfddab17db27)()
+  });
+  let [isFocused, setFocused] = (0, import_react9.useState)(false);
+  let [isFocusVisibleState, setFocusVisible] = (0, import_react9.useState)(() => state.current.isFocused && state.current.isFocusVisible);
+  let updateState = (0, import_react9.useCallback)(() => setFocusVisible(state.current.isFocused && state.current.isFocusVisible), []);
+  let onFocusChange = (0, import_react9.useCallback)((isFocused2) => {
+    state.current.isFocused = isFocused2;
+    state.current.isFocusVisible = (0, $8f5a2122b0992be3$export$b9b3dfddab17db27)();
+    setFocused(isFocused2);
+    updateState();
+  }, [
+    updateState
+  ]);
+  (0, $8f5a2122b0992be3$export$ec71b4b83ac08ec3)((isFocusVisible) => {
+    state.current.isFocusVisible = isFocusVisible;
+    updateState();
+  }, [
+    isTextInput,
+    isFocused
+  ], {
+    enabled: isFocused,
+    isTextInput
+  });
+  let { focusProps } = (0, $1e74c67db218ce67$export$f8168d8dd8fd66e6)({
+    isDisabled: within,
+    onFocusChange
+  });
+  let { focusWithinProps } = (0, $2c9edc598a03d523$export$420e68273165f4ec)({
+    isDisabled: !within,
+    onFocusWithinChange: onFocusChange
+  });
+  return {
+    isFocused,
+    isFocusVisible: isFocusVisibleState,
+    focusProps: within ? focusWithinProps : focusProps
+  };
+}
+// node_modules/react-aria/dist/private/interactions/useHover.mjs
+var import_react10 = __toESM(require_react(), 1);
+var $e969f22b6713ca4a$var$globalIgnoreEmulatedMouseEvents = false;
+var $e969f22b6713ca4a$var$hoverCount = 0;
+function $e969f22b6713ca4a$var$setGlobalIgnoreEmulatedMouseEvents() {
+  $e969f22b6713ca4a$var$globalIgnoreEmulatedMouseEvents = true;
+  setTimeout(() => {
+    $e969f22b6713ca4a$var$globalIgnoreEmulatedMouseEvents = false;
+  }, 500);
+}
+function $e969f22b6713ca4a$var$handleGlobalPointerEvent(e2) {
+  if (e2.pointerType === "touch")
+    $e969f22b6713ca4a$var$setGlobalIgnoreEmulatedMouseEvents();
+}
+function $e969f22b6713ca4a$var$setupGlobalTouchEvents() {
+  let ownerDocument = (0, $d447af545b77c9f1$export$b204af158042fbac)(null);
+  if (typeof ownerDocument === "undefined")
+    return;
+  if ($e969f22b6713ca4a$var$hoverCount === 0) {
+    if (typeof PointerEvent !== "undefined")
+      ownerDocument.addEventListener("pointerup", $e969f22b6713ca4a$var$handleGlobalPointerEvent);
+    else if (false)
+      ;
+  }
+  $e969f22b6713ca4a$var$hoverCount++;
+  return () => {
+    $e969f22b6713ca4a$var$hoverCount--;
+    if ($e969f22b6713ca4a$var$hoverCount > 0)
+      return;
+    if (typeof PointerEvent !== "undefined")
+      ownerDocument.removeEventListener("pointerup", $e969f22b6713ca4a$var$handleGlobalPointerEvent);
+    else if (false)
+      ;
+  };
+}
+function $e969f22b6713ca4a$export$ae780daf29e6d456(props) {
+  let { onHoverStart, onHoverChange, onHoverEnd, isDisabled } = props;
+  let [isHovered, setHovered] = (0, import_react10.useState)(false);
+  let state = (0, import_react10.useRef)({
+    isHovered: false,
+    ignoreEmulatedMouseEvents: false,
+    pointerType: "",
+    target: null
+  }).current;
+  (0, import_react10.useEffect)($e969f22b6713ca4a$var$setupGlobalTouchEvents, []);
+  let { addGlobalListener, removeAllGlobalListeners } = (0, $48a7d519b337145d$export$4eaf04e54aa8eed6)();
+  let { hoverProps, triggerHoverEnd } = (0, import_react10.useMemo)(() => {
+    let triggerHoverStart = (event, pointerType) => {
+      state.pointerType = pointerType;
+      if (isDisabled || pointerType === "touch" || state.isHovered || !(0, $23f2114a1b82827e$export$4282f70798064fe0)(event.currentTarget, (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(event)))
+        return;
+      state.isHovered = true;
+      let target = event.currentTarget;
+      state.target = target;
+      addGlobalListener((0, $d447af545b77c9f1$export$b204af158042fbac)((0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(event)), "pointerover", (e2) => {
+        if (state.isHovered && state.target && !(0, $23f2114a1b82827e$export$4282f70798064fe0)(state.target, (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2)))
+          triggerHoverEnd2(e2, e2.pointerType);
+      }, {
+        capture: true
+      });
+      if (onHoverStart)
+        onHoverStart({
+          type: "hoverstart",
+          target,
+          pointerType
+        });
+      if (onHoverChange)
+        onHoverChange(true);
+      setHovered(true);
+    };
+    let triggerHoverEnd2 = (event, pointerType) => {
+      let target = state.target;
+      state.pointerType = "";
+      state.target = null;
+      if (pointerType === "touch" || !state.isHovered || !target)
+        return;
+      state.isHovered = false;
+      removeAllGlobalListeners();
+      if (onHoverEnd)
+        onHoverEnd({
+          type: "hoverend",
+          target,
+          pointerType
+        });
+      if (onHoverChange)
+        onHoverChange(false);
+      setHovered(false);
+    };
+    let hoverProps2 = {};
+    if (typeof PointerEvent !== "undefined") {
+      hoverProps2.onPointerEnter = (e2) => {
+        if ($e969f22b6713ca4a$var$globalIgnoreEmulatedMouseEvents && e2.pointerType === "mouse")
+          return;
+        triggerHoverStart(e2, e2.pointerType);
+      };
+      hoverProps2.onPointerLeave = (e2) => {
+        if (!isDisabled && (0, $23f2114a1b82827e$export$4282f70798064fe0)(e2.currentTarget, (0, $23f2114a1b82827e$export$e58f029f0fbfdb29)(e2)))
+          triggerHoverEnd2(e2, e2.pointerType);
+      };
+    } else if (false) {}
+    return {
+      hoverProps: hoverProps2,
+      triggerHoverEnd: triggerHoverEnd2
+    };
+  }, [
+    onHoverStart,
+    onHoverChange,
+    onHoverEnd,
+    isDisabled,
+    state,
+    addGlobalListener,
+    removeAllGlobalListeners
+  ]);
+  (0, import_react10.useEffect)(() => {
+    if (isDisabled)
+      triggerHoverEnd({
+        currentTarget: state.target
+      }, state.pointerType);
+  }, [
+    isDisabled
+  ]);
+  return {
+    hoverProps,
+    isHovered
+  };
+}
+// node_modules/@headlessui/react/dist/hooks/use-active-press.js
+var import_react15 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/utils/env.js
+var i2 = Object.defineProperty;
+var d2 = (t2, e2, n2) => (e2 in t2) ? i2(t2, e2, { enumerable: true, configurable: true, writable: true, value: n2 }) : t2[e2] = n2;
+var r2 = (t2, e2, n2) => (d2(t2, typeof e2 != "symbol" ? e2 + "" : e2, n2), n2);
+
+class o2 {
+  constructor() {
+    r2(this, "current", this.detect());
+    r2(this, "handoffState", "pending");
+    r2(this, "currentId", 0);
+  }
+  set(e2) {
+    this.current !== e2 && (this.handoffState = "pending", this.currentId = 0, this.current = e2);
+  }
+  reset() {
+    this.set(this.detect());
+  }
+  nextId() {
+    return ++this.currentId;
+  }
+  get isServer() {
+    return this.current === "server";
+  }
+  get isClient() {
+    return this.current === "client";
+  }
+  detect() {
+    return typeof window == "undefined" || typeof document == "undefined" ? "server" : "client";
+  }
+  handoff() {
+    this.handoffState === "pending" && (this.handoffState = "complete");
+  }
+  get isHandoffComplete() {
+    return this.handoffState === "complete";
+  }
+}
+var s2 = new o2;
+
+// node_modules/@headlessui/react/dist/utils/owner.js
+function l2(n2) {
+  var u2;
+  return s2.isServer ? null : n2 == null ? document : (u2 = n2 == null ? undefined : n2.ownerDocument) != null ? u2 : document;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-disposables.js
+var import_react11 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/utils/micro-task.js
+function t2(e2) {
+  typeof queueMicrotask == "function" ? queueMicrotask(e2) : Promise.resolve().then(e2).catch((o3) => setTimeout(() => {
+    throw o3;
+  }));
+}
+
+// node_modules/@headlessui/react/dist/utils/disposables.js
+function o3() {
+  let s3 = [], r3 = { addEventListener(e2, t3, n2, i3) {
+    return e2.addEventListener(t3, n2, i3), r3.add(() => e2.removeEventListener(t3, n2, i3));
+  }, requestAnimationFrame(...e2) {
+    let t3 = requestAnimationFrame(...e2);
+    return r3.add(() => cancelAnimationFrame(t3));
+  }, nextFrame(...e2) {
+    return r3.requestAnimationFrame(() => r3.requestAnimationFrame(...e2));
+  }, setTimeout(...e2) {
+    let t3 = setTimeout(...e2);
+    return r3.add(() => clearTimeout(t3));
+  }, microTask(...e2) {
+    let t3 = { current: true };
+    return t2(() => {
+      t3.current && e2[0]();
+    }), r3.add(() => {
+      t3.current = false;
+    });
+  }, style(e2, t3, n2) {
+    let i3 = e2.style.getPropertyValue(t3);
+    return Object.assign(e2.style, { [t3]: n2 }), this.add(() => {
+      Object.assign(e2.style, { [t3]: i3 });
+    });
+  }, group(e2) {
+    let t3 = o3();
+    return e2(t3), this.add(() => t3.dispose());
+  }, add(e2) {
+    return s3.includes(e2) || s3.push(e2), () => {
+      let t3 = s3.indexOf(e2);
+      if (t3 >= 0)
+        for (let n2 of s3.splice(t3, 1))
+          n2();
+    };
+  }, dispose() {
+    for (let e2 of s3.splice(0))
+      e2();
+  } };
+  return r3;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-disposables.js
+function p2() {
+  let [e2] = import_react11.useState(o3);
+  return import_react11.useEffect(() => () => e2.dispose(), [e2]), e2;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-event.js
+var import_react14 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/hooks/use-latest-value.js
+var import_react13 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/hooks/use-iso-morphic-effect.js
+var import_react12 = __toESM(require_react(), 1);
+var n2 = (e2, t3) => {
+  s2.isServer ? import_react12.useEffect(e2, t3) : import_react12.useLayoutEffect(e2, t3);
+};
+
+// node_modules/@headlessui/react/dist/hooks/use-latest-value.js
+function s4(e2) {
+  let r3 = import_react13.useRef(e2);
+  return n2(() => {
+    r3.current = e2;
+  }, [e2]), r3;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-event.js
+var o5 = function(t4) {
+  let e2 = s4(t4);
+  return import_react14.default.useCallback((...r3) => e2.current(...r3), [e2]);
+};
+
+// node_modules/@headlessui/react/dist/hooks/use-active-press.js
+function E2(e2) {
+  let t4 = e2.width / 2, n3 = e2.height / 2;
+  return { top: e2.clientY - n3, right: e2.clientX + t4, bottom: e2.clientY + n3, left: e2.clientX - t4 };
+}
+function P2(e2, t4) {
+  return !(!e2 || !t4 || e2.right < t4.left || e2.left > t4.right || e2.bottom < t4.top || e2.top > t4.bottom);
+}
+function w2({ disabled: e2 = false } = {}) {
+  let t4 = import_react15.useRef(null), [n3, l3] = import_react15.useState(false), r3 = p2(), o6 = o5(() => {
+    t4.current = null, l3(false), r3.dispose();
+  }), f3 = o5((s5) => {
+    if (r3.dispose(), t4.current === null) {
+      t4.current = s5.currentTarget, l3(true);
+      {
+        let i3 = l2(s5.currentTarget);
+        r3.addEventListener(i3, "pointerup", o6, false), r3.addEventListener(i3, "pointermove", (c3) => {
+          if (t4.current) {
+            let p3 = E2(c3);
+            l3(P2(p3, t4.current.getBoundingClientRect()));
+          }
+        }, false), r3.addEventListener(i3, "pointercancel", o6, false);
+      }
+    }
+  });
+  return { pressed: n3, pressProps: e2 ? {} : { onPointerDown: f3, onPointerUp: o6, onClick: o6 } };
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-slot.js
+var import_react16 = __toESM(require_react(), 1);
+function n3(e2) {
+  return import_react16.useMemo(() => e2, Object.values(e2));
+}
+
+// node_modules/@headlessui/react/dist/internal/disabled.js
+var import_react17 = __toESM(require_react(), 1);
+var e2 = import_react17.createContext(undefined);
+function a4() {
+  return import_react17.useContext(e2);
+}
+
+// node_modules/@headlessui/react/dist/utils/render.js
+var import_react18 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/utils/class-names.js
+function t5(...r4) {
+  return Array.from(new Set(r4.flatMap((n5) => typeof n5 == "string" ? n5.split(" ") : []))).filter(Boolean).join(" ");
+}
+
+// node_modules/@headlessui/react/dist/utils/match.js
+function u2(r4, n5, ...a5) {
+  if (r4 in n5) {
+    let e3 = n5[r4];
+    return typeof e3 == "function" ? e3(...a5) : e3;
+  }
+  let t6 = new Error(`Tried to handle "${r4}" but there is no handler defined. Only defined handlers are: ${Object.keys(n5).map((e3) => `"${e3}"`).join(", ")}.`);
+  throw Error.captureStackTrace && Error.captureStackTrace(t6, u2), t6;
+}
+
+// node_modules/@headlessui/react/dist/utils/render.js
+var A = ((a5) => (a5[a5.None = 0] = "None", a5[a5.RenderStrategy = 1] = "RenderStrategy", a5[a5.Static = 2] = "Static", a5))(A || {});
+var C2 = ((t6) => (t6[t6.Unmount = 0] = "Unmount", t6[t6.Hidden = 1] = "Hidden", t6))(C2 || {});
+function K2() {
+  let e3 = I2();
+  return import_react18.useCallback((r4) => U2({ mergeRefs: e3, ...r4 }), [e3]);
+}
+function U2({ ourProps: e3, theirProps: r4, slot: t6, defaultTag: a5, features: o6, visible: n5 = true, name: i4, mergeRefs: l3 }) {
+  l3 = l3 != null ? l3 : H;
+  let s5 = P3(r4, e3);
+  if (n5)
+    return F(s5, t6, a5, i4, l3);
+  let y2 = o6 != null ? o6 : 0;
+  if (y2 & 2) {
+    let { static: f3 = false, ...u3 } = s5;
+    if (f3)
+      return F(u3, t6, a5, i4, l3);
+  }
+  if (y2 & 1) {
+    let { unmount: f3 = true, ...u3 } = s5;
+    return u2(f3 ? 0 : 1, { [0]() {
+      return null;
+    }, [1]() {
+      return F({ ...u3, hidden: true, style: { display: "none" } }, t6, a5, i4, l3);
+    } });
+  }
+  return F(s5, t6, a5, i4, l3);
+}
+function F(e3, r4 = {}, t6, a5, o6) {
+  let { as: n5 = t6, children: i4, refName: l3 = "ref", ...s5 } = h2(e3, ["unmount", "static"]), y2 = e3.ref !== undefined ? { [l3]: e3.ref } : {}, f3 = typeof i4 == "function" ? i4(r4) : i4;
+  f3 = E3(f3), "className" in s5 && s5.className && typeof s5.className == "function" && (s5.className = s5.className(r4)), s5["aria-labelledby"] && s5["aria-labelledby"] === s5.id && (s5["aria-labelledby"] = undefined);
+  let u3 = {};
+  if (r4) {
+    let d3 = false, p3 = [];
+    for (let [c3, T2] of Object.entries(r4))
+      typeof T2 == "boolean" && (d3 = true), T2 === true && p3.push(c3.replace(/([A-Z])/g, (g2) => `-${g2.toLowerCase()}`));
+    if (d3) {
+      u3["data-headlessui-state"] = p3.join(" ");
+      for (let c3 of p3)
+        u3[`data-${c3}`] = "";
+    }
+  }
+  if (b2(n5) && (Object.keys(m3(s5)).length > 0 || Object.keys(m3(u3)).length > 0))
+    if (!import_react18.isValidElement(f3) || Array.isArray(f3) && f3.length > 1 || L2(f3)) {
+      if (Object.keys(m3(s5)).length > 0)
+        throw new Error(['Passing props on "Fragment"!', "", `The current component <${a5} /> is rendering a "Fragment".`, "However we need to passthrough the following props:", Object.keys(m3(s5)).concat(Object.keys(m3(u3))).map((d3) => `  - ${d3}`).join(`
+`), "", "You can apply a few solutions:", ['Add an `as="..."` prop, to ensure that we render an actual element instead of a "Fragment".', "Render a single element as the child so that we can forward the props onto that element."].map((d3) => `  - ${d3}`).join(`
+`)].join(`
+`));
+    } else {
+      let d3 = f3.props, p3 = d3 == null ? undefined : d3.className, c3 = typeof p3 == "function" ? (...R2) => t5(p3(...R2), s5.className) : t5(p3, s5.className), T2 = c3 ? { className: c3 } : {}, g2 = P3(f3.props, m3(h2(s5, ["ref"])));
+      for (let R2 in u3)
+        R2 in g2 && delete u3[R2];
+      return import_react18.cloneElement(f3, Object.assign({}, g2, u3, y2, { ref: o6(D(f3), y2.ref) }, T2));
+    }
+  return import_react18.createElement(n5, Object.assign({}, h2(s5, ["ref"]), !b2(n5) && y2, !b2(n5) && u3), f3);
+}
+function I2() {
+  let e3 = import_react18.useRef([]), r4 = import_react18.useCallback((t6) => {
+    for (let a5 of e3.current)
+      a5 != null && (typeof a5 == "function" ? a5(t6) : a5.current = t6);
+  }, []);
+  return (...t6) => {
+    if (!t6.every((a5) => a5 == null))
+      return e3.current = t6, r4;
+  };
+}
+function H(...e3) {
+  return e3.every((r4) => r4 == null) ? undefined : (r4) => {
+    for (let t6 of e3)
+      t6 != null && (typeof t6 == "function" ? t6(r4) : t6.current = r4);
+  };
+}
+function P3(...e3) {
+  var a5;
+  if (e3.length === 0)
+    return {};
+  if (e3.length === 1)
+    return e3[0];
+  let r4 = {}, t6 = {};
+  for (let o6 of e3)
+    for (let n5 in o6)
+      n5.startsWith("on") && typeof o6[n5] == "function" ? ((a5 = t6[n5]) != null || (t6[n5] = []), t6[n5].push(o6[n5])) : r4[n5] = o6[n5];
+  if (r4.disabled || r4["aria-disabled"])
+    for (let o6 in t6)
+      /^(on(?:Click|Pointer|Mouse|Key)(?:Down|Up|Press)?)$/.test(o6) && (t6[o6] = [(n5) => {
+        var i4;
+        return (i4 = n5 == null ? undefined : n5.preventDefault) == null ? undefined : i4.call(n5);
+      }]);
+  for (let o6 in t6)
+    Object.assign(r4, { [o6](n5, ...i4) {
+      let l3 = t6[o6];
+      for (let s5 of l3) {
+        if ((n5 instanceof Event || (n5 == null ? undefined : n5.nativeEvent) instanceof Event) && n5.defaultPrevented)
+          return;
+        s5(n5, ...i4);
+      }
+    } });
+  return r4;
+}
+function V2(...e3) {
+  var a5;
+  if (e3.length === 0)
+    return {};
+  if (e3.length === 1)
+    return e3[0];
+  let r4 = {}, t6 = {};
+  for (let o6 of e3)
+    for (let n5 in o6)
+      n5.startsWith("on") && typeof o6[n5] == "function" ? ((a5 = t6[n5]) != null || (t6[n5] = []), t6[n5].push(o6[n5])) : r4[n5] = o6[n5];
+  for (let o6 in t6)
+    Object.assign(r4, { [o6](...n5) {
+      let i4 = t6[o6];
+      for (let l3 of i4)
+        l3 == null || l3(...n5);
+    } });
+  return r4;
+}
+function Y2(e3) {
+  var r4;
+  return Object.assign(import_react18.forwardRef(e3), { displayName: (r4 = e3.displayName) != null ? r4 : e3.name });
+}
+function m3(e3) {
+  let r4 = Object.assign({}, e3);
+  for (let t6 in r4)
+    r4[t6] === undefined && delete r4[t6];
+  return r4;
+}
+function h2(e3, r4 = []) {
+  let t6 = Object.assign({}, e3);
+  for (let a5 of r4)
+    a5 in t6 && delete t6[a5];
+  return t6;
+}
+function D(e3) {
+  return import_react18.default.version.split(".")[0] >= "19" ? e3.props.ref : e3.ref;
+}
+function E3(e3) {
+  if (e3 != null && e3.$$typeof === Symbol.for("react.lazy")) {
+    let r4 = e3._payload;
+    if (r4 != null && r4.status === "fulfilled")
+      return E3(r4.value);
+  }
+  return e3;
+}
+function b2(e3) {
+  return e3 === import_react18.Fragment || e3 === Symbol.for("react.fragment");
+}
+function L2(e3) {
+  return b2(e3.type);
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-controllable.js
+var import_react19 = __toESM(require_react(), 1);
+var import_react_dom = __toESM(require_react_dom(), 1);
+function b3(l3, r4, c3) {
+  let [i4, s5] = import_react19.useState(c3), e3 = l3 !== undefined, t6 = import_react19.useRef(e3), u3 = import_react19.useRef(false), d3 = import_react19.useRef(false);
+  return e3 && !t6.current && !u3.current ? (u3.current = true, t6.current = e3, console.error("A component is changing from uncontrolled to controlled. This may be caused by the value changing from undefined to a defined value, which should not happen.")) : !e3 && t6.current && !d3.current && (d3.current = true, t6.current = e3, console.error("A component is changing from controlled to uncontrolled. This may be caused by the value changing from a defined value to undefined, which should not happen.")), [e3 ? l3 : i4, o5((n5) => (e3 || import_react_dom.flushSync(() => s5(n5)), r4 == null ? undefined : r4(n5)))];
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-default-value.js
+var import_react20 = __toESM(require_react(), 1);
+function l3(e3) {
+  let [t6] = import_react20.useState(e3);
+  return t6;
+}
+
+// node_modules/@headlessui/react/dist/hooks/use-id.js
+var import_react21 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/internal/form-fields.js
+var import_react23 = __toESM(require_react(), 1);
+var import_react_dom2 = __toESM(require_react_dom(), 1);
+
+// node_modules/@headlessui/react/dist/utils/form.js
+var import_react22 = __toESM(require_react(), 1);
+function p3(t6 = {}, i4 = null, n5 = []) {
+  for (let [e3, o7] of Object.entries(t6))
+    s5(n5, r5(i4, e3), o7);
+  return n5;
+}
+function r5(t6, i4) {
+  return t6 ? t6 + "[" + i4 + "]" : i4;
+}
+function s5(t6, i4, n5) {
+  if (Array.isArray(n5))
+    for (let [e3, o7] of n5.entries())
+      s5(t6, r5(i4, e3.toString()), o7);
+  else
+    n5 instanceof Date ? t6.push([i4, n5.toISOString()]) : typeof n5 == "boolean" ? t6.push([i4, n5 ? "1" : "0"]) : typeof n5 == "string" ? t6.push([i4, n5]) : typeof n5 == "number" ? t6.push([i4, `${n5}`]) : n5 == null ? t6.push([i4, ""]) : c3(n5) && !import_react22.isValidElement(n5) && p3(n5, i4, t6);
+}
+function g2(t6) {
+  var n5, e3;
+  let i4 = (n5 = t6 == null ? undefined : t6.form) != null ? n5 : t6.closest("form");
+  if (i4) {
+    for (let o7 of i4.elements)
+      if (o7 !== t6 && (o7.tagName === "INPUT" && o7.type === "submit" || o7.tagName === "BUTTON" && o7.type === "submit" || o7.nodeName === "INPUT" && o7.type === "image")) {
+        o7.click();
+        return;
+      }
+    (e3 = i4.requestSubmit) == null || e3.call(i4);
+  }
+}
+function c3(t6) {
+  if (Object.prototype.toString.call(t6) !== "[object Object]")
+    return false;
+  let i4 = Object.getPrototypeOf(t6);
+  return i4 === null || Object.getPrototypeOf(i4) === null;
+}
+
+// node_modules/@headlessui/react/dist/internal/hidden.js
+var a6 = "span";
+var s6 = ((e3) => (e3[e3.None = 1] = "None", e3[e3.Focusable = 2] = "Focusable", e3[e3.Hidden = 4] = "Hidden", e3))(s6 || {});
+function l4(t6, r6) {
+  var n5;
+  let { features: d3 = 1, ...e3 } = t6, o7 = { ref: r6, "aria-hidden": (d3 & 2) === 2 ? true : (n5 = e3["aria-hidden"]) != null ? n5 : undefined, hidden: (d3 & 4) === 4 ? true : undefined, style: { position: "fixed", top: 1, left: 1, width: 1, height: 0, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", borderWidth: "0", ...(d3 & 4) === 4 && (d3 & 2) !== 2 && { display: "none" } } };
+  return K2()({ ourProps: o7, theirProps: e3, slot: {}, defaultTag: a6, name: "Hidden" });
+}
+var f5 = Y2(l4);
+
+// node_modules/@headlessui/react/dist/internal/form-fields.js
+var f6 = import_react23.createContext(null);
+function c4({ children: t6 }) {
+  let e3 = import_react23.useContext(f6);
+  if (!e3)
+    return import_react23.default.createElement(import_react23.default.Fragment, null, t6);
+  let { target: r6 } = e3;
+  return r6 ? import_react_dom2.createPortal(import_react23.default.createElement(import_react23.default.Fragment, null, t6), r6) : null;
+}
+function j2({ data: t6, form: e3, disabled: r6, onReset: n5, overrides: F2 }) {
+  let [i4, a7] = import_react23.useState(null), p4 = p2();
+  return import_react23.useEffect(() => {
+    if (n5 && i4)
+      return p4.addEventListener(i4, "reset", n5);
+  }, [i4, e3, n5]), import_react23.default.createElement(c4, null, import_react23.default.createElement(C3, { setForm: a7, formId: e3 }), p3(t6).map(([s7, v3]) => import_react23.default.createElement(f5, { features: s6.Hidden, ...m3({ key: s7, as: "input", type: "hidden", hidden: true, readOnly: true, form: e3, disabled: r6, name: s7, value: v3, ...F2 }) })));
+}
+function C3({ setForm: t6, formId: e3 }) {
+  return import_react23.useEffect(() => {
+    if (e3) {
+      let r6 = document.getElementById(e3);
+      r6 && t6(r6);
+    }
+  }, [t6, e3]), e3 ? null : import_react23.default.createElement(f5, { features: s6.Hidden, as: "input", type: "hidden", hidden: true, readOnly: true, ref: (r6) => {
+    if (!r6)
+      return;
+    let n5 = r6.closest("form");
+    n5 && t6(n5);
+  } });
+}
+
+// node_modules/@headlessui/react/dist/internal/id.js
+var import_react24 = __toESM(require_react(), 1);
+var e3 = import_react24.createContext(undefined);
+function u5() {
+  return import_react24.useContext(e3);
+}
+
+// node_modules/@headlessui/react/dist/utils/dom.js
+function o8(e4) {
+  return typeof e4 != "object" || e4 === null ? false : ("nodeType" in e4);
+}
+function t6(e4) {
+  return o8(e4) && "tagName" in e4;
+}
+function n6(e4) {
+  return t6(e4) && "accessKey" in e4;
+}
+function l5(e4) {
+  return n6(e4) && e4.nodeName === "INPUT";
+}
+function m5(e4) {
+  return n6(e4) && e4.nodeName === "LABEL";
+}
+function a7(e4) {
+  return n6(e4) && e4.nodeName === "FIELDSET";
+}
+function E5(e4) {
+  return n6(e4) && e4.nodeName === "LEGEND";
+}
+function L3(e4) {
+  return t6(e4) ? e4.matches('a[href],audio[controls],button,details,embed,iframe,img[usemap],input:not([type="hidden"]),label,select,textarea,video[controls]') : false;
+}
+
+// node_modules/@headlessui/react/dist/utils/bugs.js
+function s7(l6) {
+  let e4 = l6.parentElement, t7 = null;
+  for (;e4 && !a7(e4); )
+    E5(e4) && (t7 = e4), e4 = e4.parentElement;
+  let i5 = (e4 == null ? undefined : e4.getAttribute("disabled")) === "";
+  return i5 && r6(t7) ? false : i5;
+}
+function r6(l6) {
+  if (!l6)
+    return false;
+  let e4 = l6.previousElementSibling;
+  for (;e4 !== null; ) {
+    if (E5(e4))
+      return false;
+    e4 = e4.previousElementSibling;
+  }
+  return true;
+}
+
+// node_modules/@headlessui/react/dist/components/description/description.js
+var import_react26 = __toESM(require_react(), 1);
+
+// node_modules/@headlessui/react/dist/hooks/use-sync-refs.js
+var import_react25 = __toESM(require_react(), 1);
+var u6 = Symbol();
+function y2(...t7) {
+  let n7 = import_react25.useRef(t7);
+  import_react25.useEffect(() => {
+    n7.current = t7;
+  }, [t7]);
+  let c5 = o5((e4) => {
+    for (let o9 of n7.current)
+      o9 != null && (typeof o9 == "function" ? o9(e4) : o9.current = e4);
+  });
+  return t7.every((e4) => e4 == null || (e4 == null ? undefined : e4[u6])) ? undefined : c5;
+}
+
+// node_modules/@headlessui/react/dist/components/description/description.js
+"use client";
+var a8 = import_react26.createContext(null);
+a8.displayName = "DescriptionContext";
+function f7() {
+  let r7 = import_react26.useContext(a8);
+  if (r7 === null) {
+    let e4 = new Error("You used a <Description /> component, but it is not inside a relevant parent.");
+    throw Error.captureStackTrace && Error.captureStackTrace(e4, f7), e4;
+  }
+  return r7;
+}
+function w4() {
+  var r7, e4;
+  return (e4 = (r7 = import_react26.useContext(a8)) == null ? undefined : r7.value) != null ? e4 : undefined;
+}
+function H3() {
+  let [r7, e4] = import_react26.useState([]);
+  return [r7.length > 0 ? r7.join(" ") : undefined, import_react26.useMemo(() => function(t7) {
+    let i6 = o5((n7) => (e4((o9) => [...o9, n7]), () => e4((o9) => {
+      let s8 = o9.slice(), p4 = s8.indexOf(n7);
+      return p4 !== -1 && s8.splice(p4, 1), s8;
+    }))), l7 = import_react26.useMemo(() => ({ register: i6, slot: t7.slot, name: t7.name, props: t7.props, value: t7.value }), [i6, t7.slot, t7.name, t7.props, t7.value]);
+    return import_react26.default.createElement(a8.Provider, { value: l7 }, t7.children);
+  }, [e4])];
+}
+var I3 = "p";
+function C4(r7, e4) {
+  let c5 = import_react21.useId(), t7 = a4(), { id: i6 = `headlessui-description-${c5}`, ...l7 } = r7, n7 = f7(), o9 = y2(e4);
+  n2(() => n7.register(i6), [i6, n7.register]);
+  let s8 = n3({ ...n7.slot, disabled: t7 || false }), p4 = { ref: o9, ...n7.props, id: i6 };
+  return K2()({ ourProps: p4, theirProps: l7, slot: s8, defaultTag: I3, name: n7.name || "Description" });
+}
+var _2 = Y2(C4);
+var M2 = Object.assign(_2, {});
+
+// node_modules/@headlessui/react/dist/components/keyboard.js
+var o9 = ((r7) => (r7.Space = " ", r7.Enter = "Enter", r7.Escape = "Escape", r7.Backspace = "Backspace", r7.Delete = "Delete", r7.ArrowLeft = "ArrowLeft", r7.ArrowUp = "ArrowUp", r7.ArrowRight = "ArrowRight", r7.ArrowDown = "ArrowDown", r7.Home = "Home", r7.End = "End", r7.PageUp = "PageUp", r7.PageDown = "PageDown", r7.Tab = "Tab", r7))(o9 || {});
+
+// node_modules/@headlessui/react/dist/components/label/label.js
+var import_react27 = __toESM(require_react(), 1);
+"use client";
+var L4 = import_react27.createContext(null);
+L4.displayName = "LabelContext";
+function C5() {
+  let n7 = import_react27.useContext(L4);
+  if (n7 === null) {
+    let l7 = new Error("You used a <Label /> component, but it is not inside a relevant parent.");
+    throw Error.captureStackTrace && Error.captureStackTrace(l7, C5), l7;
+  }
+  return n7;
+}
+function N(n7) {
+  var a9, e4, o10;
+  let l7 = (e4 = (a9 = import_react27.useContext(L4)) == null ? undefined : a9.value) != null ? e4 : undefined;
+  return ((o10 = n7 == null ? undefined : n7.length) != null ? o10 : 0) > 0 ? [l7, ...n7].filter(Boolean).join(" ") : l7;
+}
+function V3({ inherit: n7 = false } = {}) {
+  let l7 = N(), [a9, e4] = import_react27.useState([]), o10 = n7 ? [l7, ...a9].filter(Boolean) : a9;
+  return [o10.length > 0 ? o10.join(" ") : undefined, import_react27.useMemo(() => function(t7) {
+    let p4 = o5((i6) => (e4((u8) => [...u8, i6]), () => e4((u8) => {
+      let d5 = u8.slice(), f8 = d5.indexOf(i6);
+      return f8 !== -1 && d5.splice(f8, 1), d5;
+    }))), b4 = import_react27.useMemo(() => ({ register: p4, slot: t7.slot, name: t7.name, props: t7.props, value: t7.value }), [p4, t7.slot, t7.name, t7.props, t7.value]);
+    return import_react27.default.createElement(L4.Provider, { value: b4 }, t7.children);
+  }, [e4])];
+}
+var G2 = "label";
+function U3(n7, l7) {
+  var y3;
+  let a9 = import_react21.useId(), e4 = C5(), o10 = u5(), T3 = a4(), { id: t7 = `headlessui-label-${a9}`, htmlFor: p4 = o10 != null ? o10 : (y3 = e4.props) == null ? undefined : y3.htmlFor, passive: b4 = false, ...i6 } = n7, u8 = y2(l7);
+  n2(() => e4.register(t7), [t7, e4.register]);
+  let d5 = o5((s8) => {
+    let g4 = s8.currentTarget;
+    if (!(s8.target !== s8.currentTarget && L3(s8.target)) && (m5(g4) && s8.preventDefault(), e4.props && ("onClick" in e4.props) && typeof e4.props.onClick == "function" && e4.props.onClick(s8), m5(g4))) {
+      let r7 = document.getElementById(g4.htmlFor);
+      if (r7) {
+        let E6 = r7.getAttribute("disabled");
+        if (E6 === "true" || E6 === "")
+          return;
+        let x2 = r7.getAttribute("aria-disabled");
+        if (x2 === "true" || x2 === "")
+          return;
+        (l5(r7) && (r7.type === "file" || r7.type === "radio" || r7.type === "checkbox") || r7.role === "radio" || r7.role === "checkbox" || r7.role === "switch") && r7.click(), r7.focus({ preventScroll: true });
+      }
+    }
+  }), f8 = n3({ ...e4.slot, disabled: T3 || false }), c5 = { ref: u8, ...e4.props, id: t7, htmlFor: p4, onClick: d5 };
+  return b4 && (("onClick" in c5) && (delete c5.htmlFor, delete c5.onClick), ("onClick" in i6) && delete i6.onClick), K2()({ ourProps: c5, theirProps: i6, slot: f8, defaultTag: p4 ? G2 : "div", name: e4.name || "Label" });
+}
+var j3 = Y2(U3);
+var Z2 = Object.assign(j3, {});
+
+// node_modules/@headlessui/react/dist/hooks/use-resolve-button-type.js
+var import_react28 = __toESM(require_react(), 1);
+function e4(t7, u8) {
+  return import_react28.useMemo(() => {
+    var n7;
+    if (t7.type)
+      return t7.type;
+    let r7 = (n7 = t7.as) != null ? n7 : "button";
+    if (typeof r7 == "string" && r7.toLowerCase() === "button" || (u8 == null ? undefined : u8.tagName) === "BUTTON" && !u8.hasAttribute("type"))
+      return "button";
+  }, [t7.type, t7.as, u8]);
+}
+
+// node_modules/@headlessui/react/dist/components/input/input.js
+"use client";
+var x2 = "input";
+function h4(r7, p4) {
+  let n7 = import_react21.useId(), s8 = u5(), a10 = a4(), { id: l7 = s8 || `headlessui-input-${n7}`, disabled: e5 = a10 || false, autoFocus: o10 = false, invalid: t7 = false, ...i6 } = r7, d5 = N(), u8 = w4(), { isFocused: f8, focusProps: m7 } = $0c4a58759813079a$export$4e328f61c538687f({ autoFocus: o10 }), { isHovered: T3, hoverProps: b4 } = $e969f22b6713ca4a$export$ae780daf29e6d456({ isDisabled: e5 }), y3 = V2({ ref: p4, id: l7, "aria-labelledby": d5, "aria-describedby": u8, "aria-invalid": t7 ? "true" : undefined, disabled: e5 || undefined, autoFocus: o10 }, m7, b4), I4 = n3({ disabled: e5, invalid: t7, hover: T3, focus: f8, autofocus: o10 });
+  return K2()({ ourProps: y3, theirProps: i6, slot: I4, defaultTag: x2, name: "Input" });
+}
+var X2 = Y2(h4);
+
+// node_modules/@headlessui/react/dist/components/switch/switch.js
+var import_react29 = __toESM(require_react(), 1);
+"use client";
+var E6 = import_react29.createContext(null);
+E6.displayName = "GroupContext";
+var ve = import_react29.Fragment;
+function xe(n7) {
+  var c5;
+  let [t7, a10] = import_react29.useState(null), [f8, h5] = V3(), [b4, o10] = H3(), s8 = import_react29.useMemo(() => ({ switch: t7, setSwitch: a10 }), [t7, a10]), T3 = {}, y3 = n7, p4 = K2();
+  return import_react29.default.createElement(o10, { name: "Switch.Description", value: b4 }, import_react29.default.createElement(h5, { name: "Switch.Label", value: f8, props: { htmlFor: (c5 = s8.switch) == null ? undefined : c5.id, onClick(u8) {
+    t7 && (m5(u8.currentTarget) && u8.preventDefault(), t7.click(), t7.focus({ preventScroll: true }));
+  } } }, import_react29.default.createElement(E6.Provider, { value: s8 }, p4({ ourProps: T3, theirProps: y3, slot: {}, defaultTag: ve, name: "Switch.Group" }))));
+}
+var Ce = "button";
+function Le(n7, t7) {
+  var g4;
+  let a10 = import_react21.useId(), f8 = u5(), h5 = a4(), { id: b4 = f8 || `headlessui-switch-${a10}`, disabled: o10 = h5 || false, checked: s8, defaultChecked: T3, onChange: y3, name: p4, value: c5, form: u8, autoFocus: S3 = false, ...C6 } = n7, _3 = import_react29.useContext(E6), [L5, R3] = import_react29.useState(null), G3 = import_react29.useRef(null), A2 = y2(G3, t7, _3 === null ? null : _3.setSwitch, R3), l7 = l3(T3), [d5, r7] = b3(s8, y3, l7 != null ? l7 : false), F2 = p2(), [H4, P4] = import_react29.useState(false), D4 = o5(() => {
+    P4(true), r7 == null || r7(!d5), F2.nextFrame(() => {
+      P4(false);
+    });
+  }), k4 = o5((e5) => {
+    if (s7(e5.currentTarget))
+      return e5.preventDefault();
+    e5.preventDefault(), D4();
+  }), M3 = o5((e5) => {
+    e5.key === o9.Space ? (e5.preventDefault(), D4()) : e5.key === o9.Enter && g2(e5.currentTarget);
+  }), U4 = o5((e5) => e5.preventDefault()), I4 = N(), B2 = w4(), { isFocusVisible: K3, focusProps: O2 } = $0c4a58759813079a$export$4e328f61c538687f({ autoFocus: S3 }), { isHovered: W, hoverProps: N2 } = $e969f22b6713ca4a$export$ae780daf29e6d456({ isDisabled: o10 }), { pressed: J2, pressProps: V4 } = w2({ disabled: o10 }), X3 = n3({ checked: d5, disabled: o10, hover: W, focus: K3, active: J2, autofocus: S3, changing: H4 }), j4 = V2({ id: b4, ref: A2, role: "switch", type: e4(n7, L5), tabIndex: n7.tabIndex === -1 ? 0 : (g4 = n7.tabIndex) != null ? g4 : 0, "aria-checked": d5, "aria-labelledby": I4, "aria-describedby": B2, disabled: o10 || undefined, autoFocus: S3, onClick: k4, onKeyUp: M3, onKeyPress: U4 }, O2, N2, V4), $2 = import_react29.useCallback(() => {
+    if (l7 !== undefined)
+      return r7 == null ? undefined : r7(l7);
+  }, [r7, l7]), q = K2();
+  return import_react29.default.createElement(import_react29.default.Fragment, null, p4 != null && import_react29.default.createElement(j2, { disabled: o10, data: { [p4]: c5 || "on" }, overrides: { type: "checkbox", checked: d5 }, form: u8, onReset: $2 }), q({ ourProps: j4, theirProps: C6, slot: X3, defaultTag: Ce, name: "Switch" }));
+}
+var Re = Y2(Le);
+var Ge = xe;
+var Ae = Z2;
+var Fe = M2;
+var tt = Object.assign(Re, { Group: Ge, Label: Ae, Description: Fe });
+
+// src/ui/App.jsx
 var jsx_dev_runtime = __toESM(require_jsx_dev_runtime(), 1);
 function hasCapability(device, type, instance) {
   return device.capabilities.some((capability) => capability.type === type && capability.instance === instance);
 }
 function useLightSocket() {
-  const socketRef = import_react.useRef(null);
-  const reconnectTimer = import_react.useRef(null);
-  const [connected, setConnected] = import_react.useState(false);
-  const [snapshot, setSnapshot] = import_react.useState({ devices: [], configuredProviders: [], hueConfigured: false });
-  const [toast, setToast] = import_react.useState(null);
-  const [hueBridges, setHueBridges] = import_react.useState([]);
-  const [discoveringHue, setDiscoveringHue] = import_react.useState(false);
-  const [pairingHue, setPairingHue] = import_react.useState(false);
-  const [huePairCount, setHuePairCount] = import_react.useState(0);
-  const notify = import_react.useCallback((message, error = false) => {
+  const socketRef = import_react30.useRef(null);
+  const reconnectTimer = import_react30.useRef(null);
+  const [connected, setConnected] = import_react30.useState(false);
+  const [snapshot, setSnapshot] = import_react30.useState({ devices: [], configuredProviders: [], hueConfigured: false });
+  const [toast, setToast] = import_react30.useState(null);
+  const [hueBridges, setHueBridges] = import_react30.useState([]);
+  const [discoveringHue, setDiscoveringHue] = import_react30.useState(false);
+  const [pairingHue, setPairingHue] = import_react30.useState(false);
+  const [huePairCount, setHuePairCount] = import_react30.useState(0);
+  const notify = import_react30.useCallback((message, error = false) => {
     setToast({ message, error });
     window.clearTimeout(notify.timer);
     notify.timer = window.setTimeout(() => setToast(null), 2600);
   }, []);
-  const send = import_react.useCallback((message) => {
+  const send = import_react30.useCallback((message) => {
     const socket = socketRef.current;
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       notify("Connecting to the light controller…", true);
@@ -17145,7 +18848,7 @@ function useLightSocket() {
     socket.send(JSON.stringify({ ...message, requestId: crypto.randomUUID() }));
     return true;
   }, [notify]);
-  import_react.useEffect(() => {
+  import_react30.useEffect(() => {
     let stopped = false;
     const connect = () => {
       if (stopped)
@@ -17191,201 +18894,340 @@ function useLightSocket() {
       socketRef.current?.close();
     };
   }, [notify]);
-  const discoverHue = import_react.useCallback(() => {
+  const discoverHue = import_react30.useCallback(() => {
     setDiscoveringHue(true);
     if (!send({ type: "discover-hue" }))
       setDiscoveringHue(false);
   }, [send]);
-  const pairHue = import_react.useCallback((bridgeIp) => {
+  const pairHue = import_react30.useCallback((bridgeIp) => {
     setPairingHue(true);
     if (!send({ type: "pair-hue", bridgeIp }))
       setPairingHue(false);
   }, [send]);
   return { ...snapshot, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue };
 }
+function ColorControl({ device, connected, send }) {
+  const [color, setColor] = import_react30.useState("#ffffff");
+  const [open, setOpen] = import_react30.useState(false);
+  const rootRef = import_react30.useRef(null);
+  const commit = import_react30.useCallback((value) => {
+    const hex = (typeof value === "string" ? value : color).replace("#", "");
+    if (!/^[0-9a-f]{6}$/i.test(hex))
+      return;
+    const red = parseInt(hex.slice(0, 2), 16);
+    const green = parseInt(hex.slice(2, 4), 16);
+    const blue = parseInt(hex.slice(4, 6), 16);
+    send({ type: "control", providerId: device.provider, deviceId: device.id, command: { type: "color", red, green, blue } });
+  }, [color, device, send]);
+  const palette = device.palette ?? [];
+  const paletteFull = palette.length >= 12;
+  const inPalette = palette.some((entry) => entry.toLowerCase() === color.toLowerCase());
+  const applyPreset = import_react30.useCallback((hex) => {
+    setColor(hex);
+    const red = parseInt(hex.slice(1, 3), 16);
+    const green = parseInt(hex.slice(3, 5), 16);
+    const blue = parseInt(hex.slice(5, 7), 16);
+    send({ type: "control", providerId: device.provider, deviceId: device.id, command: { type: "color", red, green, blue } });
+  }, [device, send]);
+  const addPreset = import_react30.useCallback(() => {
+    if (palette.some((entry) => entry.toLowerCase() === color.toLowerCase()))
+      return;
+    send({ type: "add-palette-color", providerId: device.provider, deviceId: device.id, color });
+    setOpen(false);
+  }, [palette, color, device, send]);
+  const removePreset = import_react30.useCallback((hex) => {
+    send({ type: "remove-palette-color", providerId: device.provider, deviceId: device.id, color: hex });
+  }, [device, send]);
+  import_react30.useEffect(() => {
+    if (!open)
+      return;
+    const close = (event) => {
+      if (rootRef.current && !rootRef.current.contains(event.target))
+        setOpen(false);
+    };
+    const onKey = (event) => {
+      if (event.key === "Escape")
+        setOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+    className: "control",
+    ref: rootRef,
+    children: [
+      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+        className: "control-row",
+        children: [
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+            className: "control-label",
+            children: "Color"
+          }, undefined, false, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+            className: `color-swatch${open ? " open" : ""}`,
+            type: "button",
+            style: { backgroundColor: color },
+            "aria-label": "Choose color",
+            "aria-haspopup": "dialog",
+            "aria-expanded": open,
+            disabled: !connected,
+            onClick: () => setOpen((current) => !current)
+          }, undefined, false, undefined, this)
+        ]
+      }, undefined, true, undefined, this),
+      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+        className: "presets-row",
+        children: [
+          palette.map((hex) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "preset-wrap",
+            children: [
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                className: "preset-swatch",
+                type: "button",
+                style: { backgroundColor: hex },
+                title: hex,
+                "aria-label": `Apply preset ${hex}`,
+                disabled: !connected,
+                onClick: () => applyPreset(hex)
+              }, undefined, false, undefined, this),
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+                className: "preset-remove",
+                type: "button",
+                "aria-label": `Remove preset ${hex}`,
+                disabled: !connected,
+                onClick: () => removePreset(hex),
+                children: "×"
+              }, undefined, false, undefined, this)
+            ]
+          }, hex, true, undefined, this)),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+            className: "preset-add",
+            type: "button",
+            "aria-label": "Add a preset color",
+            title: paletteFull ? "Presets are full" : "Add a preset color",
+            disabled: !connected,
+            onClick: () => setOpen(true),
+            children: "+"
+          }, undefined, false, undefined, this)
+        ]
+      }, undefined, true, undefined, this),
+      open && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+        className: "color-popover",
+        children: [
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV(Z, {
+            color,
+            onChange: setColor,
+            onChangeEnd: commit
+          }, undefined, false, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "color-hex-row",
+            children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV(Oe, {
+              className: "color-hex-input",
+              color,
+              onChange: setColor,
+              onBlur: () => commit(),
+              onKeyDown: (event) => {
+                if (event.key === "Enter")
+                  event.currentTarget.blur();
+              },
+              prefixed: true
+            }, undefined, false, undefined, this)
+          }, undefined, false, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "color-popover-footer",
+            children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
+              className: "save-name-button",
+              type: "button",
+              disabled: !connected || paletteFull || inPalette,
+              onClick: addPreset,
+              children: inPalette ? "Already a preset" : "Add to presets"
+            }, undefined, false, undefined, this)
+          }, undefined, false, undefined, this)
+        ]
+      }, undefined, true, undefined, this)
+    ]
+  }, undefined, true, undefined, this);
+}
 function DeviceCard({ device, connected, send }) {
-  const [name, setName] = import_react.useState(device.customName ?? "");
-  const [powerOn, setPowerOn] = import_react.useState(false);
-  const [brightness, setBrightness] = import_react.useState(50);
-  const [temperature, setTemperature] = import_react.useState(4000);
-  const [color, setColor] = import_react.useState("#ffffff");
-  const inputId = `name-${device.provider}-${device.id}`;
-  import_react.useEffect(() => setName(device.customName ?? ""), [device.customName]);
+  const [name, setName] = import_react30.useState(device.customName ?? "");
+  const [powerOn, setPowerOn] = import_react30.useState(device.state?.on ?? false);
+  const [brightness, setBrightness] = import_react30.useState(50);
+  const [temperature, setTemperature] = import_react30.useState(4000);
+  const [editing, setEditing] = import_react30.useState(false);
+  import_react30.useEffect(() => {
+    if (!editing)
+      setName(device.customName ?? "");
+  }, [device.customName, editing]);
+  import_react30.useEffect(() => {
+    if (device.state?.on !== undefined)
+      setPowerOn(device.state.on);
+  }, [device.state?.on]);
   const control = (command, optimisticUpdate) => {
     optimisticUpdate?.();
     send({ type: "control", providerId: device.provider, deviceId: device.id, command });
   };
-  const saveName = (event) => {
-    event.preventDefault();
-    send({ type: "save-name", providerId: device.provider, deviceId: device.id, name: name.trim() });
+  const startEdit = () => {
+    setName(device.customName ?? "");
+    setEditing(true);
   };
+  const commitName = () => {
+    setEditing(false);
+    const value = name.trim();
+    if (value === (device.customName ?? ""))
+      return;
+    setName(value);
+    send({ type: "save-name", providerId: device.provider, deviceId: device.id, name: value });
+  };
+  const cancelName = () => {
+    setEditing(false);
+    setName(device.customName ?? "");
+  };
+  const handleNameKey = (event) => {
+    if (event.key === "Enter")
+      event.currentTarget.blur();
+    else if (event.key === "Escape")
+      cancelName();
+  };
+  const hasPower = hasCapability(device, "devices.capabilities.on_off", "powerSwitch");
   return /* @__PURE__ */ jsx_dev_runtime.jsxDEV("article", {
     className: "device-card",
     children: [
       /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
         className: "device-heading",
-        children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-          children: [
-            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("h2", {
-              className: "device-name",
-              children: device.name
-            }, undefined, false, undefined, this),
-            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
-              className: "device-meta",
-              children: [
-                device.provider,
-                " · ",
-                device.model
-              ]
-            }, undefined, true, undefined, this)
-          ]
-        }, undefined, true, undefined, this)
-      }, undefined, false, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("form", {
-        className: "name-form",
-        onSubmit: saveName,
         children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("label", {
-            className: "name-label",
-            htmlFor: inputId,
-            children: "Device name"
-          }, undefined, false, undefined, this),
           /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "name-row",
             children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
-                id: inputId,
-                type: "text",
-                maxLength: "80",
+              editing ? /* @__PURE__ */ jsx_dev_runtime.jsxDEV(X2, {
+                className: "name-input",
                 value: name,
                 onChange: (event) => setName(event.target.value),
-                placeholder: "Optional name"
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-                className: "save-name-button",
-                type: "submit",
+                maxLength: 80,
+                placeholder: device.name,
                 disabled: !connected,
-                children: "Save name"
-              }, undefined, false, undefined, this)
+                "aria-label": "Device name",
+                autoFocus: true,
+                onBlur: commitName,
+                onKeyDown: handleNameKey
+              }, undefined, false, undefined, this) : /* @__PURE__ */ jsx_dev_runtime.jsxDEV("h2", {
+                className: "device-name",
+                tabIndex: connected ? 0 : -1,
+                onClick: connected ? startEdit : undefined,
+                onKeyDown: (event) => {
+                  if (connected && event.key === "Enter")
+                    startEdit();
+                },
+                children: device.name
+              }, undefined, false, undefined, this),
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("p", {
+                className: "device-meta",
+                children: [
+                  device.provider,
+                  " · ",
+                  device.model
+                ]
+              }, undefined, true, undefined, this)
             ]
-          }, undefined, true, undefined, this)
-        ]
-      }, undefined, true, undefined, this),
-      hasCapability(device, "devices.capabilities.on_off", "powerSwitch") && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "control-row control power-control",
-        children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-            className: "control-label",
-            children: "Power"
-          }, undefined, false, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("button", {
-            className: `power-button${powerOn ? " on" : ""}`,
-            type: "button",
+          }, undefined, true, undefined, this),
+          hasPower && /* @__PURE__ */ jsx_dev_runtime.jsxDEV(tt, {
+            checked: powerOn,
+            onChange: (on) => control({ type: "power", on }, () => setPowerOn(on)),
             disabled: !connected,
-            onClick: () => control({ type: "power", on: !powerOn }, () => setPowerOn(!powerOn)),
-            children: powerOn ? "On" : "Off"
+            "aria-label": "Toggle power",
+            className: "power-switch",
+            children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+              className: "power-thumb"
+            }, undefined, false, undefined, this)
           }, undefined, false, undefined, this)
         ]
       }, undefined, true, undefined, this),
-      hasCapability(device, "devices.capabilities.range", "brightness") && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "control",
+      (!hasPower || powerOn) && /* @__PURE__ */ jsx_dev_runtime.jsxDEV(jsx_dev_runtime.Fragment, {
         children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "control-row",
+          hasCapability(device, "devices.capabilities.range", "brightness") && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "control",
             children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                className: "control-label",
-                children: "Brightness"
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                className: "value",
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "control-row",
                 children: [
-                  brightness,
-                  "%"
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    className: "control-label",
+                    children: "Brightness"
+                  }, undefined, false, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    className: "value",
+                    children: [
+                      brightness,
+                      "%"
+                    ]
+                  }, undefined, true, undefined, this)
+                ]
+              }, undefined, true, undefined, this),
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "range-row",
+                children: [
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
+                    type: "range",
+                    min: "1",
+                    max: "100",
+                    value: brightness,
+                    disabled: !connected,
+                    onChange: (event) => {
+                      const value = Number(event.target.value);
+                      setBrightness(value);
+                      control({ type: "brightness", value });
+                    }
+                  }, undefined, false, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {}, undefined, false, undefined, this)
                 ]
               }, undefined, true, undefined, this)
             ]
           }, undefined, true, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "range-row",
+          hasCapability(device, "devices.capabilities.color_setting", "colorRgb") && /* @__PURE__ */ jsx_dev_runtime.jsxDEV(ColorControl, {
+            device,
+            connected,
+            send
+          }, undefined, false, undefined, this),
+          hasCapability(device, "devices.capabilities.color_setting", "colorTemperatureK") && !hasCapability(device, "devices.capabilities.color_setting", "colorRgb") && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+            className: "control",
             children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
-                type: "range",
-                min: "1",
-                max: "100",
-                value: brightness,
-                disabled: !connected,
-                onChange: (event) => {
-                  const value = Number(event.target.value);
-                  setBrightness(value);
-                  control({ type: "brightness", value });
-                }
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {}, undefined, false, undefined, this)
-            ]
-          }, undefined, true, undefined, this)
-        ]
-      }, undefined, true, undefined, this),
-      hasCapability(device, "devices.capabilities.color_setting", "colorRgb") && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "control",
-        children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-          className: "control-row",
-          children: [
-            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-              className: "control-label",
-              children: "Color"
-            }, undefined, false, undefined, this),
-            /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
-              type: "color",
-              value: color,
-              disabled: !connected,
-              "aria-label": "Choose color",
-              onChange: (event) => {
-                const value = event.target.value;
-                setColor(value);
-                const [red, green, blue] = value.slice(1).match(/.{2}/g).map((part) => parseInt(part, 16));
-                control({ type: "color", red, green, blue });
-              }
-            }, undefined, false, undefined, this)
-          ]
-        }, undefined, true, undefined, this)
-      }, undefined, false, undefined, this),
-      hasCapability(device, "devices.capabilities.color_setting", "colorTemperatureK") && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-        className: "control",
-        children: [
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "control-row",
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                className: "control-label",
-                children: "Color temperature"
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
-                className: "value",
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "control-row",
                 children: [
-                  temperature.toLocaleString(),
-                  "K"
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    className: "control-label",
+                    children: "Color temperature"
+                  }, undefined, false, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {
+                    className: "value",
+                    children: [
+                      temperature.toLocaleString(),
+                      "K"
+                    ]
+                  }, undefined, true, undefined, this)
+                ]
+              }, undefined, true, undefined, this),
+              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+                className: "range-row",
+                children: [
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
+                    type: "range",
+                    min: "2000",
+                    max: "9000",
+                    step: "100",
+                    value: temperature,
+                    disabled: !connected,
+                    onChange: (event) => {
+                      const value = Number(event.target.value);
+                      setTemperature(value);
+                      control({ type: "temperature", value });
+                    }
+                  }, undefined, false, undefined, this),
+                  /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {}, undefined, false, undefined, this)
                 ]
               }, undefined, true, undefined, this)
-            ]
-          }, undefined, true, undefined, this),
-          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "range-row",
-            children: [
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
-                type: "range",
-                min: "2000",
-                max: "9000",
-                step: "100",
-                value: temperature,
-                disabled: !connected,
-                onChange: (event) => {
-                  const value = Number(event.target.value);
-                  setTemperature(value);
-                  control({ type: "temperature", value });
-                }
-              }, undefined, false, undefined, this),
-              /* @__PURE__ */ jsx_dev_runtime.jsxDEV("span", {}, undefined, false, undefined, this)
             ]
           }, undefined, true, undefined, this)
         ]
@@ -17394,7 +19236,7 @@ function DeviceCard({ device, connected, send }) {
   }, undefined, true, undefined, this);
 }
 function HueSetup({ open, onClose, bridges, discovering, pairing, onDiscover, onPair }) {
-  const [bridgeIp, setBridgeIp] = import_react.useState("");
+  const [bridgeIp, setBridgeIp] = import_react30.useState("");
   if (!open)
     return null;
   return /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
@@ -17465,12 +19307,12 @@ function HueSetup({ open, onClose, bridges, discovering, pairing, onDiscover, on
         },
         children: [
           /* @__PURE__ */ jsx_dev_runtime.jsxDEV("label", {
-            className: "name-label",
+            className: "setup-label",
             htmlFor: "hue-bridge-ip",
             children: "Bridge IP address"
           }, undefined, false, undefined, this),
           /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
-            className: "name-row",
+            className: "setup-row",
             children: [
               /* @__PURE__ */ jsx_dev_runtime.jsxDEV("input", {
                 id: "hue-bridge-ip",
@@ -17495,13 +19337,15 @@ function HueSetup({ open, onClose, bridges, discovering, pairing, onDiscover, on
   }, undefined, true, undefined, this);
 }
 function App() {
-  const [hueSetupOpen, setHueSetupOpen] = import_react.useState(false);
+  const [hueSetupOpen, setHueSetupOpen] = import_react30.useState(false);
   const controller = useLightSocket();
   const { devices, connected, toast, send, hueBridges, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue } = controller;
-  import_react.useEffect(() => {
+  import_react30.useEffect(() => {
     if (huePairCount > 0)
       setHueSetupOpen(false);
   }, [huePairCount]);
+  const onDevices = devices.filter((device) => device.state?.on === true);
+  const offDevices = devices.filter((device) => device.state?.on !== true);
   return /* @__PURE__ */ jsx_dev_runtime.jsxDEV("main", {
     className: "shell",
     children: [
@@ -17559,18 +19403,54 @@ function App() {
         onDiscover: discoverHue,
         onPair: pairHue
       }, undefined, false, undefined, this),
-      /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
+      devices.length === 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
         className: "device-grid",
         "aria-live": "polite",
-        children: devices.length ? devices.map((device) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV(DeviceCard, {
-          device,
-          connected,
-          send
-        }, `${device.provider}:${device.id}`, false, undefined, this)) : /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
+        children: /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
           className: "empty",
           children: connected ? "No lights found. Check your provider configuration." : "Connecting to the light controller…"
         }, undefined, false, undefined, this)
       }, undefined, false, undefined, this),
+      onDevices.length > 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV(jsx_dev_runtime.Fragment, {
+        children: [
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("h2", {
+            className: "group-heading",
+            children: [
+              "On",
+              onDevices.length > 1 ? ` (${onDevices.length})` : ""
+            ]
+          }, undefined, true, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
+            className: "device-grid",
+            "aria-live": "polite",
+            children: onDevices.map((device) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV(DeviceCard, {
+              device,
+              connected,
+              send
+            }, `${device.provider}:${device.id}`, false, undefined, this))
+          }, undefined, false, undefined, this)
+        ]
+      }, undefined, true, undefined, this),
+      offDevices.length > 0 && /* @__PURE__ */ jsx_dev_runtime.jsxDEV(jsx_dev_runtime.Fragment, {
+        children: [
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("h2", {
+            className: "group-heading",
+            children: [
+              "Off",
+              offDevices.length > 1 ? ` (${offDevices.length})` : ""
+            ]
+          }, undefined, true, undefined, this),
+          /* @__PURE__ */ jsx_dev_runtime.jsxDEV("section", {
+            className: "device-grid",
+            "aria-live": "polite",
+            children: offDevices.map((device) => /* @__PURE__ */ jsx_dev_runtime.jsxDEV(DeviceCard, {
+              device,
+              connected,
+              send
+            }, `${device.provider}:${device.id}`, false, undefined, this))
+          }, undefined, false, undefined, this)
+        ]
+      }, undefined, true, undefined, this),
       toast && /* @__PURE__ */ jsx_dev_runtime.jsxDEV("div", {
         className: `toast visible${toast.error ? " error" : ""}`,
         role: "status",
