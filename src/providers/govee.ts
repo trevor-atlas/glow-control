@@ -3,7 +3,9 @@ import type {
   LightCommand,
   LightDevice,
   LightProvider,
+  LightState,
 } from "./types";
+import { clamp } from "./color";
 
 const API_BASE = "https://openapi.api.govee.com";
 const DEVICE_PATH = "/router/api/v1/user/devices";
@@ -105,7 +107,7 @@ export class GoveeProvider implements LightProvider {
     });
   }
 
-  async getState(deviceId: string): Promise<{ on?: boolean } | null> {
+  async getState(deviceId: string): Promise<LightState | null> {
     let device = this.devices.get(deviceId);
     if (!device) {
       await this.listDevices();
@@ -120,12 +122,31 @@ export class GoveeProvider implements LightProvider {
         payload: { sku: device.sku, device: device.device },
       }),
     });
-    const capability = response.payload?.capabilities?.find(
-      (entry) => entry.type === "devices.capabilities.on_off" && entry.instance === "powerSwitch",
-    );
-    const value = capability?.state?.value;
-    if (value === undefined) return null;
-    return { on: value === 1 || value === true };
+    const capabilities = response.payload?.capabilities;
+    if (!capabilities?.length) return null;
+
+    const state: LightState = {};
+    for (const entry of capabilities) {
+      const value = entry.state?.value;
+      if (value === undefined) continue;
+      if (entry.type === "devices.capabilities.on_off" && entry.instance === "powerSwitch") {
+        state.on = value === 1 || value === true;
+      } else if (entry.type === "devices.capabilities.range" && entry.instance === "brightness") {
+        state.brightness = clamp(Number(value), 0, 100);
+      } else if (entry.type === "devices.capabilities.color_setting" && entry.instance === "colorRgb") {
+        const rgb = Number(value);
+        if (Number.isInteger(rgb) && rgb >= 0) {
+          state.color = {
+            red: (rgb >> 16) & 0xff,
+            green: (rgb >> 8) & 0xff,
+            blue: rgb & 0xff,
+          };
+        }
+      } else if (entry.type === "devices.capabilities.color_setting" && entry.instance === "colorTemperatureK") {
+        state.temperature = Number(value);
+      }
+    }
+    return Object.keys(state).length ? state : null;
   }
 
   private capabilityFor(

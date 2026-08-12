@@ -1,5 +1,6 @@
 import { ProviderError } from "./govee";
-import type { LightCapability, LightCommand, LightDevice, LightProvider } from "./types";
+import { clamp, hsToRgb, rgbToHs } from "./color";
+import type { LightCapability, LightCommand, LightDevice, LightProvider, LightState } from "./types";
 
 const ELGATO_PORT = 9123;
 const REQUEST_TIMEOUT_MS = 2_000;
@@ -63,7 +64,7 @@ export class ElgatoProvider implements LightProvider {
     });
   }
 
-  async getState(deviceId: string): Promise<{ on?: boolean } | null> {
+  async getState(deviceId: string): Promise<LightState | null> {
     const entry = await this.entryFor(deviceId).catch(() => null);
     if (!entry) return null;
     const body = await ElgatoProvider.requestJson<ElgatoLightsResponse>(
@@ -71,7 +72,7 @@ export class ElgatoProvider implements LightProvider {
       "/elgato/lights",
     ).catch(() => null);
     const light = body?.lights?.[entry.index];
-    return light ? { on: light.on === 1 } : null;
+    return light ? stateFor(light) : null;
   }
 
   /** Probe an IP to confirm it is an Elgato light and fetch its identity (serial + product name). */
@@ -111,7 +112,7 @@ export class ElgatoProvider implements LightProvider {
         name: light.name ?? info?.productName ?? `Elgato light (${light.ip})`,
         model: info?.productName ?? "Elgato Key Light",
         capabilities: capabilitiesFor(entry),
-        state: { on: entry.on === 1 },
+        state: stateFor(entry),
       };
     });
   }
@@ -143,8 +144,8 @@ export class ElgatoProvider implements LightProvider {
           temperature: Math.round(clamp(command.value * 0.05, TEMPERATURE_MIN, TEMPERATURE_MAX)),
         };
       case "color": {
-        const { hue, saturation } = rgbToHsv(command.red, command.green, command.blue);
-        return { hue, saturation };
+        const { h, s } = rgbToHs(command.red, command.green, command.blue);
+        return { hue: Math.round(h * 360), saturation: Math.round(s * 100) };
       }
     }
   }
@@ -179,6 +180,21 @@ export class ElgatoProvider implements LightProvider {
   }
 }
 
+function stateFor(light: ElgatoLightState): LightState {
+  const state: LightState = { on: light.on === 1 };
+  if (light.brightness !== undefined) {
+    state.brightness = clamp(Math.round(light.brightness), 0, 100);
+  }
+  if (light.temperature !== undefined) {
+    // API temperature units are Kelvin × 0.05, so the inverse of fieldsFor.
+    state.temperature = Math.round(light.temperature / 0.05);
+  }
+  if (light.hue !== undefined && light.saturation !== undefined) {
+    state.color = hsToRgb(light.hue / 360, light.saturation / 100);
+  }
+  return state;
+}
+
 function capabilitiesFor(state: ElgatoLightState): LightCapability[] {
   const capabilities: LightCapability[] = [
     { type: "devices.capabilities.on_off", instance: "powerSwitch" },
@@ -199,24 +215,3 @@ function normalizeIp(value: string): string {
   return trimmed;
 }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
-}
-
-function rgbToHsv(red: number, green: number, blue: number): { hue: number; saturation: number } {
-  const r = red / 255;
-  const g = green / 255;
-  const b = blue / 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const delta = max - min;
-  let hue = 0;
-  if (delta !== 0) {
-    if (max === r) hue = 60 * (((g - b) / delta) % 6);
-    else if (max === g) hue = 60 * ((b - r) / delta + 2);
-    else hue = 60 * ((r - g) / delta + 4);
-  }
-  if (hue < 0) hue += 360;
-  const saturation = max === 0 ? 0 : (delta / max) * 100;
-  return { hue: Math.round(hue), saturation: Math.round(saturation) };
-}

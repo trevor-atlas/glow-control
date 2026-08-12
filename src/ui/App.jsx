@@ -6,11 +6,16 @@ function hasCapability(device, type, instance) {
   return device.capabilities.some((capability) => capability.type === type && capability.instance === instance);
 }
 
+function rgbToHex({ red, green, blue }) {
+  const channel = (value) => value.toString(16).padStart(2, "0");
+  return `#${channel(red)}${channel(green)}${channel(blue)}`;
+}
+
 function useLightSocket() {
   const socketRef = useRef(null);
   const reconnectTimer = useRef(null);
   const [connected, setConnected] = useState(false);
-  const [snapshot, setSnapshot] = useState({ devices: [], configuredProviders: [], hueConfigured: false, hueBridgeIp: null, elgatoLights: [] });
+  const [snapshot, setSnapshot] = useState({ devices: [], groups: [], configuredProviders: [], hueConfigured: false, hueBridgeIp: null, elgatoLights: [] });
   const [toast, setToast] = useState(null);
   const [hueBridges, setHueBridges] = useState([]);
   const [discoveringHue, setDiscoveringHue] = useState(false);
@@ -122,9 +127,15 @@ function useLightSocket() {
 }
 
 function ColorControl({ device, connected, send }) {
-  const [color, setColor] = useState("#ffffff");
+  const [color, setColor] = useState(() => (device.state?.color ? rgbToHex(device.state.color) : "#ffffff"));
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
+
+  // Keep the picker in sync with server-reported color (initial load, other
+  // clients, revert after a failed control).
+  useEffect(() => {
+    if (device.state?.color) setColor(rgbToHex(device.state.color));
+  }, [device.state?.color?.red, device.state?.color?.green, device.state?.color?.blue]);
 
   // Commit only when the user finishes picking (mouseup/keyup/blur) instead of
   // on every drag tick, so we don't flood the bridge with control messages.
@@ -204,8 +215,8 @@ function ColorControl({ device, connected, send }) {
 function DeviceCard({ device, connected, send }) {
   const [name, setName] = useState(device.customName ?? "");
   const [powerOn, setPowerOn] = useState(device.state?.on ?? false);
-  const [brightness, setBrightness] = useState(50);
-  const [temperature, setTemperature] = useState(4000);
+  const [brightness, setBrightness] = useState(device.state?.brightness ?? 50);
+  const [temperature, setTemperature] = useState(device.state?.temperature ?? 4000);
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
@@ -216,6 +227,18 @@ function DeviceCard({ device, connected, send }) {
   useEffect(() => {
     if (device.state?.on !== undefined) setPowerOn(device.state.on);
   }, [device.state?.on]);
+  // Same for brightness and temperature, so the sliders reflect the light's
+  // actual values instead of a hardcoded default. Clamp to the slider range.
+  useEffect(() => {
+    if (device.state?.brightness !== undefined) {
+      setBrightness(Math.min(100, Math.max(1, Math.round(device.state.brightness))));
+    }
+  }, [device.state?.brightness]);
+  useEffect(() => {
+    if (device.state?.temperature !== undefined) {
+      setTemperature(Math.min(9000, Math.max(2000, device.state.temperature)));
+    }
+  }, [device.state?.temperature]);
 
   const control = (command, optimisticUpdate) => {
     optimisticUpdate?.();
@@ -280,6 +303,60 @@ function DeviceCard({ device, connected, send }) {
   </article>;
 }
 
+function GroupCard({ group, devices, connected, send }) {
+  const [powerOn, setPowerOn] = useState(group.state?.on ?? false);
+  const [brightness, setBrightness] = useState(group.state?.brightness ?? 50);
+  const [temperature, setTemperature] = useState(group.state?.temperature ?? 4000);
+
+  // Keep the card in sync with server-reported state (initial load, other
+  // clients, revert after a failed control).
+  useEffect(() => {
+    if (group.state?.on !== undefined) setPowerOn(group.state.on);
+  }, [group.state?.on]);
+  useEffect(() => {
+    if (group.state?.brightness !== undefined) {
+      setBrightness(Math.min(100, Math.max(1, Math.round(group.state.brightness))));
+    }
+  }, [group.state?.brightness]);
+  useEffect(() => {
+    if (group.state?.temperature !== undefined) {
+      setTemperature(Math.min(9000, Math.max(2000, group.state.temperature)));
+    }
+  }, [group.state?.temperature]);
+
+  // Resolve member refs to full device records for names, state and capabilities.
+  const members = group.members
+    .map((ref) => devices.find((device) => device.provider === ref.provider && device.id === ref.id))
+    .filter(Boolean);
+
+  const control = (command) => send({ type: "control-group", id: group.id, command });
+  const hasBrightness = members.some((device) => hasCapability(device, "devices.capabilities.range", "brightness"));
+  const hasTemperature = members.some((device) => hasCapability(device, "devices.capabilities.color_setting", "colorTemperatureK"));
+
+  return <article className="device-card">
+    <div className="device-heading">
+      <div>
+        <h2 className="device-name">{group.name}</h2>
+        <p className="device-meta">{group.source === "provider" ? `${group.providerId} group` : "Group"}{members.length > 0 && ` · ${members.length} ${members.length === 1 ? "device" : "devices"}`}</p>
+      </div>
+      <Switch checked={powerOn} onChange={(on) => control({ type: "power", on })} disabled={!connected} aria-label={`Toggle ${group.name}`} className="power-switch">
+        <span className="power-thumb" />
+      </Switch>
+    </div>
+    {members.length > 0 && <div className="group-members">
+      {members.map((device) => <span key={`${device.provider}:${device.id}`} className={`group-member${device.state?.on ? " on" : ""}`}>{device.name}</span>)}
+    </div>}
+    {hasBrightness && <div className="control">
+      <div className="control-row"><span className="control-label">Brightness</span><span className="value">{brightness}%</span></div>
+      <div className="range-row"><input type="range" min="1" max="100" value={brightness} disabled={!connected} onChange={(event) => { const value = Number(event.target.value); setBrightness(value); control({ type: "brightness", value }); }} /><span /></div>
+    </div>}
+    {hasTemperature && <div className="control">
+      <div className="control-row"><span className="control-label">Color temperature</span><span className="value">{temperature.toLocaleString()}K</span></div>
+      <div className="range-row"><input type="range" min="2000" max="9000" step="100" value={temperature} disabled={!connected} onChange={(event) => { const value = Number(event.target.value); setTemperature(value); control({ type: "temperature", value }); }} /><span /></div>
+    </div>}
+  </article>;
+}
+
 function SetupPanel({ open, onClose, hueBridgeIp, bridges, discovering, pairing, onDiscover, onPair, elgatoDiscovered, discoveringElgato, elgatoBusy, elgatoLights, onDiscoverElgato, onAddElgato, onRemoveElgato, onFlashElgato }) {
   const [bridgeIp, setBridgeIp] = useState("");
   const [elgatoIp, setElgatoIp] = useState("");
@@ -324,10 +401,63 @@ function SetupPanel({ open, onClose, hueBridgeIp, bridges, discovering, pairing,
   </Dialog>;
 }
 
+function GroupsManager({ open, onClose, groups, devices, connected, send }) {
+  const manualGroups = groups.filter((group) => group.source === "manual");
+  const providerGroups = groups.filter((group) => group.source === "provider");
+
+  const inGroup = (group, device) =>
+    group.members.some((ref) => ref.provider === device.provider && ref.id === device.id);
+
+  // Toggle a device in/out of a group. Because a device is a plain ref, moving
+  // it between groups is just checking it here and unchecking it there.
+  const toggleDevice = (group, device) => {
+    const members = inGroup(group, device)
+      ? group.members.filter((ref) => !(ref.provider === device.provider && ref.id === device.id))
+      : [...group.members, { provider: device.provider, id: device.id }];
+    send({ type: "update-group", id: group.id, members });
+  };
+
+  return <Dialog open={open} onClose={onClose} transition className="dialog-root">
+    <DialogBackdrop transition className="dialog-backdrop" />
+    <div className="dialog-positioner">
+      <DialogPanel transition className="setup-panel">
+        <div className="setup-heading"><div><p className="eyebrow">Groups</p><DialogTitle>Manage groups</DialogTitle></div><CloseButton className="close-button" aria-label="Close groups">×</CloseButton></div>
+        <div className="setup-block">
+          <p className="setup-copy">Groups are collections of devices you can control together. Tick the devices you want in each group; a device can be in more than one.</p>
+          <button className="secondary-button" type="button" disabled={!connected} onClick={() => send({ type: "create-group", name: "New group", members: [] })}>New group</button>
+        </div>
+        {manualGroups.map((group) => <div className="setup-block" key={group.id}>
+          <div className="group-editor-heading">
+            <Input className="name-input" defaultValue={group.name} maxLength={80} disabled={!connected} aria-label="Group name"
+              onBlur={(event) => { const name = event.target.value.trim(); if (name && name !== group.name) send({ type: "update-group", id: group.id, name }); }}
+              onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); if (event.key === "Escape") { event.currentTarget.value = group.name; event.currentTarget.blur(); } }} />
+            <button className="close-button" type="button" aria-label={`Delete ${group.name}`} disabled={!connected} onClick={() => send({ type: "delete-group", id: group.id })}>×</button>
+          </div>
+          <div className="group-device-list">
+            {devices.map((device) => (
+              <label className="group-device-row" key={`${device.provider}:${device.id}`}>
+                <input type="checkbox" checked={inGroup(group, device)} disabled={!connected} onChange={() => toggleDevice(group, device)} />
+                <span className="group-device-name">{device.name}<span className="device-meta"> {device.provider} · {device.model}</span></span>
+              </label>
+            ))}
+            {devices.length === 0 && <span className="device-meta">No devices connected yet.</span>}
+          </div>
+        </div>)}
+        {manualGroups.length === 0 && <div className="setup-block"><p className="device-meta">No groups yet — create one to start grouping your devices.</p></div>}
+        {providerGroups.length > 0 && <div className="setup-block">
+          <p className="setup-copy"><strong>Synced from providers</strong> — these groups come from your connected providers and are read-only here. Control them from the main screen.</p>
+          {providerGroups.map((group) => <div className="bridge-option" key={group.id}><span>{group.name} · {group.members.length} {group.members.length === 1 ? "device" : "devices"}</span><span className="device-meta">{group.providerId}</span></div>)}
+        </div>}
+      </DialogPanel>
+    </div>
+  </Dialog>;
+}
+
 function App() {
   const [setupOpen, setSetupOpen] = useState(false);
+  const [groupsOpen, setGroupsOpen] = useState(false);
   const controller = useLightSocket();
-  const { devices, connected, toast, send, hueBridges, hueBridgeIp, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight, elgatoLights } = controller;
+  const { devices, groups, connected, toast, send, hueBridges, hueBridgeIp, discoveringHue, pairingHue, huePairCount, discoverHue, pairHue, elgatoDiscovered, discoveringElgato, elgatoBusy, discoverElgato, addElgatoLight, removeElgatoLight, flashElgatoLight, elgatoLights } = controller;
   useEffect(() => {
     if (huePairCount > 0) setSetupOpen(false);
   }, [huePairCount]);
@@ -338,9 +468,14 @@ function App() {
   return <main className="shell">
     <header className="hero">
       <div><p className="eyebrow">Home lighting</p><h1>Glow control</h1><p className="subtitle">A small, local-first remote for your smart lights.</p></div>
-      <div className="header-actions"><span className={`connection-status${connected ? " connected" : ""}`}><span />{connected ? "Live" : "Reconnecting"}</span><button className="secondary-button" type="button" onClick={() => setSetupOpen(!setupOpen)}>Set up lights</button><button className="secondary-button" type="button" disabled={!connected} onClick={() => send({ type: "refresh" })}>Refresh devices</button></div>
+      <div className="header-actions"><span className={`connection-status${connected ? " connected" : ""}`}><span />{connected ? "Live" : "Reconnecting"}</span><button className="secondary-button" type="button" onClick={() => setGroupsOpen(!groupsOpen)}>Groups</button><button className="secondary-button" type="button" onClick={() => setSetupOpen(!setupOpen)}>Set up lights</button><button className="secondary-button" type="button" disabled={!connected} onClick={() => send({ type: "refresh" })}>Refresh devices</button></div>
     </header>
     <SetupPanel open={setupOpen} onClose={() => setSetupOpen(false)} hueBridgeIp={hueBridgeIp} bridges={hueBridges} discovering={discoveringHue} pairing={pairingHue} onDiscover={discoverHue} onPair={pairHue} elgatoDiscovered={elgatoDiscovered} discoveringElgato={discoveringElgato} elgatoBusy={elgatoBusy} elgatoLights={elgatoLights ?? []} onDiscoverElgato={discoverElgato} onAddElgato={addElgatoLight} onRemoveElgato={removeElgatoLight} onFlashElgato={flashElgatoLight} />
+    <GroupsManager open={groupsOpen} onClose={() => setGroupsOpen(false)} groups={groups} devices={devices} connected={connected} send={send} />
+    {groups.length > 0 && <>
+      <h2 className="group-heading">Groups{groups.length > 1 ? ` (${groups.length})` : ""}</h2>
+      <section className="device-grid" aria-live="polite">{groups.map((group) => <GroupCard key={group.id} group={group} devices={devices} connected={connected} send={send} />)}</section>
+    </>}
     {devices.length === 0 && <section className="device-grid" aria-live="polite"><div className="empty">{connected ? "No lights found. Check your provider configuration." : "Connecting to the light controller…"}</div></section>}
     {onDevices.length > 0 && <>
       <h2 className="group-heading">On{onDevices.length > 1 ? ` (${onDevices.length})` : ""}</h2>

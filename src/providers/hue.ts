@@ -1,5 +1,6 @@
 import { ProviderError } from "./govee";
-import type { LightCapability, LightCommand, LightDevice, LightProvider } from "./types";
+import { clamp, hsToRgb, rgbToHs } from "./color";
+import type { LightCapability, LightCommand, LightDevice, LightProvider, LightState, ProviderGroup } from "./types";
 
 export type HueBridgeConfig = {
   bridgeIp: string;
@@ -14,6 +15,8 @@ type HueLight = {
     ct?: number;
     hue?: number;
     sat?: number;
+    /** CIE xy as [x, y] — the bridge reports an array, not an object. */
+    xy?: [number, number];
     colormode?: string;
   };
   capabilities?: {
@@ -22,6 +25,17 @@ type HueLight = {
       ct?: { min?: number; max?: number };
     };
   };
+};
+
+type HueGroup = {
+  name: string;
+  /** Room, Zone, Entertainment, Luminaire or LightGroup. */
+  type: string;
+  class?: string;
+  lights: string[];
+  /** Last command state, same shape as a light's state. */
+  action?: HueLight["state"];
+  state?: { all_on: boolean; any_on: boolean };
 };
 
 export class HueProvider implements LightProvider {
@@ -64,8 +78,22 @@ export class HueProvider implements LightProvider {
       name: light.name,
       model: "Hue light",
       capabilities: capabilitiesFor(light),
-      state: light.state ? { on: light.state.on } : undefined,
+      state: stateFor(light.state),
     }));
+  }
+
+  async listGroups(): Promise<ProviderGroup[]> {
+    const response = await this.request<Record<string, HueGroup>>("/groups");
+    return Object.entries(response)
+      // Entertainment areas, luminaires and ad-hoc light groups are not rooms;
+      // keep only the real rooms and zones a user would think of as groups.
+      .filter(([, group]) => group.type === "Room" || group.type === "Zone")
+      .map(([id, group]) => ({
+        id,
+        name: group.name,
+        members: group.lights.map((lightId) => ({ provider: this.id, id: lightId })),
+        state: stateFor(group.action),
+      }));
   }
 
   async control(deviceId: string, command: LightCommand): Promise<void> {
@@ -82,9 +110,11 @@ export class HueProvider implements LightProvider {
       case "brightness":
         state = { bri: Math.round((command.value / 100) * 254) };
         break;
-      case "color":
-        state = { xy: rgbToXy(command.red, command.green, command.blue) };
+      case "color": {
+        const { h, s } = rgbToHs(command.red, command.green, command.blue);
+        state = { hue: Math.round(h * 65535), sat: Math.round(s * 254) };
         break;
+      }
       case "temperature":
         state = { ct: Math.round(1_000_000 / command.value) };
         break;
@@ -121,6 +151,38 @@ function normalizeBridgeIp(value: string): string {
   return trimmed;
 }
 
+function stateFor(state: HueLight["state"]): LightState | undefined {
+  if (!state) return undefined;
+  const result: LightState = {};
+  if (state.on !== undefined) result.on = state.on;
+  if (state.bri !== undefined) result.brightness = Math.round((state.bri / 254) * 100);
+  if (state.colormode !== "ct") {
+    if (state.colormode === "xy" && Array.isArray(state.xy) && state.xy.length >= 2) {
+      result.color = xyToRgb(state.xy[0], state.xy[1]);
+    } else if (typeof state.hue === "number" && typeof state.sat === "number") {
+      result.color = hsToRgb(state.hue / 65535, state.sat / 254);
+    }
+  }
+  if (state.ct !== undefined) result.temperature = Math.round(1_000_000 / state.ct);
+  return result;
+}
+
+// Maps a CIE xy point back to sRGB. Used to show the light's actual color
+// in the picker when the bridge reports xy colormode.
+function xyToRgb(x: number, y: number): { red: number; green: number; blue: number } {
+  const z = 1 - x - y;
+  let r = x * 1.656492 - y * 0.354851 - z * 0.255038;
+  let g = -x * 0.707196 + y * 1.655397 + z * 0.036152;
+  let b = x * 0.051713 - y * 0.121364 + z * 1.01153;
+  const gamma = (value: number): number =>
+    value <= 0.0031308 ? 12.92 * value : 1.055 * Math.pow(value, 1 / 2.4) - 0.055;
+  // Out-of-gamut xy points can produce tiny negative linear values; clamp
+  // before gamma so Math.pow never sees a negative base.
+  const channel = (value: number): number =>
+    Math.round(clamp(gamma(clamp(value, 0, 1)) * 255, 0, 255));
+  return { red: channel(r), green: channel(g), blue: channel(b) };
+}
+
 function capabilitiesFor(light: HueLight): LightCapability[] {
   const capabilities: LightCapability[] = [
     { type: "devices.capabilities.on_off", instance: "powerSwitch" },
@@ -137,17 +199,3 @@ function capabilitiesFor(light: HueLight): LightCapability[] {
   return capabilities;
 }
 
-function rgbToXy(red: number, green: number, blue: number): { x: number; y: number } {
-  const [r, g, b] = [red, green, blue].map((value) => {
-    const normalized = value / 255;
-    return normalized > 0.04045
-      ? ((normalized + 0.055) / 1.055) ** 2.4
-      : normalized / 12.92;
-  });
-  const x = r * 0.664511 + g * 0.154324 + b * 0.162028;
-  const y = r * 0.283881 + g * 0.668433 + b * 0.047685;
-  const z = r * 0.000088 + g * 0.07231 + b * 0.986039;
-  const total = x + y + z;
-  if (total === 0) return { x: 0.3227, y: 0.329 };
-  return { x: Number((x / total).toFixed(4)), y: Number((y / total).toFixed(4)) };
-}

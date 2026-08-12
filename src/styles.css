@@ -98,4 +98,15 @@ input[type="range"] { width: 100%; accent-color: #b889ff; }
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); border: 1px solid #4c4560; border-radius: 999px; background: #272132; color: #eee9f8; padding: 11px 18px; opacity: 0; pointer-events: none; transition: .25s ease; z-index: 60; }
 .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 .toast.error { border-color: #6e4738; background: #281b1a; color: #f4c6a8; }
+.group-members { display: flex; flex-wrap: wrap; gap: 6px; margin: -6px 0 4px; }
+.group-member { border: 1px solid #3e3a49; background: #201d29; color: #c5c1cb; border-radius: 999px; padding: 4px 10px; font-size: .78rem; }
+.group-member.on { border-color: #d8adff; background: #3a2f4d; color: #f6f4f0; }
+.group-editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.group-editor-heading .name-input { flex: 1; }
+.group-device-list { display: grid; gap: 2px; max-height: 280px; overflow-y: auto; border: 1px solid #302d3a; border-radius: 12px; padding: 6px; }
+.group-device-row { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 8px; cursor: pointer; }
+.group-device-row:hover { background: #26222f; }
+.group-device-row input { accent-color: #b889ff; }
+.group-device-name { color: #f6f4f0; font-size: .9rem; }
+.group-device-row .device-meta { display: inline; }
 @media (max-width: 640px) { .shell { width: min(100% - 28px, 1120px); padding-top: 38px; } .hero { align-items: start; flex-direction: column; } .header-actions { justify-content: stretch; width: 100%; } .header-actions .secondary-button { flex: 1; } }

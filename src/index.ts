@@ -5,10 +5,17 @@ import { HueProvider, type HueBridgeConfig } from "./providers/hue";
 import { discoverHueBridges } from "./providers/hue-discovery";
 import { ElgatoProvider, type ElgatoLightConfig } from "./providers/elgato";
 import { discoverElgatoLights } from "./providers/elgato-discovery";
-import type { LightCommand, LightDevice, LightProvider } from "./providers/types";
+import type { DeviceRef, Group, LightCommand, LightDevice, LightProvider, LightState } from "./providers/types";
 
 type DeviceNames = Record<string, Record<string, string>>;
 type DevicePalettes = Record<string, Record<string, string[]>>;
+
+/** Persisted shape of a user-defined group (source of truth: groups.json). */
+type StoredGroup = {
+  id: string;
+  name: string;
+  members: DeviceRef[];
+};
 
 const DEFAULT_PALETTE = ["#ffffff", "#ff9500", "#ff3b30", "#34c759", "#007aff"];
 const MAX_PALETTE_SIZE = 12;
@@ -21,6 +28,7 @@ const deviceNamesFile = `${dataDirectory}/device-names.json`;
 const devicePalettesFile = `${dataDirectory}/device-palettes.json`;
 const hueConfigFile = `${dataDirectory}/hue-bridge.json`;
 const elgatoLightsFile = `${dataDirectory}/elgato-lights.json`;
+const groupsFile = `${dataDirectory}/groups.json`;
 const providers = new Map<string, LightProvider>();
 let deviceNames = await loadDeviceNames();
 let devicePalettes = await loadDevicePalettes();
@@ -29,6 +37,8 @@ let elgatoConfig = await loadElgatoLights();
 let nameWriteQueue = Promise.resolve();
 let paletteWriteQueue = Promise.resolve();
 let elgatoWriteQueue = Promise.resolve();
+let manualGroups = await loadManualGroups();
+let groupsWriteQueue = Promise.resolve();
 
 if (Bun.env.GOVEE_API_KEY && Bun.env.GOVEE_API_KEY !== "replace-me") {
   providers.set("govee", new GoveeProvider(Bun.env.GOVEE_API_KEY));
@@ -107,6 +117,44 @@ async function saveElgatoLights(): Promise<void> {
 function syncElgatoProvider(): void {
   if (elgatoConfig.length) providers.set("elgato", new ElgatoProvider(elgatoConfig));
   else providers.delete("elgato");
+}
+
+async function loadManualGroups(): Promise<StoredGroup[]> {
+  const file = Bun.file(groupsFile);
+  if (!(await file.exists())) return [];
+  try {
+    const parsed = await file.json();
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (entry): entry is StoredGroup =>
+        typeof entry?.id === "string" &&
+        typeof entry?.name === "string" &&
+        Array.isArray(entry?.members) &&
+        entry.members.every(
+          (member) =>
+            typeof member === "object" &&
+            member !== null &&
+            typeof (member as DeviceRef).provider === "string" &&
+            typeof (member as DeviceRef).id === "string",
+        ),
+    );
+  } catch {
+    console.warn(`Could not read ${groupsFile}; starting with no groups.`);
+    return [];
+  }
+}
+
+async function saveManualGroups(): Promise<void> {
+  await mkdir(dataDirectory, { recursive: true });
+  const temporaryFile = `${groupsFile}.tmp`;
+  await Bun.write(temporaryFile, `${JSON.stringify(manualGroups, null, 2)}\n`);
+  await rename(temporaryFile, groupsFile);
+}
+
+function runGroupsMutation<T>(task: () => Promise<T>): Promise<T> {
+  const result = groupsWriteQueue.then(task, task);
+  groupsWriteQueue = result.then(() => undefined, () => undefined);
+  return result;
 }
 
 async function loadDeviceNames(): Promise<DeviceNames> {
@@ -215,10 +263,11 @@ function runElgatoMutation<T>(task: () => Promise<T>): Promise<T> {
   return result;
 }
 
-// Cached on/off state, keyed by `${providerId}:${deviceId}`. The cache is the
-// source of truth for snapshots: providers that report live state (Hue) win,
-// and the cache is refreshed on connect / updated on every successful control.
-const deviceStates = new Map<string, { on?: boolean }>();
+// Cached state, keyed by `${providerId}:${deviceId}`. The cache is the
+// source of truth for snapshots: providers that report live state (Hue,
+// Elgato) win, and the cache is refreshed on connect / updated on every
+// successful control.
+const deviceStates = new Map<string, LightState>();
 let lastStateRefresh = 0;
 const STATE_REFRESH_MS = 30_000;
 
@@ -286,12 +335,151 @@ async function controlDevice(providerId: string, deviceId: string, command: Ligh
   if (!provider) throw new ProviderError(`Provider ${providerId} is not configured`, 404);
   await provider.control(deviceId, command);
   const key = deviceKey(providerId, deviceId);
+  const previous = deviceStates.get(key) ?? {};
   if (command.type === "power") {
-    deviceStates.set(key, { on: command.on });
+    deviceStates.set(key, { ...previous, on: command.on });
   } else {
     // Any brightness/color/temperature change turns the light on.
-    deviceStates.set(key, { ...deviceStates.get(key), on: true });
+    const update: LightState = { ...previous, on: true };
+    if (command.type === "brightness") update.brightness = command.value;
+    if (command.type === "color") update.color = { red: command.red, green: command.green, blue: command.blue };
+    if (command.type === "temperature") update.temperature = command.value;
+    deviceStates.set(key, update);
   }
+}
+
+/**
+ * Derive an aggregated state for a group from its members' states. Any member
+ * on means the group reads as on; brightness/temperature are the mean of the
+ * members that report them.
+ */
+function deriveGroupState(members: DeviceRef[], devices: LightDevice[]): LightState | undefined {
+  const states = members
+    .map((member) =>
+      devices.find((device) => device.provider === member.provider && device.id === member.id)?.state,
+    )
+    .filter((state): state is LightState => Boolean(state));
+  if (!states.length) return undefined;
+
+  const result: LightState = {};
+  if (states.some((state) => state.on === true)) result.on = true;
+  else if (states.every((state) => state.on === false)) result.on = false;
+
+  const brightness = states
+    .map((state) => state.brightness)
+    .filter((value): value is number => value !== undefined);
+  if (brightness.length) {
+    result.brightness = Math.round(brightness.reduce((sum, value) => sum + value, 0) / brightness.length);
+  }
+
+  const temperature = states
+    .map((state) => state.temperature)
+    .filter((value): value is number => value !== undefined);
+  if (temperature.length) {
+    result.temperature = Math.round(temperature.reduce((sum, value) => sum + value, 0) / temperature.length);
+  }
+
+  return result;
+}
+
+/**
+ * Every group the app knows about: provider-seeded groups (rooms, zones, …)
+ * plus user-defined groups from groups.json. Manual group state is derived
+ * from the member devices in `devices` (fetched when omitted).
+ */
+async function listGroups(devices?: LightDevice[]): Promise<Group[]> {
+  const knownDevices = devices ?? await listDevices();
+  const groups: Group[] = [];
+
+  const providerResults = await Promise.allSettled(
+    [...providers.values()].map(async (provider) => ({
+      provider,
+      groups: provider.listGroups ? await provider.listGroups() : [],
+    })),
+  );
+  for (const result of providerResults) {
+    if (result.status === "rejected") {
+      console.error("Could not load groups from a provider:", result.reason);
+      continue;
+    }
+    for (const group of result.value.groups) {
+      groups.push({
+        id: `${result.value.provider.id}:${group.id}`,
+        name: group.name,
+        source: "provider",
+        providerId: result.value.provider.id,
+        providerGroupId: group.id,
+        members: group.members,
+        state: group.state,
+      });
+    }
+  }
+
+  for (const group of manualGroups) {
+    groups.push({
+      id: group.id,
+      name: group.name,
+      source: "manual",
+      members: group.members,
+      state: deriveGroupState(group.members, knownDevices),
+    });
+  }
+
+  return groups;
+}
+
+/** Resolve a group (manual or provider) down to its member device refs. */
+async function resolveGroup(groupId: string): Promise<{ name: string; members: DeviceRef[] }> {
+  const manual = manualGroups.find((group) => group.id === groupId);
+  if (manual) return { name: manual.name, members: manual.members };
+
+  for (const provider of providers.values()) {
+    if (!provider.listGroups) continue;
+    const groups = await provider.listGroups();
+    const group = groups.find((entry) => `${provider.id}:${entry.id}` === groupId);
+    if (group) return { name: group.name, members: group.members };
+  }
+
+  throw new ProviderError(`Group ${groupId} was not found`, 404);
+}
+
+/**
+ * Control every device in a group. Provider groups are controlled the same
+ * way as manual ones (fan out to members), so no provider-specific logic is
+ * needed. Partial failures are reported without aborting the rest.
+ */
+async function controlGroup(groupId: string, command: LightCommand): Promise<void> {
+  const group = await resolveGroup(groupId);
+  const results = await Promise.allSettled(
+    group.members.map((member) => controlDevice(member.provider, member.id, command)),
+  );
+  const failed = results.filter((result) => result.status === "rejected");
+  if (failed.length) {
+    const reason = failed[0].reason;
+    throw new ProviderError(
+      `Updated ${results.length - failed.length} of ${results.length} lights in “${group.name}”` +
+        (reason instanceof Error ? `: ${reason.message}` : ""),
+      502,
+    );
+  }
+}
+
+/** Validate and normalize a members array from a request body. */
+function deviceRefsFrom(value: unknown): DeviceRef[] {
+  if (!Array.isArray(value)) {
+    throw new ProviderError("members must be an array of { provider, id }", 400);
+  }
+  const refs = value.filter(
+    (entry): entry is DeviceRef =>
+      typeof entry === "object" &&
+      entry !== null &&
+      typeof (entry as DeviceRef).provider === "string" &&
+      typeof (entry as DeviceRef).id === "string",
+  );
+  if (refs.length !== value.length) {
+    throw new ProviderError("Each group member needs a provider and device id", 400);
+  }
+  return refs;
 }
 
 async function readJson(request: Request): Promise<Record<string, unknown>> {
@@ -350,6 +538,7 @@ type SocketMessage = {
   id?: string;
   name?: string;
   color?: string;
+  members?: DeviceRef[];
   command?: Record<string, unknown>;
 };
 
@@ -360,28 +549,26 @@ function sendSocket(socket: AppSocket, message: unknown): void {
   socket.send(JSON.stringify(message));
 }
 
-async function sendSnapshot(socket: AppSocket): Promise<void> {
-  sendSocket(socket, {
+async function buildSnapshotPayload(): Promise<Record<string, unknown>> {
+  const devices = await listDevices();
+  return {
     type: "snapshot",
-    devices: await listDevices(),
+    devices,
+    groups: await listGroups(devices),
     configuredProviders: [...providers.keys()],
     hueConfigured: Boolean(hueConfig),
     hueBridgeIp: hueConfig?.bridgeIp ?? null,
     elgatoLights: elgatoConfig,
-  });
+  };
+}
+
+async function sendSnapshot(socket: AppSocket): Promise<void> {
+  sendSocket(socket, await buildSnapshotPayload());
 }
 
 async function broadcastSnapshot(): Promise<void> {
   if (!sockets.size) return;
-  const devices = await listDevices();
-  const message = JSON.stringify({
-    type: "snapshot",
-    devices,
-    configuredProviders: [...providers.keys()],
-    hueConfigured: Boolean(hueConfig),
-    hueBridgeIp: hueConfig?.bridgeIp ?? null,
-    elgatoLights: elgatoConfig,
-  });
+  const message = JSON.stringify(await buildSnapshotPayload());
   for (const socket of sockets) socket.send(message);
 }
 
@@ -436,6 +623,55 @@ async function handleSocketMessage(socket: AppSocket, rawMessage: string | Buffe
         }
         const removed = await removePaletteColor(message.providerId, message.deviceId, message.color);
         sendSocket(socket, { type: "ack", requestId: message.requestId, message: removed ? "Color removed from presets" : "Color not in presets" });
+        await broadcastSnapshot();
+        return;
+      }
+      case "create-group": {
+        if (typeof message.name !== "string") throw new ProviderError("A group name is required", 400);
+        const name = message.name.trim();
+        if (!name) throw new ProviderError("A group name is required", 400);
+        if (name.length > 80) throw new ProviderError("Group names must be 80 characters or fewer", 400);
+        const members = deviceRefsFrom(message.members);
+        await runGroupsMutation(async () => {
+          manualGroups = [...manualGroups, { id: crypto.randomUUID(), name, members }];
+          await saveManualGroups();
+        });
+        sendSocket(socket, { type: "ack", requestId: message.requestId, message: `Created group “${name}”` });
+        await broadcastSnapshot();
+        return;
+      }
+      case "update-group": {
+        if (typeof message.id !== "string") throw new ProviderError("A group id is required", 400);
+        await runGroupsMutation(async () => {
+          const existing = manualGroups.find((group) => group.id === message.id);
+          if (!existing) throw new ProviderError(`Group ${message.id} was not found`, 404);
+          const name = typeof message.name === "string" ? message.name.trim() : existing.name;
+          if (!name) throw new ProviderError("A group name is required", 400);
+          if (name.length > 80) throw new ProviderError("Group names must be 80 characters or fewer", 400);
+          const members = message.members !== undefined ? deviceRefsFrom(message.members) : existing.members;
+          manualGroups = manualGroups.map((group) => (group.id === message.id ? { ...group, name, members } : group));
+          await saveManualGroups();
+        });
+        sendSocket(socket, { type: "ack", requestId: message.requestId, message: "Group updated" });
+        await broadcastSnapshot();
+        return;
+      }
+      case "delete-group": {
+        if (typeof message.id !== "string") throw new ProviderError("A group id is required", 400);
+        await runGroupsMutation(async () => {
+          const removed = manualGroups.find((group) => group.id === message.id);
+          if (!removed) throw new ProviderError(`Group ${message.id} was not found`, 404);
+          manualGroups = manualGroups.filter((group) => group.id !== message.id);
+          await saveManualGroups();
+        });
+        sendSocket(socket, { type: "ack", requestId: message.requestId, message: "Group deleted" });
+        await broadcastSnapshot();
+        return;
+      }
+      case "control-group": {
+        if (typeof message.id !== "string") throw new ProviderError("A group id is required", 400);
+        await controlGroup(message.id, commandFrom(message.command ?? {}));
+        sendSocket(socket, { type: "ack", requestId: message.requestId, message: "Updated" });
         await broadcastSnapshot();
         return;
       }
@@ -539,6 +775,63 @@ async function api(request: Request, url: URL): Promise<Response> {
     const devices = await listDevices();
     void mqttBridge?.publishDevices(devices);
     return json({ devices });
+  }
+
+  if (url.pathname === "/api/groups" && request.method === "GET") {
+    return json({ groups: await listGroups() });
+  }
+
+  if (url.pathname === "/api/groups" && request.method === "POST") {
+    const body = await readJson(request);
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    if (!name) throw new ProviderError("A group name is required", 400);
+    if (name.length > 80) throw new ProviderError("Group names must be 80 characters or fewer", 400);
+    const members = deviceRefsFrom(body.members);
+    await runGroupsMutation(async () => {
+      manualGroups = [...manualGroups, { id: crypto.randomUUID(), name, members }];
+      await saveManualGroups();
+    });
+    void broadcastSnapshot();
+    return json({ groups: await listGroups() });
+  }
+
+  const groupMatch = url.pathname.match(/^\/api\/groups\/([^/]+)$/);
+  if (groupMatch && request.method === "PUT") {
+    const groupId = decodeURIComponent(groupMatch[1]);
+    const body = await readJson(request);
+    await runGroupsMutation(async () => {
+      const existing = manualGroups.find((group) => group.id === groupId);
+      if (!existing) throw new ProviderError(`Group ${groupId} was not found`, 404);
+      const name = typeof body.name === "string" ? body.name.trim() : existing.name;
+      if (!name) throw new ProviderError("A group name is required", 400);
+      if (name.length > 80) throw new ProviderError("Group names must be 80 characters or fewer", 400);
+      const members = body.members !== undefined ? deviceRefsFrom(body.members) : existing.members;
+      manualGroups = manualGroups.map((group) => (group.id === groupId ? { ...group, name, members } : group));
+      await saveManualGroups();
+    });
+    void broadcastSnapshot();
+    return json({ groups: await listGroups() });
+  }
+
+  if (groupMatch && request.method === "DELETE") {
+    const groupId = decodeURIComponent(groupMatch[1]);
+    await runGroupsMutation(async () => {
+      const removed = manualGroups.find((group) => group.id === groupId);
+      if (!removed) throw new ProviderError(`Group ${groupId} was not found`, 404);
+      manualGroups = manualGroups.filter((group) => group.id !== groupId);
+      await saveManualGroups();
+    });
+    void broadcastSnapshot();
+    return json({ groups: await listGroups() });
+  }
+
+  const groupControlMatch = url.pathname.match(/^\/api\/groups\/([^/]+)\/control$/);
+  if (groupControlMatch && request.method === "POST") {
+    const groupId = decodeURIComponent(groupControlMatch[1]);
+    const command = commandFrom(await readJson(request));
+    await controlGroup(groupId, command);
+    void broadcastSnapshot();
+    return json({ ok: true });
   }
 
   const nameMatch = url.pathname.match(/^\/api\/providers\/([^/]+)\/devices\/([^/]+)\/name$/);
