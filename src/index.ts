@@ -872,6 +872,8 @@ async function staticFile(pathname: string): Promise<Response> {
 
 const server = Bun.serve({
   port,
+  // Bind address; loopback by default, Tailscale Serve terminates TLS for tailnet access.
+  hostname: Bun.env.HOST ?? "127.0.0.1",
   websocket: {
     open(socket) {
       sockets.add(socket);
