@@ -41,3 +41,11 @@ cp data/bridge-rules.example.json data/bridge-rules.json
 ```
 
 Each rule matches a Zigbee2MQTT topic and selected JSON fields, then sends normalized light commands through the configured provider. See `data/bridge-rules.example.json` for the shape.
+
+## Deployment
+
+glow runs as a Docker container managed by Coolify (app `glow-control:main`, raw Docker Compose mode). Pushing to `main` auto-deploys.
+
+- `network_mode: host` is required: Elgato discovery browses mDNS (`_elg._tcp`), which does not cross a docker bridge.
+- The container binds `172.17.0.1:3000` (the docker0 gateway) — Caddy and the rehearsal Traefik proxy reach it there. The old systemd unit (`glow-control.service`) is disabled; rollback = re-enable the unit and stop the container.
+- Runtime state (`hue-bridge.json`, `device-*.json`, `elgato-lights.json`, `bridge-rules.json`) lives in `data/` on the host, bind-mounted to `/app/data`.
