@@ -1,0 +1,9 @@
+.git
+node_modules
+data
+.tmp-build
+.tmp-build-ui
+dist
+.env
+Dockerfile
+.dockerignore
