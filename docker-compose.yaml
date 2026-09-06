@@ -1,0 +1,16 @@
+# glow-control — deployed by Coolify as a Docker Compose app in RAW mode.
+# network_mode: host is load-bearing: Elgato discovery browses mDNS (_elg._tcp)
+# which does not cross a docker bridge. With host networking the container's
+# behavior is identical to the old host process (it even binds HOST=172.17.0.1
+# so Caddy + the rehearsal Traefik proxy are unchanged).
+# Env vars come from Coolify's env UI (.env written next to this file at deploy).
+services:
+  glow:
+    build: .
+    image: glow-control:coolify
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env
+    volumes:
+      - /home/atlas/src/glow-control/data:/app/data
